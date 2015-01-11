@@ -161,7 +161,7 @@ Item {
         json.liste = positions;
         json.gegeben = gegeben;
 
-        json.kasse = "G&ouml;ppingen";
+        json.kasse = "Göppingen";
         json.zahlungsart = "Bar";
         json.kundennummer = kundennummer;
         json.kostenstelle = kostenstelle;
@@ -171,9 +171,7 @@ Item {
             cmp: 'cmp_mde_sync',
             page: 'single_report',
             sid: sessionID,
-            json: JSON.stringify( json ).replace(/ß/g,"&szlig;")
-                 .replace(/ö/g,"&ouml;").replace(/ä/g,"&auml;").replace(/ü/g,"&uuml;")
-                 .replace(/Ö/g,"&Ouml;").replace(/Ä/g,"&Auml;").replace(/Ü/g,"&Uuml;")
+            json: JSON.stringify( html_encode_entities_object(json) )
         },function(err,res){
 
             cb(err,res);
