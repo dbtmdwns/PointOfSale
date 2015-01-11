@@ -24,3 +24,6 @@ RC_FILE = app.rc
 
 HEADERS += \
     posprinter.h
+
+DISTFILES += \
+    README.md
