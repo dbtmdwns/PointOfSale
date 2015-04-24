@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(PointOfSale)
 
 
+SET(CMAKE_BUILD_TYPE "Release")
+
 set(CMAKE_PREFIX_PATH $ENV{QTDIR})
 set(CMAKE_MODULE_PATH $EN ${PointOfSale_SOURCE_DIR}/cmake)
 message("including ${PointOfSale_SOURCE_DIR}/cmake ")
