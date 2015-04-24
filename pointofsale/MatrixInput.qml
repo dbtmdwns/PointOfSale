@@ -34,7 +34,6 @@ StackViewItem {
             fillMode: Image.PreserveAspectFit
             source: App.left_logo_file
             Component.onCompleted: {
-
             }
         }
     }
@@ -78,7 +77,7 @@ StackViewItem {
                     y: 0//spacing
                     color: "transparent"
                     //width: itemWidth*App.waregroupColumns
-                    width: (parent.width-(8 + App.waregroupColumns)*spacing)/(8 + App.waregroupColumns)*App.waregroupColumns
+                    width: (parent.width-(5 + App.waregroupColumns)*spacing)/(5 + App.waregroupColumns)*App.waregroupColumns
                     height: mFrame.height -relationChooser.height - spacing*2
 
                     WaregroupMatrix{

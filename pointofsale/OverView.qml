@@ -42,14 +42,14 @@ StackViewItem {
             page: "About.qml"
         }
 
-        /*
+
         ListElement {
             iconText: "\uf085"
             title:  "Settings"
             doneText: "\uf00c Fertig"
             page: "Settings.qml"
         }
-        */
+        
 
         ListElement {
             iconText: "\uf08b"

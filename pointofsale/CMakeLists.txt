@@ -51,9 +51,17 @@ endif()
 if(APPLE)
   list(APPEND pointofsale_srcs image_source/osx_icon.icns)
   set(MACOSX_BUNDLE_ICON_FILE osx_icon.icns)
-  set(MACOSX_BUNDLE_BUNDLE_VERSION "${AvogadroApp_VERSION}")
+  set(MACOSX_BUNDLE_BUNDLE_VERSION "${PointOfSale_VERSION}")
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.tualo.PointOfSale")
   set_source_files_properties(image_source/osx_icon.icns PROPERTIES
     MACOSX_PACKAGE_LOCATION Resources)
+
+  #set(MACOSX_BUNDLE_INFO_FILE Resources/Info.plist.in)
+  message("current source ${CMAKE_CURRENT_SOURCE_DIR}")
+  set(MACOSX_BUNDLE_INFO_FILE "${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in")
+  set(MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in")
+
+
 elseif(UNIX)
 message("fix me")
 #  install(FILES "image_source/avogadro2.desktop" DESTINATION "${INSTALL_XDG_APPS_DIR}")
@@ -103,7 +111,6 @@ if(WIN32)
 endif()
 set_target_properties(pointofsale PROPERTIES AUTOMOC TRUE)
 
-#target_link_libraries(pointofsale AvogadroQtOpenGL AvogadroQtGui AvogadroQtPlugins)
 
 
 if(APPLE)

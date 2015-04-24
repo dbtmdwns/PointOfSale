@@ -14,6 +14,7 @@ cmake_install.cmake
 install_manifest.txt
 Makefile
 build
-qml.q1rc.depends
-*_automoc1.cpp
-moc_1*.cpp
+qml.qrc.depends
+*_automoc.cpp
+moc_*.cpp
+qrc_qml.cpp

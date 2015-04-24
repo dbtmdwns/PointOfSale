@@ -13,19 +13,19 @@ StackViewItem {
     title: "Einstellungen"
 
     property int _labelWidth: 300
-
     doneText: qsTr("Ready") + "\uf00c"
 
     function onDoneClicked(){
         //App.debug('Settings','onDoneClicked', url.text)
         App.url = url.text;
-        App.aurl = aurl.text;
+        //App.aurl = aurl.text;
         App.client = client.text;
         App.username = username.text;
         App.password = password.text;
-        App.department = department.text;
-        App.receipt = receipt.text;
-        App.items_group = items_group.text;
+
+        //App.department = department.text;
+        //App.receipt = receipt.text;
+        //App.items_group = items_group.text;
 
         App.saveSettings();
         stackView.pop();
@@ -33,13 +33,13 @@ StackViewItem {
 
     Component.onCompleted: {
         url.text = App.url;
-        aurl.text = App.aurl;
+        //aurl.text = App.aurl;
         client.text = App.client;
         username.text = App.username;
         password.text = App.password;
-        department.text = App.department;
-        receipt.text = App.receipt;
-        items_group.text = App.items_group;
+        //department.text = App.department;
+        //receipt.text = App.receipt;
+        //items_group.text = App.items_group;
     }
 
 
@@ -134,6 +134,7 @@ StackViewItem {
 
 
 
+/*
             Rectangle {
                 id: line4
                 y: 80 * 4
@@ -208,6 +209,7 @@ StackViewItem {
                     labelLeftSpace: 40
                 }
             }
+            */
         }
 
     }

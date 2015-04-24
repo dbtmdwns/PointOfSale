@@ -508,7 +508,7 @@ Item {
     }
 
     function getHTML(display){
-        var template = App.posPrinter.readFile(App.template_file);
+        var template = App.template;
 
         ticketHeader = _extractPart(template,"HEADER");
         ticketItem = _extractPart(template,"ITEM");

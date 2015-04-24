@@ -11,6 +11,7 @@ Item {
 
     property string aurl: ""
 
+
     property string username: "admin"
     property string password: "admin"
     property string client: ""
@@ -29,6 +30,7 @@ Item {
 
     property int totalDisplayRows: 1
 
+    property int windowWidth:800;
 
     property int leftSideColumns: 3
     property int rightSideColumns: 3
@@ -43,9 +45,16 @@ Item {
     property int articleRows: 10
 
     property string template_file: ""
+    property string template: ""
     property string logo_file: ""
     property string left_logo_file: ""
     property string fixview: ""
+
+
+    property string kasse: "Göppingen"
+    property string zahlart: "Bar"
+    property string tabellenzusatz: "BARVERKAUF"
+
 
     property var __callback
     property var use_date
@@ -94,38 +103,135 @@ Item {
     Component.onCompleted: {
         use_date = new Date();
 
+        var db = LocalStorage.openDatabaseSync("PointOfSale","1.0","",1000000);
 
-        url = posPrinter.getEnv("POSURL","");
-        fullscreen = posPrinter.getEnv("POSFULLSCREEN","0");
-        posTitle = posPrinter.getEnv("POSTITLE","Point of Sale");
-        fontSize = posPrinter.getEnv("POSFONTSIZE","18")*1;
-        buttonFontSize = posPrinter.getEnv("POSBUTTONFONTSIZE","24")*1;
-        client = posPrinter.getEnv("POSCLIENT","");
-        username = posPrinter.getEnv("POSUSER","admin");
-        password = posPrinter.getEnv("POSPASSWORD","admin");
-        fixview = posPrinter.getEnv("POSFIXVIEW","10000");
-        template_file = posPrinter.getEnv("POSTEMPLATE","");
-        logo_file = posPrinter.getEnv("POSLOGO","");
-        left_logo_file = posPrinter.getEnv("POSLEFTLOGO","");
+        url = "https://tualoserver.de/wawi/index.php"
+        username = "admin"
+        password = "admin"
 
-        leftMatrixWidth = posPrinter.getEnv("POSLEFTSPACERWIDTH","100")*1;
-        rightMatrixWidth = posPrinter.getEnv("POSRIGHTSPACERWIDTH","100")*1;
+        db.transaction(
+          function(tx) {
+              // Create the database if it doesn't already exist
+              tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
 
-        waregroupColumns = posPrinter.getEnv("POSWGCOLUMNS","1")*1;
-        waregroupRows = posPrinter.getEnv("POSWGROWS","10")*1;
+              var rs = tx.executeSql('SELECT key,value FROM settings');
+              for(var i = 0; i < rs.rows.length; i++) {
+                switch(rs.rows.item(i).key){
+                case "url":
+                  url = rs.rows.item(i).value;
+                  break;
+                case "client":
+                  client = rs.rows.item(i).value;
+                  break;
+                case "username":
+                  username = rs.rows.item(i).value;
+                  break;
+                case "password":
+                  password = rs.rows.item(i).value;
+                  break;
+                }
+              }
 
 
-        //relationColumns = posPrinter.getEnv("POSRELCOLUMNS","5")*1;
-        relationRows = posPrinter.getEnv("POSRELROWS","1")*1;
+          url = posPrinter.getEnv("POSURL",url);
+          client = posPrinter.getEnv("POSCLIENT",client);
+          username = posPrinter.getEnv("POSUSER",username);
+          password = posPrinter.getEnv("POSPASSWORD",password);
 
 
-        articleColumns = posPrinter.getEnv("POSARTCOLUMNS","8")*1;
-        articleRows = posPrinter.getEnv("POSARTROWS","10")*1;
+          template_file = posPrinter.getEnv("POSTEMPLATE","");
+          if (template_file!==""){
+            template = App.posPrinter.readFile(App.template_file);
+          }else{
+
+          }
+
+
+
+          fullscreen = posPrinter.getEnv("POSFULLSCREEN","0");
+          posTitle = posPrinter.getEnv("POSTITLE","Point of Sale");
+          fontSize = posPrinter.getEnv("POSFONTSIZE","12")*1;
+          buttonFontSize = posPrinter.getEnv("POSBUTTONFONTSIZE","12")*1;
+
+          fixview = posPrinter.getEnv("POSFIXVIEW","10000");
+          template_file = posPrinter.getEnv("POSTEMPLATE","");
+          logo_file = posPrinter.getEnv("POSLOGO","");
+          left_logo_file = posPrinter.getEnv("POSLEFTLOGO","");
+
+          leftMatrixWidth = posPrinter.getEnv("POSLEFTSPACERWIDTH","100")*1;
+          rightMatrixWidth = posPrinter.getEnv("POSRIGHTSPACERWIDTH","100")*1;
+
+          waregroupColumns = posPrinter.getEnv("POSWGCOLUMNS","1")*1;
+          waregroupRows = posPrinter.getEnv("POSWGROWS","10")*1;
+
+
+          //relationColumns = posPrinter.getEnv("POSRELCOLUMNS","5")*1;
+          relationRows = posPrinter.getEnv("POSRELROWS","1")*1;
+
+
+          articleColumns = posPrinter.getEnv("POSARTCOLUMNS","2")*1;
+          articleRows = posPrinter.getEnv("POSARTROWS","10")*1;
+
+
+          }
+        )
+
+
+
 
     }
 
     function saveSettings(){
+      var db = LocalStorage.openDatabaseSync("PointOfSale","1.0","",1000000);
+      db.transaction(
+        function(tx) {
+            // Create the database if it doesn't already exist
+            tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
 
+            // Add (another) greeting row
+            tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', [ 'url', url ]);
+            tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', [ 'username', username ]);
+            tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', [ 'password', password ]);
+            tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', [ 'client', client ]);
+
+            tx.executeSql('UPDATE settings set value = ? where key = ?', [  url, 'url' ]);
+            tx.executeSql('UPDATE settings set value = ? where key = ?', [  client, 'client' ]);
+            tx.executeSql('UPDATE settings set value = ? where key = ?', [  username, 'username' ]);
+            tx.executeSql('UPDATE settings set value = ? where key = ?', [  password, 'password' ]);
+
+            
+        }
+      )
+    }
+
+
+    function getSettings(cb){
+        post(url, {
+             TEMPLATE: 'NO',
+             cmp: 'cmp_mde_sync',
+             sid: sessionID,
+             page: "pos_get_config",
+            "return": "json"
+        },function(err,res){
+        debug('App','settings',jsonDebug(res));
+            if (err){
+                debug('App','settings - ERROR',jsonDebug(err));
+            }else if (res.success){
+              if (template_file===""){
+                template = res.template
+              }
+
+              if(left_logo_file===""){
+                left_logo_file = res.left_logo
+              }
+
+              kasse = res.kasse;
+              zahlart = res.zahlart;
+              tabellenzusatz = res.tabellenzusatz;
+
+              cb();
+            }
+        });
     }
 
 
@@ -142,7 +248,10 @@ Item {
                 debug('App','login - ERROR',jsonDebug(err));
             }else if (res.success){
                 sessionID = res.sid;
+                getSettings(function(){
                 cb();
+                });
+
             }
         });
     }
@@ -163,13 +272,13 @@ Item {
     function saveReport(kundennummer,kostenstelle,positions,gegeben,cb){
         var json = {};
         json.id = 'Kasse ' + (new Date()).toISOString();
-        json.tabellenzusatz = 'BARVERKAUF';
+        json.tabellenzusatz = tabellenzusatz;
         json.datum = (new Date()).toISOString().substring(0,10);
         json.liste = positions;
         json.gegeben = gegeben;
 
-        json.kasse = "Dresden";
-        json.zahlungsart = "Bar";
+        json.kasse = kasse;
+        json.zahlungsart = zahlart;
         json.kundennummer = kundennummer;
         json.kostenstelle = kostenstelle;
 
