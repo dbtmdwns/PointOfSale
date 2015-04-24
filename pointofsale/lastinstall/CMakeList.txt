@@ -1,0 +1,38 @@
+if((APPLE OR WIN32) AND NOT ${CMAKE_VERSION} VERSION_LESS 2.8.8)
+  set(pfx "")
+  if(NOT APPLE)
+    set(pfx "bin/")
+  endif()
+
+  set(sfx "")
+  if(APPLE)
+    set(sfx ".app")
+  elseif(WIN32)
+    set(sfx ".exe")
+  endif()
+
+  get_target_property(output_name pointofsale OUTPUT_NAME)
+  if(output_name)
+    set(exe "${pfx}${output_name}${sfx}")
+  else()
+    set(exe "${pfx}pointofsale${sfx}")
+  endif()
+
+  set(dirs "")
+  if(CMAKE_PREFIX_PATH)
+    foreach(dir ${CMAKE_PREFIX_PATH})
+      list(APPEND dirs "${dir}/bin" "${dir}/lib")
+    endforeach()
+  endif()
+
+
+  set(plugins "")
+  foreach(plugin ${PointOfSale_PLUGINS})
+    get_property(location TARGET ${plugin} PROPERTY LOCATION)
+    list(APPEND plugins ${location})
+  endforeach()
+
+  include(InstallRequiredSystemLibraries)
+  include(DeployQt5)
+  install_qt5_executable(${exe} "${plugins}" "${ob_plugins}" "${dirs}" "")
+endif()

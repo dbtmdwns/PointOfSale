@@ -6,3 +6,11 @@ brender-pos.svg
 .DS_Store
 sample.svg
 *.user.*
+CMakeFiles
+PointOfSale.app
+build-PointOfSale-Desktop_Qt_5_4_1_clang_64bit-Release
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
+build
