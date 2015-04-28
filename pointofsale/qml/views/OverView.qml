@@ -58,14 +58,14 @@ StackViewItem {
             page: "Exit.qml"
         }
 
-
+        /*
         ListElement {
             iconText: "\uf08b"
             title: "Testing"
             doneText: ""
             page: "stackitems/Main.qml"
         }
-
+        */
 
     }
 
@@ -87,7 +87,7 @@ StackViewItem {
             icon: iconText
             onClicked: {
                 if (
-                  (page==='MatrixInput.qml') 
+                  (page==='MatrixInput.qml')
                 ){
                     App.wawiLogin(function(){
                         ReportStore.loadArticles(function(){

@@ -28,6 +28,10 @@ Grid {
         NumberAnimation { properties: "x,y"; easing.type: Easing.OutBounce; duration: 100 }
      }
 
+     Component.onCompleted:{
+        console.log ('ArticleMatrix.qml','deprecated');
+     }
+
      Repeater {
 
        model: columns*rows

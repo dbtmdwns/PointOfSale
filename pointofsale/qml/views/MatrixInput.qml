@@ -103,7 +103,7 @@ StackViewItem {
                 WaregroupMatrix{
                   anchors.fill: parent
                   onWaregroupChanged: {
-                     articleMatrix.articles = articles
+                     articleMatrix.addList(articleMatrix.articles)
                   }
                 }
               }
@@ -119,9 +119,10 @@ StackViewItem {
                 height: mFrame.height -relationChooser.height -spacing*2
 
 
-                ArticleMatrix{
+                Matrix{
                   id: articleMatrix
                   anchors.fill: parent
+                  template: "{gruppe}<br/>{brutto}"
                 }
 
               }
