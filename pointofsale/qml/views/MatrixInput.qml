@@ -16,6 +16,7 @@ StackViewItem {
     property int spacing: 8
 
     property int buttonPanelColumns: 5
+    property int rows: 10
     property int maxColumns: 8 + App.waregroupColumns + buttonPanelColumns + App.leftSideColumns + App.rightSideColumns
     property int itemWidth: (framedView.width - spacing*maxColumns ) / maxColumns
 
@@ -100,12 +101,23 @@ StackViewItem {
                 width: (parent.width-(8 + App.waregroupColumns)*spacing)/(8 + App.waregroupColumns)*App.waregroupColumns
                 height: mFrame.height -relationChooser.height - spacing*2
 
-                WaregroupMatrix{
+
+                Matrix{
+                  id: waregroupMatrix
                   anchors.fill: parent
-                  onWaregroupChanged: {
-                     articleMatrix.addList(articleMatrix.articles)
+                  template: "{warengruppe}"
+                  rows: framedView.rows
+                  columns: 1
+                  Component.onCompleted: {
+                  console.log(JSON.stringify(ReportStore.getWarengrupen(),null,1))
+                    waregroupMatrix.addList(ReportStore.getWarengrupen());
+                  }
+                  onSelected: {
+                    articleMatrix.defaultBackgroundColor = item.displayBackgroundColor;
+                    articleMatrix.addList(ReportStore.getArtikel(item.warengruppe));
                   }
                 }
+
               }
 
               Rectangle{
@@ -123,6 +135,8 @@ StackViewItem {
                   id: articleMatrix
                   anchors.fill: parent
                   template: "{gruppe}<br/>{brutto}"
+                  rows: framedView.rows
+                  columns: 2
                 }
 
               }
@@ -271,7 +285,7 @@ StackViewItem {
       x: view.width+rightFrame.width
       width: itemWidth * App.rightSideColumns
       height: framedView.height
-      color: "transparent"
+      //color: "transparent"
       anchors.margins: spacing
       Behavior on opacity { OpacityAnimator{  easing.type: Easing.InCubic; duration: 500 } }
       opacity: ReportStore.reportMode?1:0
