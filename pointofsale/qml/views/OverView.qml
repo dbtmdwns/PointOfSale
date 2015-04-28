@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import "../controlls"
 import "../singleton"
-
+import "./stackitems"
 
 
 StackViewItem {
@@ -29,10 +29,10 @@ StackViewItem {
         */
 
         ListElement {
-            iconText: "\uf073"
-            title: "Kasse"
-            doneText: ""
-            page: "MatrixInput.qml"
+          iconText: "\uf073"
+          title: "Kasse"
+          doneText: ""
+          page: "MatrixInput.qml"
         }
 
         ListElement {
@@ -49,7 +49,7 @@ StackViewItem {
             doneText: "\uf00c Fertig"
             page: "Settings.qml"
         }
-        
+
 
         ListElement {
             iconText: "\uf08b"
@@ -57,6 +57,15 @@ StackViewItem {
             doneText: ""
             page: "Exit.qml"
         }
+
+
+        ListElement {
+            iconText: "\uf08b"
+            title: "Testing"
+            doneText: ""
+            page: "stackitems/Main.qml"
+        }
+
 
     }
 
@@ -77,11 +86,13 @@ StackViewItem {
             text: title
             icon: iconText
             onClicked: {
-                if (page==='MatrixInput.qml'){
+                if (
+                  (page==='MatrixInput.qml') 
+                ){
                     App.wawiLogin(function(){
                         ReportStore.loadArticles(function(){
-                            stack.push(Qt.resolvedUrl(page))
-                            //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));
+                          stack.push(Qt.resolvedUrl(page))
+                          //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));
                         });
                     });
                 }else{

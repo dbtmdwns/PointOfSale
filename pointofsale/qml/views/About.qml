@@ -7,7 +7,6 @@ StackViewItem {
 
     width: parent.width
     height: parent.height
-
     title: qsTr("About")
 
     ScrollView {

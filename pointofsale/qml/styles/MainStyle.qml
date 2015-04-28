@@ -14,7 +14,7 @@ Item {
         property int buttonFontSize:  App.buttonFontSize
 
         property alias iconFont: fontAwesome
-        FontLoader { id: fontAwesome; source: "../resources/fontawesome-webfont.ttf" }
+        FontLoader { id: fontAwesome; source: "../fontawesome-webfont.ttf" }
     }
 
     Item{

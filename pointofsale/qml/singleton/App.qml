@@ -199,7 +199,7 @@ Item {
             tx.executeSql('UPDATE settings set value = ? where key = ?', [  username, 'username' ]);
             tx.executeSql('UPDATE settings set value = ? where key = ?', [  password, 'password' ]);
 
-            
+
         }
       )
     }
@@ -406,6 +406,9 @@ Item {
                 timeoutTimer.stop()
 
                 if(xhr.status === 200) {
+
+                console.log(xhr.responseText);
+                
                     http_result = xhr.responseText;
 
 

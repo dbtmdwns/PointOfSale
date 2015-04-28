@@ -60,12 +60,21 @@ ApplicationWindow {
        property string inputText: ""
        Keys.onReleased:{
 
+           if (typeof stack.currentItem.keyInput==='function'){
+            stack.currentItem.keyInput(event);
+           }
+
            switch(event.key){
            case Qt.Key_Escape:
                if (stackView.depth > 1) {
                    stackView.pop();
                    event.accepted = true;
                }
+               break;
+           case Qt.Key_Backspace:
+                if (inputText.length>0)
+                inputText = inputText.substring(0,inputText.length-1);
+                event.accepted = true;
                break;
            case Qt.Key_Enter:
            case Qt.Key_Return:
@@ -75,11 +84,11 @@ ApplicationWindow {
                break;
            default:
                for(var i in Qt){
-                   if (i.indexOf('Key')===0){
-                       if (Qt[i]===event.key){
-                           console.log("main","QT KEY",i);
-                       }
+                 if (i.indexOf('Key')===0){
+                   if (Qt[i]===event.key){
+                       console.log("main","QT KEY",i);
                    }
+                 }
                }
                inputText += event.text;
                event.accepted = true;

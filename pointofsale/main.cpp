@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     //@uri Tualo.PosPrinter
     qmlRegisterType <PosPrinter> ("com.tualo", 1, 0, "PosPrinter");
     QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     return app.exec();
 
 }

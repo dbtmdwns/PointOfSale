@@ -9,5 +9,4 @@ Grid {
     columns: 1
     rows: 1
 
-
 }

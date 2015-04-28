@@ -14,6 +14,7 @@ Item {
     property var positions: []
     property var update
     property var styles
+    property var refItem
 
     property bool reportMode: false
 
@@ -31,6 +32,8 @@ Item {
     property int kundennummer: 1
     property int kostenstelle: 1
     property string feld: ""
+
+    property string referenzString: ""
 
 
     property var _steuergruppen: []
@@ -82,17 +85,18 @@ Item {
     }
 
     function loadArticles(cb){
-        App.getPOSArticles(function(res){
-            _steuergruppen = res.steuergruppen;
-            for(var i in res.warengruppen){
-                res.warengruppen[i].farbe = App.rgb_hex_Color(res.warengruppen[i].farbe);
-            }
+      App.getPOSArticles(function(res){
+        _steuergruppen = res.steuergruppen;
+        for(var i in res.warengruppen){
+          res.warengruppen[i].farbe = App.rgb_hex_Color(res.warengruppen[i].farbe);
+          res.warengruppen[i].displayBackgroundColor = res.warengruppen[i].farbe;
+        }
 
-            _warengruppen = res.warengruppen;
-            _staffeln = res.staffeln;
-            _artikel = res.artikel;
-            cb();
-        });
+        _warengruppen = res.warengruppen;
+        _staffeln = res.staffeln;
+        _artikel = res.artikel;
+        cb();
+      });
     }
 
     function pushOldReport(item){
@@ -116,41 +120,32 @@ Item {
 
 
     function getArtikel(warengruppe){
-        _warengruppe = warengruppe;
-        var res = [];
+      _warengruppe = warengruppe;
+      var res = [];
 
-        for(var i in _artikel){
-            if (_artikel[i].warengruppe === warengruppe){
-                //res.push(_artikel[i]);
-                for(var s in _staffeln){
-                    if (_staffeln[s].gruppe === _artikel[i].gruppe){
-
-
-                        if (preiskategorie*1 === _staffeln[s].preiskategorie*1){
-
-                            var item={};
-                            item.gruppe = _staffeln[s].gruppe;
-
-                            item.anzahl = 1;
-                            //_staffeln[s].brutto = Math.round(_staffeln[s].preis * (1 + 1*_artikel[i]["steuer"+feld]/100)*100)/100;
-
-                            item.steuersatz = 1*_artikel[i]["steuer"+feld];
-                            item.bpreis = _staffeln[s].brutto;
-                            item.preis = _staffeln[s].brutto / (1+item.steuersatz/100);
-                            item.netto = item.preis;
-
-                            item.brutto_preis = _staffeln[s].brutto * 1;
-                            item.brutto = _staffeln[s].brutto * 1;
-
-                            item.zusatztext =  _artikel[i].zusatztext;
-                            res.push( item );
-
-                        }
-                    }
-                }
+      for(var i in _artikel){
+        if (_artikel[i].warengruppe === warengruppe){
+          for(var s in _staffeln){
+            if (_staffeln[s].gruppe === _artikel[i].gruppe){
+              if (preiskategorie*1 === _staffeln[s].preiskategorie*1){
+                var item={};
+                item.gruppe = _staffeln[s].gruppe;
+                item.plugin = _artikel[i].plugin;
+                item.anzahl = 1;
+                item.steuersatz = 1*_artikel[i]["steuer"+feld];
+                item.bpreis = _staffeln[s].brutto;
+                item.preis = _staffeln[s].brutto / (1+item.steuersatz/100);
+                item.netto = item.preis;
+                item.brutto_preis = _staffeln[s].brutto * 1;
+                item.brutto = _staffeln[s].brutto * 1;
+                item.zusatztext =  _artikel[i].zusatztext;
+                res.push( item );
+              }
             }
+          }
         }
-        return res;
+      }
+      return res;
     }
 
     function cmd(cmdtype,val){
@@ -161,6 +156,15 @@ Item {
                     calcPos(positions.length-1);
                 }
             }
+        }
+
+        if (cmdtype === 'BACK'){
+          if (currentMode === 'Referenz'){
+            if (referenzString.length>0){
+              referenzString=referenzString.substring(0,referenzString.length-1);
+            }
+            return;
+          }
         }
 
         if (cmdtype === 'SEP'){
@@ -219,11 +223,18 @@ Item {
 
 
         if (cmdtype === 'NUM'){
+
+            if (currentMode === 'Referenz'){
+              referenzString +=val+""
+              return;
+            }
+
             if (positions.length===0){
                 return;
             }
 
             if(number===-1){
+
                 if (currentMode === 'amount'){
                     if (amountModeInit){
                         positions[positions.length-1].anzahl=val;
@@ -373,117 +384,132 @@ Item {
 
         if (cmdtype === 'ENTER'){
 
-            if(total!==0){
-                if(number===-1){
+          if (currentMode === 'Referenz'){
+            refItem.referenz = referenzString;
+            currentMode = 'amount';
+            add(refItem,true);
+            return;
+          }
 
-                    if (currentMode==='pay'){
-                        if (given>=total){
-                            displayMessage("Der Beleg wird gespeichert.",true);
-                            currentMode='paysave';
-                            App.posPrinter.openDrawer();
+          if(total!==0){
+            if(number===-1){
 
-                            App.saveReport(kundennummer,kostenstelle,positions,given,function(err,res){
-                                if (err){
-                                    displayMessage(err.response);
-                                    console.log(err.response);
-                                }else{
+              if (currentMode==='pay'){
+                if (given>=total){
+                displayMessage("Der Beleg wird gespeichert.",true);
+                currentMode='paysave';
+                App.posPrinter.openDrawer();
 
-                                    if (res.success){
-                                        number = res.belegnummer;
-                                        zeit = (new Date()).toISOString().substring(11,16);
-                                        datum = (new Date()).toISOString().substring(0,10);
-                                        lastReport = getHTML();
-                                        var  item = {
-                                            zeit: zeit,
-                                            kundennummer: kundennummer,
-                                            kostenstelle: kostenstelle,
-                                            datum: datum,
-                                            belegnummer: number,
-                                            brutto: total,
-                                            positionen: App.html_decode_entities_object(positions),
-                                            html: lastReport,
-                                            displayColor: "#41414f",
-                                            displayText: ""+number+" "+zeit+" | <b>"+total.toFixed(2)+" €</b>"
-                                        }
-                                        pushOldReport(item);
+                App.saveReport(kundennummer,kostenstelle,positions,given,function(err,res){
+                  if (err){
+                    displayMessage(err.response);
+                    console.log(err.response);
+                  }else{
 
-                                        positions = [];
-                                        number = -1;
-                                        displayMessage( res.belegnummer+" gespeichert.");
-                                        lastTotal = total;
+                    if (res.success){
+                      number = res.belegnummer;
+                      zeit = (new Date()).toISOString().substring(11,16);
+                      datum = (new Date()).toISOString().substring(0,10);
+                      lastReport = getHTML();
+                      var  item = {
+                        zeit: zeit,
+                        kundennummer: kundennummer,
+                        kostenstelle: kostenstelle,
+                        datum: datum,
+                        belegnummer: number,
+                        brutto: total,
+                        positionen: App.html_decode_entities_object(positions),
+                        html: lastReport,
+                        displayColor: "#41414f",
+                        displayText: ""+number+" "+zeit+" | <b>"+total.toFixed(2)+" €</b>"
+                      }
+                      pushOldReport(item);
 
-                                        currentMode = 'amount';
-                                        //App.posPrinter.openDrawer();
+                      positions = [];
+                      number = -1;
+                      displayMessage( res.belegnummer+" gespeichert.");
+                      lastTotal = total;
 
-                                    }else{
-                                        displayMessage(res.msg);
-                                    }
-                                    sum();
-                                }
+                      currentMode = 'amount';
+                      //App.posPrinter.openDrawer();
 
-                            });
-                        }
                     }else{
-
-                        _givenfraction = "";
-                        given = total;
-
-                        givenModeInit=true;
-                        givenPModeInit=true;
-
-                        currentMode='pay';
+                      displayMessage(res.msg);
                     }
-                }else{
-                    positions = [];
-                    number= -1;
+                    sum();
+                    }
+
+                  });
                 }
+              }else{
+
+                _givenfraction = "";
+                given = total;
+
+                givenModeInit=true;
+                givenPModeInit=true;
+
+                currentMode='pay';
+              }
+            }else{
+              positions = [];
+              number= -1;
             }
+          }
 
         }
         sum();
     }
 
-    function add(item){
+    function add(item,noPlugin){
+      if ((item.plugin === 'Ext.plugin.Referenz')&&(noPlugin!==true)){
+        currentMode = 'Referenz';
+        referenzString='';
+        refItem = item;
+        refItem.referenz = '';
+        refItem.anzahl=1;
+      }else{
         if(number===-1){
-            lastTotal = 0;
-            var brutto_preis = item.brutto_preis;
-            var brutto  = Math.round(  ( item.anzahl * brutto_preis ) *100) /100;
-            var netto = brutto / (1+item.steuersatz/100);
-            var item = {
-                artikel: item.gruppe,
-                zusatztext: item.zusatztext,
-                referenz: item.referenz,
-                steuersatz: item.steuersatz,
-                anzahl: item.anzahl,
-                xref: item.xref,
-                epreis: item.preis,
-                brutto_preis: brutto_preis,
-                brutto: brutto,
-                netto: netto
-            }
-            positions.push(item);
-            currentMode = 'amount';
-            amountModeInit = true;
-            sum();
+          lastTotal = 0;
+          var brutto_preis = item.brutto_preis;
+          var brutto  = Math.round(  ( item.anzahl * brutto_preis ) *100) /100;
+          var netto = brutto / (1+item.steuersatz/100);
+          var item = {
+            artikel: item.gruppe,
+            zusatztext: item.zusatztext,
+            referenz: item.referenz,
+            steuersatz: item.steuersatz,
+            anzahl: item.anzahl,
+            xref: item.xref,
+            epreis: item.preis,
+            brutto_preis: brutto_preis,
+            brutto: brutto,
+            netto: netto
+          }
+          positions.push(item);
+          currentMode = 'amount';
+          amountModeInit = true;
+          sum();
         }
+      }
+
     }
 
     function calcPos(index){
+      if(number===-1){
+        var brutto_preis = positions[index].brutto_preis;// Math.round( positions[index].epreis*(1+positions[index].steuersatz/100) * 100) /100;
 
-        if(number===-1){
-            var brutto_preis = positions[index].brutto_preis;// Math.round( positions[index].epreis*(1+positions[index].steuersatz/100) * 100) /100;
+        var brutto  = Math.round(  ( positions[index].anzahl * brutto_preis ) *100) /100;
 
-            var brutto  = Math.round(  ( positions[index].anzahl * brutto_preis ) *100) /100;
+        positions[index].steuersatz = _artikel[positions[index].artikel]['steuer'+feld]*1;
+        var netto = brutto / (1+  positions[index].steuersatz/100);
 
-            positions[index].steuersatz = _artikel[positions[index].artikel]['steuer'+feld]*1;
-            var netto = brutto / (1+  positions[index].steuersatz/100);
-
-            positions[index].brutto_preis = brutto_preis;
-            positions[index].brutto = brutto;
-            positions[index].netto = netto;
-            positions[index].steuer = brutto - netto;
-            positions[index].epreis = brutto_preis/(1+positions[index].steuersatz/100);
-        }
+        positions[index].brutto_preis = brutto_preis;
+        positions[index].brutto = brutto;
+        positions[index].netto = netto;
+        positions[index].steuer = brutto - netto;
+        positions[index].epreis = brutto_preis/(1+positions[index].steuersatz/100);
+      }
     }
 
     function sum(){
@@ -502,111 +528,111 @@ Item {
     }
 
     function _extractPart(template,str){
-        var start = "<!--"+str+"-->";
-        var end = "<!--/"+str+"-->";
-        return template.substring(template.indexOf(start),template.indexOf(end)+end.length);
+      var start = "<!--"+str+"-->";
+      var end = "<!--/"+str+"-->";
+      return template.substring(template.indexOf(start),template.indexOf(end)+end.length);
     }
 
     function getHTML(display){
-        var template = App.template;
+      var template = App.template;
 
-        ticketHeader = _extractPart(template,"HEADER");
-        ticketItem = _extractPart(template,"ITEM");
-        ticketFooter = _extractPart(template,"FOOTER");
-        ticketTaxesPositions = _extractPart(template,"TAX_ITEM");
-        ticketTaxesHeader = _extractPart(template,"TAX_HEADER");
-        ticketTaxesFooter = _extractPart(template,"TAX_FOOTER");
+      ticketHeader = _extractPart(template,"HEADER");
+      ticketItem = _extractPart(template,"ITEM");
+      ticketFooter = _extractPart(template,"FOOTER");
+      ticketTaxesPositions = _extractPart(template,"TAX_ITEM");
+      ticketTaxesHeader = _extractPart(template,"TAX_HEADER");
+      ticketTaxesFooter = _extractPart(template,"TAX_FOOTER");
 
-        if (typeof styles==="object"){
-            var h="<!DOCTYPE html>";
-            h+=getHTMLHeader();
-            for(var i=0;i<positions.length;i++){
-                h+=getHTMLPosition(i);
-            }
-            h+=getHTMLTaxes();
-            h+=getHTMLFooter();
+      if (typeof styles==="object"){
+          var h="<!DOCTYPE html>";
+          h+=getHTMLHeader();
+          for(var i=0;i<positions.length;i++){
+              h+=getHTMLPosition(i);
+          }
+          h+=getHTMLTaxes();
+          h+=getHTMLFooter();
 
-            if (display===true){
-                var extract = _extractPart(h,"HIDE ON DISPLAY");
-                h = h.replace(extract,"");
-            }
+          if (display===true){
+              var extract = _extractPart(h,"HIDE ON DISPLAY");
+              h = h.replace(extract,"");
+          }
 
-            return h;
-        }else{
-            return "";
-        }
+          return h;
+      }else{
+          return "";
+      }
     }
     function getHTMLHeader(){
-        return _hReplace(ticketHeader);
+      return _hReplace(ticketHeader);
     }
 
     function getHTMLPosition(index){
-        if (typeof positions[index]==="object"){
-            var h = ticketItem;
-            for (var i in positions[index]){
-                switch(i){
-                case "brutto":
-                case "netto":
-                case "epreis":
-                case "brutto_preis":
-                case "steuer":
-                    h=h.replace("{"+i+"}",positions[index][i].toFixed(2));
-                    break;
-                case "steuersatz":
-                    h=h.replace("{"+i+"}",positions[index][i].toFixed(0));
-                    break;
-                default:
-                    h=h.replace("{"+i+"}",positions[index][i]);
-                    break;
-                }
+      if (typeof positions[index]==="object"){
+          var h = ticketItem;
+          for (var i in positions[index]){
+            switch(i){
+            case "brutto":
+            case "netto":
+            case "epreis":
+            case "brutto_preis":
+            case "steuer":
+                h=h.replace("{"+i+"}",positions[index][i].toFixed(2));
+                break;
+            case "steuersatz":
+                h=h.replace("{"+i+"}",positions[index][i].toFixed(0));
+                break;
+            default:
+                h=h.replace("{"+i+"}",positions[index][i]);
+                break;
             }
-            return h;
-        }else{
-            return "";
-        }
+          }
+          return h;
+      }else{
+          return "";
+      }
     }
 
 
     function getHTMLTaxes(){
 
-        var html = _hReplace(ticketTaxesPositions);
-        var h = "";
-        var taxes = {};
+      var html = _hReplace(ticketTaxesPositions);
+      var h = "";
+      var taxes = {};
 
-        for (var index in positions){
+      for (var index in positions){
 
-            if (typeof taxes['S'+positions[index].steuersatz]==='undefined'){
-                taxes['S'+positions[index].steuersatz] = 0;
-            }
-            ;
-            taxes['S'+positions[index].steuersatz]+=positions[index].brutto -positions[index].netto
+          if (typeof taxes['S'+positions[index].steuersatz]==='undefined'){
+              taxes['S'+positions[index].steuersatz] = 0;
+          }
+          ;
+          taxes['S'+positions[index].steuersatz]+=positions[index].brutto -positions[index].netto
 
-        }
+      }
 
-        for (var tax in taxes){
-            h+=html.replace("{tax}",tax.substring(1)).replace("{tax_value}",taxes[tax].toFixed(2));
-        }
+      for (var tax in taxes){
+          h+=html.replace("{tax}",tax.substring(1)).replace("{tax_value}",taxes[tax].toFixed(2));
+      }
 
-        return _hReplace(ticketTaxesHeader) + h + _hReplace(ticketTaxesFooter);
+      return _hReplace(ticketTaxesHeader) + h + _hReplace(ticketTaxesFooter);
     }
 
     function getHTMLFooter(){
 
-        return _hReplace(ticketFooter).replace("</body>","<script>window.scrollTo(0, "+App.fixview+");</script></body>");
+      return _hReplace(ticketFooter).replace("</body>","<script>window.scrollTo(0, "+App.fixview+");</script></body>");
     }
 
     function _hReplace(html){
-        html = html.replace("{datum}", (datum.split('-')).reverse().join('.') );
-        html = html.replace("{zeit}",zeit);
+      html = html.replace("{datum}", (datum.split('-')).reverse().join('.') );
+      html = html.replace("{zeit}",zeit);
 
-        html = html.replace("{belegnummer}",number);
-        html = html.replace("{number}",number);
-        html = html.replace("{preiskategorie}",preiskategorie);
-        html = html.replace("{relation}",relation);
-        html = html.replace("{total}",total.toFixed(2));
-        html = html.replace("{total_tax}",total_tax.toFixed(2));
-        html = html.replace("{total_without_tax}",total_without_tax.toFixed(2));
-        return html;
+      html = html.replace("{belegnummer}",number);
+      html = html.replace("{number}",number);
+      html = html.replace("{preiskategorie}",preiskategorie);
+      html = html.replace("{relation}",relation);
+      html = html.replace("{total}",total.toFixed(2));
+      html = html.replace("{total_tax}",total_tax.toFixed(2));
+      html = html.replace("{total_without_tax}",total_without_tax.toFixed(2));
+      return html;
     }
 
 }

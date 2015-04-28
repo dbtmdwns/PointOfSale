@@ -54,6 +54,7 @@ Rectangle {
                         to: 0
                     }
                 }
+
             }
     }
 
@@ -105,7 +106,17 @@ Rectangle {
             x: backButton.x + backButton.width + mainStyle.dimens.leftMargin
             anchors.verticalCenter: parent.verticalCenter
             color: mainStyle.colors.toolbarText
-            text: backButton.opacity ? ( ( (typeof stackView!=='undefined') && (typeof stackView.currentItem!=='undefined') && (typeof stackView.currentItem.title!=='undefined') )? (title+": "+stackView.currentItem.title):title ) : title//"Leistungserfassung am "+App.getShortDateString()
+            text: backButton.opacity ? (
+
+              (
+
+                (typeof stackView === 'object' ) &&
+                (typeof stackView.currentItem === 'object' ) &&
+                (stackView.currentItem !== null )
+
+              ) ? ( title+": "+stackView.currentItem.title ) : title
+
+            ) : title
         }
 
 
