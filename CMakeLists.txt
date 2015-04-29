@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 project(PointOfSale)
 
+cmake_policy (SET CMP0020 NEW)
 
 SET(CMAKE_BUILD_TYPE "Release")
 
 set(CMAKE_PREFIX_PATH $ENV{QTDIR})
-set(CMAKE_MODULE_PATH $EN ${PointOfSale_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${PointOfSale_SOURCE_DIR}/cmake)
 message("including ${PointOfSale_SOURCE_DIR}/cmake ")
-
 
 include(BuildType)
 include(BuildLocation)
@@ -34,6 +34,7 @@ if(APPLE)
   set(INSTALL_DATA_DIR    "${prefix}/${INSTALL_DATA_DIR}")
   set(INSTALL_DOC_DIR     "${prefix}/${INSTALL_DOC_DIR}")
   set(INSTALL_CMAKE_DIR   "${prefix}/Resources")
+  set(MACOSX_BUNDLE_INFO_PLIST "MacOSXBundleInfo.plist.in")
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
