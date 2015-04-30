@@ -60,6 +60,7 @@ Item {
 
   property string kasse: "Göppingen"
   property string zahlart: "Bar"
+  property string lager: "0"
   property string tabellenzusatz: "BARVERKAUF"
 
 
@@ -247,6 +248,7 @@ Item {
         }
 
         kasse = res.kasse;
+        lager = res.lager;
         zahlart = res.zahlart;
         tabellenzusatz = res.tabellenzusatz;
 
@@ -300,6 +302,7 @@ Item {
     json.gegeben = gegeben;
 
     json.kasse = kasse;
+    json.lager = lager;
     json.zahlungsart = zahlart;
     json.kundennummer = kundennummer;
     json.kostenstelle = kostenstelle;

@@ -4,9 +4,9 @@ import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
 
 
-import "../controlls"
-import "../styles"
-import "../singleton"
+import "../../controlls"
+import "../../styles"
+import "../../singleton"
 
 StackViewItem {
     id: root

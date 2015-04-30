@@ -3,9 +3,9 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
-import "../controlls"
-import "../styles"
-import "../singleton"
+import "../../controlls"
+import "../../styles"
+import "../../singleton"
 
 Rectangle {
 
@@ -14,6 +14,9 @@ Rectangle {
 
   Text {
     color: "white"
+    anchors.fill: parent
+    horizontalAlignment: Text.AlignHCenter
+    verticalAlignment: Text.AlignVCenter
     text: "Referenz: " + ReportStore.referenzString
   }
 

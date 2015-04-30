@@ -184,6 +184,7 @@ var Shunt;
         continue; // whitespace
 
       if (!isNaN(token)) {
+
         this.tokens.push(prev = new Token(parseFloat(token), T_NUMBER));
         continue;
       }
@@ -687,7 +688,7 @@ Template.prototype.escapeRegExp = function(string) {
 }
 
 Template.prototype.pureValues = function(){
-  console.log(this.obj);
+  //console.log(this.obj);
   var matches = (this.result.match(this.values));
   if (matches){
     for(var i=0,m=matches.length;i<m;i++){

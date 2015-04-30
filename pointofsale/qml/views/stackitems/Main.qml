@@ -44,8 +44,6 @@ StackViewItem {
       addList( Configurations.getWaregroups() )
     }
     onSelected: {
-      console.log(item.text);
-      console.log(JSON.stringify(Configurations.getArticles(item.text),null,1));
       articleMatrix.addList(Configurations.getArticles(item.text))
     }
   }

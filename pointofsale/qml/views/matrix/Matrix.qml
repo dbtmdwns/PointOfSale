@@ -10,14 +10,13 @@ ScrollView {
   property string defaultBackgroundColor: '#111122'
 
   function addItem(item) {
-    gridModel.append(item);
+    gridModel.append(prepareItem(item));
   }
 
   function addList(list) {
     gridModel.clear();
-
     for (var i = 0, m = list.length; i < m; i++) {
-      addItem(prepareItem(list[i]));
+      addItem(list[i]);
     }
     cRows = Math.ceil(list.length/columns)
   }
@@ -109,7 +108,6 @@ ScrollView {
           anchors.fill: parent
           anchors.margins: -10
           onClicked: {
-            console.log(mainStyle.font.size);
             var item = gridModel.get(index);
             selected(item.entry);
           }

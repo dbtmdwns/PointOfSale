@@ -20,6 +20,7 @@ Grid {
 
 
      Component.onCompleted: {
+         console.log ('WaregroupMatrix.qml','deprecated');
          App.getMatrixRelations(function(res){
              var _hash = {};
              for(var i in res.data){
@@ -95,7 +96,7 @@ Grid {
                      if (typeof relations==='object'){
                          if (typeof relations[index]!=='undefined'){
                             ReportStore.cmd("SET RELATION",relations[index]);
-                            articleMatrix.articles = ReportStore.getArtikel(ReportStore._warengruppe);
+                            articleMatrix.addList(ReportStore.getArtikel(ReportStore._warengruppe));
 
                             relationChanged(relations[index]);
 

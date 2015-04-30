@@ -1,15 +1,17 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/views/OverView.qml</file>
+
+        <file>qml/views/stackitems/OverView.qml</file>
+        <file>qml/views/stackitems/About.qml</file>
+        <file>qml/views/stackitems/Exit.qml</file>
+        <file>qml/views/stackitems/Settings.qml</file>
+        <file>qml/views/stackitems/MatrixInput.qml</file>
+
         <file>qml/views/Authenticate.qml</file>
-        <file>qml/views/Exit.qml</file>
         <file>qml/views/MainReport.qml</file>
-        <file>qml/views/About.qml</file>
         <file>qml/views/ReportAndInput.qml</file>
         <file>qml/views/ButtonPanel.qml</file>
-        <file>qml/views/Settings.qml</file>
-        <file>qml/views/MatrixInput.qml</file>
         <file>qml/views/ArticleMatrix.qml</file>
         <file>qml/views/WaregroupMatrix.qml</file>
         <file>qml/views/RelationMatrix.qml</file>
@@ -36,10 +38,11 @@
         <file>qml/views/matrix/FullMatrix.qml</file>
         <file>qml/views/matrix/Matrix.qml</file>
 
-        <file>qml/views/ReferenzPlugin.qml</file>
+        <file>qml/views/plugins/ReferenzPlugin.qml</file>
         <file>qml/fontawesome-webfont.ttf</file>
 
       <file>qml/views/stackitems/Main.qml</file>
+      <file>qml/views/stackitems/Screen.qml</file>
       <file>qml/singleton/Configurations.qml</file>
       <file>qml/js/Template.js</file>
 

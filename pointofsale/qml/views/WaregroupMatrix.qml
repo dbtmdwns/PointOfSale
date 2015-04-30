@@ -19,7 +19,9 @@ Grid {
 
      Component.onCompleted: {
         waregroups = ReportStore.getWarengrupen();
+        console.log ('WaregroupMatrix.qml','deprecated');
      }
+
 
      anchors.fill: parent
      spacing: 8

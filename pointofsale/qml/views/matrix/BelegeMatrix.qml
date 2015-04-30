@@ -12,6 +12,7 @@ MatrixField{
         ReportStore.oldReportsUpdate = function(){
             fields = ReportStore.oldReports;
         }
+        console.log ('BelegeMatrix.qml','deprecated');
     }
 //displayTemplate:"<table><tr><td>{belegnummer}<br/>{zeit}</td><td valign='top'><b>{brutto} €</b></td></tr>"
     columns: 1

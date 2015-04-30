@@ -1,8 +1,9 @@
-import QtQuick 2.0
+import QtQuick 2.3
+import QtQuick.Window 2.1
 import QtQuick.Layouts 1.1
-import "../controlls"
-import "../singleton"
-import "./stackitems"
+import "../../controlls"
+import "../../singleton"
+
 
 
 StackViewItem {
@@ -67,6 +68,14 @@ StackViewItem {
         }
         */
 
+/*
+        ListElement {
+            iconText: "\uf08b"
+            title: "Screen"
+            doneText: ""
+            page: "stackitems/Screen.qml"
+        }
+*/
     }
 
     width: parent.width
@@ -90,15 +99,16 @@ StackViewItem {
                   (page==='MatrixInput.qml')
                 ){
                     App.wawiLogin(function(){
-                        ReportStore.loadArticles(function(){
-                          stack.push(Qt.resolvedUrl(page))
-                          //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));
-                        });
+                      
+                      ReportStore.loadArticles(function(){
+                        stack.push(Qt.resolvedUrl(page))
+                        //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));
+                      });
                     });
                 }else{
                     stack.push(Qt.resolvedUrl(page))
                 }
-
+                //console.log('dpi',Screen.pixelDensity*25.4);
 
             }
         }
