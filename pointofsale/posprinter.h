@@ -17,14 +17,18 @@ public:
     Q_INVOKABLE QString getEnv(QString name,QString defaultvalue);
     Q_INVOKABLE QString readFile(QString path);
 
+    Q_INVOKABLE void setup(int res,double width,double height);
+
     bool sendToPrinter(QString printerName,QString data);
     QString osName();
-
 signals:
 
 public slots:
 
 private:
+  int printerResolution;
+  double paperHeight;
+  double paperWidth;
 };
 
 #endif // POSPRINTER_H
