@@ -22,7 +22,12 @@ StackViewItem {
   property int itemWidth: (framedView.width - spacing * maxColumns) / maxColumns
 
   function keyInput(event) {
+    //console.log(event.key,Qt.Key_Enter,Qt.Key_Return);
+    if (16777250===event.key){
+      return;
+    }
     switch (event.key) {
+
       case Qt.Key_Backspace:
         ReportStore.cmd('BACK', '');
         break;
@@ -81,7 +86,7 @@ StackViewItem {
 
       Rectangle {
         id: mFrame
-        opacity: ((ReportStore.currentMode === 'amount') || (ReportStore.currentMode === 'amount')) ? 1 : 0
+        opacity: ((ReportStore.currentMode === 'amount') || (ReportStore.currentMode === 'find')) ? 1 : 0
         Behavior on opacity {
           OpacityAnimator {
             easing.type: Easing.InCubic;
@@ -95,7 +100,7 @@ StackViewItem {
           }
         }
         color: "transparent"
-        x: ((ReportStore.currentMode === 'amount') || (ReportStore.currentMode === 'amount')) ? 0 : -1.2 * parent.width
+        x: ((ReportStore.currentMode === 'amount') || (ReportStore.currentMode === 'find')) ? 0 : -1.2 * parent.width
         y: 0
         width: parent.width
         height: parent.height
@@ -144,8 +149,9 @@ StackViewItem {
             columns: 2
             Component.onCompleted: {
               ReportStore.onFind = function(str){
-                console.log('find',str)
-                articleMatrix.addList(ReportStore.findArticle(str));
+                ReportStore.currentMode = 'find';
+                var l = (ReportStore.findArticle(str));
+                articleMatrix.addList(l);
               }
             }
             onSelected: {
@@ -176,6 +182,7 @@ StackViewItem {
             onSelected: {
               ReportStore.cmd("SET RELATION", item);
               articleMatrix.addList(ReportStore.getArtikel(ReportStore._warengruppe));
+
             }
           }
         }
