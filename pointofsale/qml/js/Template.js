@@ -172,8 +172,10 @@ var Shunt;
     var match, token, type;
 
     while (term.length) {
-      if (!(match = term.match(RE_PATTERN)))
+      if (!(match = term.match(RE_PATTERN))){
+
         throw new Error('syntax error: near `' + term.substr(0, 10) + '``');
+      }
 
       if ((token = match[1]).length === 0)
         throw new Error('syntax error: empty token matched. abort');
@@ -697,8 +699,12 @@ Template.prototype.pureValues = function(){
       if(typeof this.obj[key] === 'string'){
         this.result = this.result.replace(new RegExp("{"+key+"}","gm"), this.obj[key] );
       }else{
-        //console.log(key,Shunt.parse(key, this.ctx))
-        this.result = this.result.replace(new RegExp("{"+this.escapeRegExp(key)+"}","gm"), Shunt.parse(key, this.ctx) );
+        try{
+          //console.log(key,Shunt.parse(key, this.ctx))
+          this.result = this.result.replace(new RegExp("{"+this.escapeRegExp(key)+"}","gm"), Shunt.parse(key, this.ctx) );
+        }catch(e){
+          console.log(e);
+        }
       }
     }
   }
@@ -720,6 +726,7 @@ Template.prototype.foreach = function(){
 
       if (typeof this.obj[name]==='object'){
         for(var i=0,m=this.obj[name].length;i<m;i++){
+          console.log(name,JSON.stringify(this.obj[name][i],null,2));
           p2 += subTemplate.render(this.obj[name][i]);
         }
       }
