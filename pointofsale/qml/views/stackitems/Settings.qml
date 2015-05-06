@@ -13,7 +13,7 @@ StackViewItem {
     title: "Einstellungen"
 
     property int _labelWidth: 300
-    doneText: qsTr("Ready") + "\uf00c"
+    doneText: qsTr("Fertig") + "\uf00c"
 
     function onDoneClicked(){
         //App.debug('Settings','onDoneClicked', url.text)
@@ -22,6 +22,10 @@ StackViewItem {
         App.client = client.text;
         App.username = username.text;
         App.password = password.text;
+
+        App.printerResolution = printerResolution.text;
+        App.paperWidth = paperWidth.text;
+        App.paperHeight = paperHeight.text;
 
         //App.department = department.text;
         //App.receipt = receipt.text;
@@ -37,6 +41,10 @@ StackViewItem {
         client.text = App.client;
         username.text = App.username;
         password.text = App.password;
+
+        printerResolution.text = App.printerResolution;
+        paperWidth.text = App.paperWidth;
+        paperHeight.text = App.paperHeight;
         //department.text = App.department;
         //receipt.text = App.receipt;
         //items_group.text = App.items_group;
@@ -134,6 +142,94 @@ StackViewItem {
 
 
 
+
+            Rectangle {
+                id: line4
+                y: 80 * 4
+                width: parent.width
+                height: client.height
+
+
+                LabeledTextField {
+                    id: printerResolution
+                    width: parent.width
+                    label: qsTr("Drucker-Auflösung")
+                    text: "180"
+                    style: touchStyle
+                    labelWidth: _labelWidth
+                    labelLeftSpace: 40
+                }
+            }
+
+            Rectangle {
+                id: line5
+                y: 80 * 5
+                width: parent.width
+                height: client.height
+
+
+                LabeledTextField {
+                    id: paperWidth
+                    width: parent.width
+                    label: qsTr("Bon-Breite")
+                    text: "80"
+                    style: touchStyle
+                    labelWidth: _labelWidth
+                    labelLeftSpace: 40
+                }
+            }
+
+            Rectangle {
+                id: line6
+                y: 80 * 6
+                width: parent.width
+                height: client.height
+
+
+                LabeledTextField {
+                    id: paperHeight
+                    width: parent.width
+                    label: qsTr("max. Bon-Länge")
+                    text: "500"
+                    style: touchStyle
+                    labelWidth: _labelWidth
+                    labelLeftSpace: 40
+                }
+            }
+
+
+/*
+            Rectangle {
+                id: line7
+                y: 80 * 7
+                width: parent.width
+                height: client.height
+
+
+                Rectangle {
+                    id: prnBtn
+                    width: parent.width - _labelWidth
+                    x: _labelWidth
+                    color: "gray"
+
+                    Text{
+                      color: "white"
+                      text: "Test-Druck"
+                    }
+
+                    MouseArea {
+                      id: mouse
+                      anchors.fill: parent
+                      anchors.margins: -10
+                      onClicked: {
+                        App.posPrinter.setup( paperHeight.text*1, paperWidth.text*1, paperHeight.text*1)
+                        App.posPrinter.print("<html><body>Test Text</body></html>");
+                      }
+                    }
+                }
+            }
+
+*/
 /*
             Rectangle {
                 id: line4
