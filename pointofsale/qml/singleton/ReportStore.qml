@@ -1,8 +1,13 @@
 pragma Singleton
 import QtQuick 2.0
 import QtWebKit 3.0
+//import QtWebEngine 1.0
 import "../styles"
 import "../singleton"
+
+
+import "../js/Template.js" as Template
+
 Item {
 
   property double given: 0
@@ -40,6 +45,7 @@ Item {
   property var _warengruppen: []
   property var _staffeln: []
   property var _artikel: []
+  property var _kombiartikel: []
   property string lastReport: ""
   property double lastTotal: 0
 
@@ -56,6 +62,7 @@ Item {
   property string ticketTaxesFooter;
 
   property WebView reportView: null
+  //property WebEngineView reportView: null
   property var oldReportsUpdate: null
   property var oldReports: []
 
@@ -79,6 +86,7 @@ Item {
     running: false
     repeat: false
     onTriggered: {
+      currentMode = 'amount';
       clearFindString.stop();
       var l = findArticle(findString);
       if (l.length==1){
@@ -114,6 +122,7 @@ Item {
       _warengruppen = res.warengruppen;
       _staffeln = res.staffeln;
       _artikel = res.artikel;
+      _kombiartikel = res.kombiartikel;
       cb();
     });
   }
@@ -153,6 +162,35 @@ Item {
               item.brutto = _staffeln[s].brutto * 1;
               item.zusatztext = _artikel[i].zusatztext;
               res.push(item);
+            }
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+
+  function singleArticle(name){
+    for (var i in _artikel) {
+      if (
+        (_artikel[i].gruppe.toLowerCase().indexOf(name.toLowerCase())>=0)
+      ){
+        for (var s in _staffeln) {
+          if (_staffeln[s].gruppe === _artikel[i].gruppe) {
+            if (preiskategorie * 1 === _staffeln[s].preiskategorie * 1) {
+              var item = {};
+              item.gruppe = _staffeln[s].gruppe;
+              item.plugin = _artikel[i].plugin;
+              item.anzahl = 1;
+              item.steuersatz = 1 * _artikel[i]["steuer" + feld];
+              item.bpreis = _staffeln[s].brutto;
+              item.preis = _staffeln[s].brutto / (1 + item.steuersatz / 100);
+              item.netto = item.preis;
+              item.brutto_preis = _staffeln[s].brutto * 1;
+              item.brutto = _staffeln[s].brutto * 1;
+              item.zusatztext = _artikel[i].zusatztext;
+              return item;
             }
           }
         }
@@ -280,7 +318,7 @@ Item {
 
 
 
-        if ( (currentMode === 'amount') && (input === 'keyboard') ) {
+        if ( ((currentMode === 'amount') || (currentMode === 'find')) && (input === 'keyboard') ) {
           findString += val + "";
           clearFindString.stop();
           clearFindString.start();
@@ -296,15 +334,44 @@ Item {
 
         if ( (currentMode === 'amount') && (input === 'numpad') ) {
           val *=1;
+          var ix_init = false;
           if (amountModeInit) {
             positions[positions.length - 1].anzahl = val;
+            ix_init = true;
             amountModeInit = false;
           } else {
             positions[positions.length - 1].anzahl *= 10;
             positions[positions.length - 1].anzahl += val;
           }
           calcPos(positions.length - 1);
+          if (positions[positions.length - 1].kombiartikel===true){
+            var ix = positions.length - 2;
+            while(positions[ix].kombiartikel===true){
+              if (ix_init) {
+                positions[ix].anzahl = val;
+              } else {
+                positions[ix].anzahl *= 10;
+                positions[ix].anzahl += val;
+              }
+              calcPos(ix);
+              ix--;
+            }
+
+            if (ix_init) {
+              positions[ix].anzahl = val;
+            } else {
+              positions[ix].anzahl *= 10;
+              positions[ix].anzahl += val;
+            }
+            calcPos(ix);
+
+          }
         } else if (currentMode === 'price') {
+
+          if (positions[positions.length - 1].kombiartikel===true){
+            displayMessage("Preisänderung ist bei Kombiartikeln nicht erlaubt");
+            return;
+          }
           val *=1;
           if (priceModeInit) {
             positions[positions.length - 1].brutto_preis = val;
@@ -379,6 +446,9 @@ Item {
 
     if (cmdtype === 'CANCLE LAST') {
       if (number === -1) {
+        while (positions[positions.length - 1].kombiartikel===true){
+          positions.pop();
+        }
         positions.pop();
       }
     }
@@ -411,7 +481,9 @@ Item {
 
     if (cmdtype === 'PRINT') {
       App.posPrinter.allPrinters();
-      //console.log(getHTML());
+
+      App.posPrinter.setup( App.printerResolution*1, App.paperWidth*1, App.paperHeight*1)
+
       App.posPrinter.print(lastReport);
     }
 
@@ -445,6 +517,17 @@ Item {
 
 
     if (cmdtype === 'ENTER') {
+
+      if (currentMode === 'find') {
+        currentMode = 'amount';
+        clearFindString.stop();
+        var l = findArticle(findString);
+        if (l.length==1){
+          add(l[0]);
+        }
+        findString = "";
+        return;
+      }
 
       if (currentMode === 'Referenz') {
         refItem.referenz = referenzString;
@@ -528,7 +611,44 @@ Item {
 
   function add(item, noPlugin) {
     findString = "";
-    if ((item.plugin === 'Ext.plugin.Referenz') && (noPlugin !== true)) {
+
+    if (typeof  _kombiartikel[item.gruppe] !== 'undefined'){
+      if (number === -1) {
+        lastTotal = 0;
+        var brutto_preis = item.brutto_preis;
+        var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
+        var netto = brutto / (1 + item.steuersatz / 100);
+        var item = {
+          artikel: item.gruppe,
+          zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
+          referenz: (typeof item.referenz === 'string') ? item.referenz : '',
+          steuersatz: item.steuersatz,
+          anzahl: item.anzahl,
+          xref: item.xref,
+          epreis: item.preis,
+          brutto_preis: brutto_preis,
+          brutto: brutto,
+          netto: netto
+        }
+        var kombi_liste = _kombiartikel[item.artikel];
+        positions.push(item);
+        for(var ki=0;ki<kombi_liste.length;ki++){
+          var nitem = singleArticle(kombi_liste[ki].resultartikel);
+          nitem.artikel = nitem.gruppe;
+          nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '',
+          nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
+          nitem.epreis =  nitem.preis * kombi_liste[ki].resultpfaktor;
+          nitem.brutto_preis =  nitem.brutto_preis * kombi_liste[ki].resultpfaktor;
+          nitem.brutto =  nitem.brutto * kombi_liste[ki].resultpfaktor;
+          nitem.netto =  nitem.netto * kombi_liste[ki].resultpfaktor;
+          nitem.kombiartikel = true;
+          positions.push(nitem);
+        }
+        currentMode = 'amount';
+        amountModeInit = true;
+        sum();
+      }
+    }else if ((item.plugin === 'Ext.plugin.Referenz') && (noPlugin !== true)) {
       currentMode = 'Referenz';
       referenzString = '';
       refItem = item;
@@ -587,11 +707,17 @@ Item {
 
     }
     total_tax = total - total_without_tax;
-    //console.log("OK",total);
+    reportView.loadHtml(getHTML(true));
+
+
+
     if (typeof update === "function") {
       update();
     }
   }
+
+
+
 
   function _extractPart(template, str) {
     var start = "<!--" + str + "-->";
@@ -599,9 +725,9 @@ Item {
     return template.substring(template.indexOf(start), template.indexOf(end) + end.length);
   }
 
-  function getHTML(display) {
-    var template = App.template;
 
+  function getHTML(display) {
+    var template=App.template;
     ticketHeader = _extractPart(template, "HEADER");
     ticketItem = _extractPart(template, "ITEM");
     ticketFooter = _extractPart(template, "FOOTER");
