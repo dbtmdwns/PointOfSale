@@ -30,10 +30,11 @@ Item {
 
   property int leftMatrixWidth: 100
   property int rightMatrixWidth: 100
-  property int fontSize: (density/4) * configFontSize
-  property int buttonFontSize: (density/4) * configButtonFontSize
-  property int configFontSize: (density/4) * 22
-  property int configButtonFontSize: (density/4) * 22
+  property int scale: 4
+  property int fontSize: (density/scale) * configFontSize
+  property int buttonFontSize: (density/scale) * configButtonFontSize
+  property int configFontSize: (density/scale) * 22
+  property int configButtonFontSize: (density/scale) * 22
 
   property int totalDisplayRows: 1
 
@@ -50,6 +51,10 @@ Item {
 
   property int articleColumns: 8
   property int articleRows: 10
+
+  property string paperWidth: "80"
+  property string paperHeight: "500"
+  property string printerResolution: "180"
 
   property string template_file: ""
   property string template: ""
@@ -154,6 +159,18 @@ Item {
             case "password":
               password = rs.rows.item(i).value;
               break;
+
+
+            case "paperWidth":
+              paperWidth = rs.rows.item(i).value;
+              break;
+            case "paperHeight":
+              paperHeight = rs.rows.item(i).value;
+              break;
+            case "printerResolution":
+              printerResolution = rs.rows.item(i).value;
+              break;
+
           }
         }
 
@@ -220,6 +237,14 @@ Item {
         tx.executeSql('UPDATE settings set value = ? where key = ?', [client, 'client']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [username, 'username']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [password, 'password']);
+
+        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperWidth', paperWidth]);
+        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperHeight', paperHeight]);
+        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerResolution', printerResolution]);
+
+        tx.executeSql('UPDATE settings set value = ? where key = ?', [paperWidth, 'paperWidth']);
+        tx.executeSql('UPDATE settings set value = ? where key = ?', [paperHeight, 'paperHeight']);
+        tx.executeSql('UPDATE settings set value = ? where key = ?', [printerResolution, 'printerResolution']);
 
 
       }
