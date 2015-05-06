@@ -3,10 +3,12 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 import QtWebKit 3.0
+//import QtWebEngine 1.0
 import "../controlls"
 import "../views"
 import "../styles"
 import "../singleton"
+
 
 Rectangle {
   id: root
@@ -80,22 +82,28 @@ Rectangle {
           width: root.width
           height: reportDisplay.height - numberDisplay.height - rep.spacing
           clip: true
+
+          WebView {
+            id: webview
+            url: "about:blank"
+            width: parent.width
+            height: parent.height
+          }
+
+       /*
           ScrollView {
             id: webview_scroll
             width: parent.width
             height: parent.height
             verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
             horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-            WebView {
+            WebEngineView {
               id: webview
               url: "about:blank"
-              onLoadingChanged: {
-                if (loadRequest.status === WebView.LoadSucceededStatus) {
-
-                }
-              }
+              //url: "http://google.de"
             }
           }
+          */
         }
       }
 
