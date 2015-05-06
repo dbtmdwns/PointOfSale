@@ -210,20 +210,26 @@ QString PosPrinter::readFile(QString path){
 
 void PosPrinter::print(QString htmlContent){
 
+
     QPrinter printer(QPrinter::ScreenResolution);
-    printer.setResolution(180);
-    printer.setPaperSize(QSizeF(227,3842),QPrinter::Point);
+    printer.setResolution(printerResolution);
+    printer.setPaperSize(QSizeF(paperWidth,paperHeight),QPrinter::Millimeter);
     printer.setPageSize(QPrinter::Custom);
+
     printer.setFullPage(true);
     QWebView *m_pWebView = new QWebView();
     m_pWebView->setHtml(htmlContent);
-
     //printer.setPageMargins(4,4,4,15,QPrinter::Millimeter);
     //printer.setPaperSize(QSizeF(80,200),QPrinter::Millimeter);
     m_pWebView->print(&printer);
 
 }
 
+void PosPrinter::setup(int res,double width,double height){
+  printerResolution = res;
+  paperWidth = width;
+  paperHeight = height;
+}
 
 void PosPrinter::allPrinters(){
     int i;
@@ -233,7 +239,6 @@ void PosPrinter::allPrinters(){
         qDebug() << pInfo.printerName();
         qDebug() << pInfo.defaultPageSize().sizePoints();
         qDebug() << pInfo.supportedPaperSizes();
-
         qDebug() << pInfo.supportedResolutions();
     }
 
