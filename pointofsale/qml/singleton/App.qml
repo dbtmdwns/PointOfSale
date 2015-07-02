@@ -319,6 +319,8 @@ Item {
 
 
   function saveReport(kundennummer, kostenstelle, positions, gegeben, cb) {
+
+    
     var json = {};
     json.id = 'Kasse ' + (new Date()).toISOString();
     json.tabellenzusatz = tabellenzusatz;

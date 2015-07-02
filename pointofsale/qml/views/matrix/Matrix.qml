@@ -4,6 +4,7 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
 import "../../js/Template.js" as Template
+import "../../js/Shunt.js" as Shunt
 ScrollView {
   id: scrollview
 
@@ -35,10 +36,16 @@ ScrollView {
   }
 
   function rendered(item) {
-    var tmpl = new Template.Template(template);
-    tmpl.ctx.def("euro", function(v) {
+    var tplCtx = new Shunt.Shunt.Context();
+    tplCtx.def('compare',function(a,b){
+      return a===b;
+    });
+    tplCtx.def("euro", function(v) {
       return Number(v).toFixed(2) + " €"
     });
+
+    var tmpl = new Template.Template(template,tplCtx);
+
     if (typeof item === 'object') {
       return tmpl.render(item);
     } else {

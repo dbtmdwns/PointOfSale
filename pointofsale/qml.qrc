@@ -7,6 +7,9 @@
         <file>qml/views/stackitems/Exit.qml</file>
         <file>qml/views/stackitems/Settings.qml</file>
         <file>qml/views/stackitems/MatrixInput.qml</file>
+        <file>qml/views/stackitems/Main.qml</file>
+        <file>qml/views/stackitems/Screen.qml</file>
+        <file>qml/views/stackitems/Testing.qml</file>
 
         <file>qml/views/Authenticate.qml</file>
         <file>qml/views/MainReport.qml</file>
@@ -15,7 +18,7 @@
         <file>qml/views/ArticleMatrix.qml</file>
         <file>qml/views/WaregroupMatrix.qml</file>
         <file>qml/views/RelationMatrix.qml</file>
-        <file>qml/views/Testing.qml</file>
+
 
         <file>qml/controlls/StackViewItem.qml</file>
         <file>qml/controlls/SimpleListItemDelegate.qml</file>
@@ -41,10 +44,14 @@
         <file>qml/views/plugins/ReferenzPlugin.qml</file>
         <file>qml/fontawesome-webfont.ttf</file>
 
-      <file>qml/views/stackitems/Main.qml</file>
-      <file>qml/views/stackitems/Screen.qml</file>
+
       <file>qml/singleton/Configurations.qml</file>
+
+
+      <file>qml/js/Shunt.js</file>
       <file>qml/js/Template.js</file>
+      <file>qml/js/SimpleSAX.js</file>
+
 
     </qresource>
 

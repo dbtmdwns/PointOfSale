@@ -17,6 +17,7 @@ public:
     Q_INVOKABLE QString getEnv(QString name,QString defaultvalue);
     Q_INVOKABLE QString readFile(QString path);
 
+    Q_INVOKABLE bool sendImageToPrinter(QString printerName, QString imageName);
     Q_INVOKABLE void setup(int res,double width,double height);
 
     bool sendToPrinter(QString printerName,QString data);

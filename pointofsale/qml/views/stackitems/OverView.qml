@@ -59,14 +59,14 @@ StackViewItem {
             page: "Exit.qml"
         }
 
-        /*
+
         ListElement {
             iconText: "\uf08b"
             title: "Testing"
             doneText: ""
-            page: "stackitems/Main.qml"
+            page: "Testing.qml"
         }
-        */
+
 
 /*
         ListElement {
@@ -99,7 +99,7 @@ StackViewItem {
                   (page==='MatrixInput.qml')
                 ){
                     App.wawiLogin(function(){
-                      
+
                       ReportStore.loadArticles(function(){
                         stack.push(Qt.resolvedUrl(page))
                         //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));

@@ -30,6 +30,7 @@ find_package(Qt5Positioning REQUIRED)
 set(pointofsale_srcs
   main.cpp
   posprinter.cpp
+  escimage.cpp
 )
 
 qt5_wrap_ui(ui_srcs

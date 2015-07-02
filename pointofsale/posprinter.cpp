@@ -15,10 +15,18 @@
 #include <QProcessEnvironment>
 #include <QTimer>
 
+
+#include <QFile>
+#include <QByteArray>
+#include <QImage>
+
+
 #if defined(_WIN32)
     #include <windows.h>
     #include <winspool.h>
 #endif
+
+#include "escimage.h"
 
 PosPrinter::PosPrinter(QObject *parent) :
     QObject(parent)
@@ -113,6 +121,24 @@ void PosPrinter::openDrawer(){
     }
 }
 
+bool PosPrinter::sendImageToPrinter(QString printerName, QString imageName){
+  QByteArray ar;
+
+
+  QImage image(imageName);
+  ESCPOSImage posImage( image );
+  ar.append(posImage.getGSStar());
+  ar.append((char) 29);
+  ar.append('/');
+  ar.append((char) 0);
+
+  QFile file("x.prn");
+  file.open(QIODevice::WriteOnly);
+  file.write(ar);
+  file.close();
+  return true;
+}
+
 bool PosPrinter::sendToPrinter(QString printerName, QString data){
 #if defined(_WIN32)
     // Windows
@@ -171,7 +197,10 @@ bool PosPrinter::sendToPrinter(QString printerName, QString data){
 
     return true;
     // -- Windows
+#elif defined(Q_OS_MAC)
+
 #endif
+
     return true;
 }
 
@@ -215,8 +244,9 @@ void PosPrinter::print(QString htmlContent){
     printer.setResolution(printerResolution);
     printer.setPaperSize(QSizeF(paperWidth,paperHeight),QPrinter::Millimeter);
     printer.setPageSize(QPrinter::Custom);
-
     printer.setFullPage(true);
+
+
     QWebView *m_pWebView = new QWebView();
     m_pWebView->setHtml(htmlContent);
     //printer.setPageMargins(4,4,4,15,QPrinter::Millimeter);

@@ -6,7 +6,6 @@ import "../styles"
 import "../singleton"
 
 
-import "../js/Template.js" as Template
 
 Item {
 
