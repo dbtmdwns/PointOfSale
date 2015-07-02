@@ -42,7 +42,6 @@ import QtQuick 2.3
 import QtQuick.Window 2.1
 import "../../views"
 import "../../controlls"
-import "../../singleton"
 import "../matrix"
 
 StackViewItem {

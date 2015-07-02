@@ -1,11 +1,6 @@
-pragma Singleton
 import QtQuick 2.0
-import QtWebKit 3.0
-//import QtWebEngine 1.0
 import "../styles"
-import "../singleton"
-
-
+import "../controlls"
 
 Item {
 
@@ -16,7 +11,7 @@ Item {
   property double total_without_tax: 0
   property int number: -1
   property var positions: []
-  property var update
+
   property var styles
   property var refItem
   property var reportListView
@@ -60,13 +55,12 @@ Item {
   property string ticketTaxesHeader;
   property string ticketTaxesFooter;
 
-  property WebView reportView: null
-  //property WebEngineView reportView: null
   property var oldReportsUpdate: null
   property var oldReports: []
-
+  property ReportView reportView: null
   property var onAddedReport: null
   property var onFind: null
+
 
   Timer {
     id: messageHideTimer
@@ -110,11 +104,11 @@ Item {
   }
 
   function loadArticles(cb) {
-    App.getPOSArticles(function(res) {
+    application.articles(function(res) {
       _steuergruppen = res.steuergruppen;
       for (var i in res.warengruppen) {
         res.warengruppen[i].f = res.warengruppen[i].farbe;
-        res.warengruppen[i].farbe = App.rgb_hex_Color(res.warengruppen[i].farbe);
+        res.warengruppen[i].farbe = application.rgb_hex_Color(res.warengruppen[i].farbe);
         res.warengruppen[i].displayBackgroundColor = res.warengruppen[i].farbe;
       }
 
@@ -445,7 +439,8 @@ Item {
 
     if (cmdtype === 'CANCLE LAST') {
       if (number === -1) {
-        while (positions[positions.length - 1].kombiartikel===true){
+
+        while ((positions.length>0) && (positions[positions.length - 1].kombiartikel===true)){
           positions.pop();
         }
         positions.pop();
@@ -468,22 +463,22 @@ Item {
     if (cmdtype === 'CUT') {
       // open drawer
 
-      App.posPrinter.cut() //.print(getHTML());
+      application.posPrinter.cut() //.print(getHTML());
     }
 
 
     if (cmdtype === 'OPEN') {
       // open drawer
 
-      App.posPrinter.openDrawer() //.print(getHTML());
+      application.posPrinter.openDrawer() //.print(getHTML());
     }
 
     if (cmdtype === 'PRINT') {
-      App.posPrinter.allPrinters();
+      application.posPrinter.allPrinters();
 
-      App.posPrinter.setup( App.printerResolution*1, App.paperWidth*1, App.paperHeight*1)
+      application.posPrinter.setup( application.printerResolution*1, application.paperWidth*1, application.paperHeight*1)
 
-      App.posPrinter.print(lastReport);
+      application.posPrinter.print(lastReport);
     }
 
 
@@ -542,19 +537,21 @@ Item {
             if (given >= total) {
               displayMessage("Der Beleg wird gespeichert.", true);
               currentMode = 'paysave';
-              App.posPrinter.openDrawer();
+              application.posPrinter.openDrawer();
 
-              App.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
+              application.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
+
+      
                 if (err) {
-                  displayMessage(err.response);
-                  console.log(err.response);
+                  displayMessage(err.response,true);
+                  console.log('saveReport error',err.response);
                 } else {
 
                   if (res.success) {
                     number = res.belegnummer;
                     zeit = (new Date()).toISOString().substring(11, 16);
                     datum = (new Date()).toISOString().substring(0, 10);
-                    lastReport = getHTML();
+                    //lastReport = getHTML();
                     var item = {
                       zeit: zeit,
                       kundennummer: kundennummer,
@@ -562,8 +559,8 @@ Item {
                       datum: datum,
                       belegnummer: number,
                       brutto: total,
-                      positionen: App.html_decode_entities_object(positions),
-                      html: lastReport,
+                      positionen: application.html_decode_entities_object(positions),
+                      //html: lastReport,
                       displayBackgroundColor: "#41414f",
                       //displayText: ""+number+" "+zeit+" | <b>"+total.toFixed(2)+" €</b>"
                     }
@@ -578,7 +575,7 @@ Item {
                     lastTotal = total;
 
                     currentMode = 'amount';
-                    //App.posPrinter.openDrawer();
+                    //application.posPrinter.openDrawer();
 
                   } else {
                     displayMessage(res.msg);
@@ -700,130 +697,62 @@ Item {
   function sum() {
     total = 0;
     total_without_tax = 0;
+
+    var data = {
+      totalNet: 19.00 / 1.07 + 10.00 / 1.19,
+      totalNetIncludingTax: 19.00 + 10.00,
+      positions: [
+
+      ],
+      taxes: [
+        /*{
+          rate: 7,
+          value: 19.5
+        },
+        {
+          rate: 19,
+          value: 1.5
+        }*/
+      ]
+    };
     for (var i = 0; i < positions.length; i++) {
+      var item = positions[i];
+
+
+      data.positions.push({
+        article: item.artikel,
+        reference: item.referenz,
+        amount: item.anzahl,
+        additionalText: item.zusatztext,
+        tax: item.brutto - item.netto,
+        taxRate: item.steuersatz,
+        net: item.netto,
+        includingTax: item.brutto,
+        itemPrice: item.epreis,
+        itemPriceIncludingTax: item.epreis*(1+item.steuersatz/100)
+      })
+
+
       total += positions[i].brutto;
       total_without_tax += positions[i].netto;
 
     }
+
     total_tax = total - total_without_tax;
-    reportView.loadHtml(getHTML(true));
 
+    data.totalNet = total_without_tax;
+    data.totalNetIncludingTax = total;
+    //reportData = data;
 
-
-    if (typeof update === "function") {
-      update();
-    }
-  }
-
-
-
-
-  function _extractPart(template, str) {
-    var start = "<!--" + str + "-->";
-    var end = "<!--/" + str + "-->";
-    return template.substring(template.indexOf(start), template.indexOf(end) + end.length);
-  }
-
-
-  function getHTML(display) {
-    var template=App.template;
-    ticketHeader = _extractPart(template, "HEADER");
-    ticketItem = _extractPart(template, "ITEM");
-    ticketFooter = _extractPart(template, "FOOTER");
-    ticketTaxesPositions = _extractPart(template, "TAX_ITEM");
-    ticketTaxesHeader = _extractPart(template, "TAX_HEADER");
-    ticketTaxesFooter = _extractPart(template, "TAX_FOOTER");
-
-    if (typeof styles === "object") {
-      var h = "<!DOCTYPE html>";
-      h += getHTMLHeader();
-      for (var i = 0; i < positions.length; i++) {
-        h += getHTMLPosition(i);
-      }
-      h += getHTMLTaxes();
-      h += getHTMLFooter();
-
-      if (display === true) {
-        var extract = _extractPart(h, "HIDE ON DISPLAY");
-        h = h.replace(extract, "");
-      }
-
-      return h;
-    } else {
-      return "";
-    }
-  }
-
-  function getHTMLHeader() {
-    return _hReplace(ticketHeader);
-  }
-
-  function getHTMLPosition(index) {
-    if (typeof positions[index] === "object") {
-      var h = ticketItem;
-      for (var i in positions[index]) {
-        switch (i) {
-          case "brutto":
-          case "netto":
-          case "epreis":
-          case "brutto_preis":
-          case "steuer":
-            h = h.replace("{" + i + "}", positions[index][i].toFixed(2));
-            break;
-          case "steuersatz":
-            h = h.replace("{" + i + "}", positions[index][i].toFixed(0));
-            break;
-          default:
-            h = h.replace("{" + i + "}", positions[index][i]);
-            break;
-        }
-      }
-      return h;
-    } else {
-      return "";
-    }
-  }
-
-
-  function getHTMLTaxes() {
-
-    var html = _hReplace(ticketTaxesPositions);
-    var h = "";
-    var taxes = {};
-
-    for (var index in positions) {
-
-      if (typeof taxes['S' + positions[index].steuersatz] === 'undefined') {
-        taxes['S' + positions[index].steuersatz] = 0;
-      };
-      taxes['S' + positions[index].steuersatz] += positions[index].brutto - positions[index].netto
-
+    //reportView.loadHtml(getHTML(true));
+    console.log('ReportStore.qml #709','enable them')
+    if ((typeof reportView!=='undefined')&&(reportView!==null)){
+      reportView.refresh(data);
     }
 
-    for (var tax in taxes) {
-      h += html.replace("{tax}", tax.substring(1)).replace("{tax_value}", taxes[tax].toFixed(2));
-    }
-
-    return _hReplace(ticketTaxesHeader) + h + _hReplace(ticketTaxesFooter);
   }
 
-  function getHTMLFooter() {
 
-    return _hReplace(ticketFooter).replace("</body>", "<script>window.scrollTo(0, " + App.fixview + ");</script></body>");
-  }
 
-  function _hReplace(html) {
-    html = html.replace("{datum}", (datum.split('-')).reverse().join('.'));
-    html = html.replace("{zeit}", zeit);
-
-    html = html.replace("{belegnummer}", number);
-    html = html.replace("{number}", number);
-    html = html.replace("{preiskategorie}", preiskategorie);
-    html = html.replace("{relation}", relation);
-    html = html.replace("{total}", total.toFixed(2));
-    html = html.replace("{total_tax}", total_tax.toFixed(2));
-    html = html.replace("{total_without_tax}", total_without_tax.toFixed(2));
-    return html;
-  }
 
 }

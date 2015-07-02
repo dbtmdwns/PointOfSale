@@ -5,11 +5,10 @@ import QtQuick.Layouts 1.1
 import "../../controlls"
 import "../../views"
 import "../../styles"
-import "../../singleton"
 
 MatrixField{
 
-    columns: App.waregroupColumns
-    rows: App.waregroupRows
+    columns: application.waregroupColumns
+    rows: application.waregroupRows
 
 }

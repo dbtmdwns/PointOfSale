@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.1
 import "../controlls"
 import "../views"
 import "../styles"
-import "../singleton"
 
 Grid {
      id: grid
@@ -23,10 +22,10 @@ Grid {
      property var buttons: [
 
          {
-             text: (ReportStore.currentMode!=='pay')?"St. Alles.":"Zurück",
-             cmd: (ReportStore.currentMode!=='pay')?"CANCLE":"CANCLEPAY", val:".",
-             hidden: false,//(ReportStore.number===-1)?false:true ,
-             color: (ReportStore.currentMode!=='pay')?"#f33":"3f9"
+             text: (application.reportStore.currentMode!=='pay')?"St. Alles.":"Zurück",
+             cmd: (application.reportStore.currentMode!=='pay')?"CANCLE":"CANCLEPAY", val:".",
+             hidden: false,//(application.reportStore.number===-1)?false:true ,
+             color: (application.reportStore.currentMode!=='pay')?"#f33":"3f9"
          },
          { text: ".", cmd: ".",val:"", hidden: true , color: mainStyle.colors.btnBackground},
          { text: ".", cmd: ".",val:"", hidden: true , color: mainStyle.colors.btnBackground},
@@ -35,36 +34,36 @@ Grid {
 
 
          {
-             text: (ReportStore.currentMode!=='pay')?"St. Pos.":"Pas.",
-             cmd: (ReportStore.currentMode!=='pay')?"CANCLE LAST":"PAYFIT", val:".",
-             hidden: (ReportStore.number===-1)?false:true ,
-             color: (ReportStore.currentMode!=='pay')?"#f33":"3f9"
+             text: (application.reportStore.currentMode!=='pay')?"St. Pos.":"Pas.",
+             cmd: (application.reportStore.currentMode!=='pay')?"CANCLE LAST":"PAYFIT", val:".",
+             hidden: (application.reportStore.number===-1)?false:true ,
+             color: (application.reportStore.currentMode!=='pay')?"#f33":"3f9"
          },
-         { text: "7", cmd: "NUM", val: 7 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "8", cmd: "NUM", val: 8 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "9", cmd: "NUM", val: 9 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "7", cmd: "NUM", val: 7 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "8", cmd: "NUM", val: 8 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "9", cmd: "NUM", val: 9 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf115", cmd: "CUT",val:"", hidden: true , color: "#ff8"},
 
 
 
-         { text: "PR", cmd: "AMOUNTPRICESWITCH", val:"", hidden: (ReportStore.number===-1&&ReportStore.currentMode!=='pay')?false:true , color: ((ReportStore.currentMode==='amount')? "#9aa": "#955") },
-         { text: "4", cmd: "NUM", val: 4 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "5", cmd: "NUM", val: 5 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "6", cmd: "NUM", val: 6 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "PR", cmd: "AMOUNTPRICESWITCH", val:"", hidden: (application.reportStore.number===-1&&application.reportStore.currentMode!=='pay')?false:true , color: ((application.reportStore.currentMode==='amount')? "#9aa": "#955") },
+         { text: "4", cmd: "NUM", val: 4 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "5", cmd: "NUM", val: 5 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "6", cmd: "NUM", val: 6 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf02f", cmd: "PRINT", val:"", hidden: false , color: "#88f"},
 
 
          { text: ".", cmd: ".", val:"", hidden: true , color: "#faa"},
-         { text: "1", cmd: "NUM", val: 1 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "2", cmd: "NUM", val: 2 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "3", cmd: "NUM", val: 3 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "1", cmd: "NUM", val: 1 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "2", cmd: "NUM", val: 2 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "3", cmd: "NUM", val: 3 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: ".", cmd: ".", val:"", hidden: true , color: "#afa"},
 
 
-         { text: "B", cmd: "REPORTMODE", val:"", hidden: (ReportStore.currentMode!=='pay')?false:true , color: "#133"},
-         { text: "+/-", cmd: "PLUSMINUS", val: "" , hidden: (ReportStore.number===-1)?false:true , color: "#aad"},
-         { text: "0", cmd: "NUM", val: 0 , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: ",", cmd: "SEP", val: "" , hidden: (ReportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "B", cmd: "REPORTMODE", val:"", hidden: (application.reportStore.currentMode!=='pay')?false:true , color: "#133"},
+         { text: "+/-", cmd: "PLUSMINUS", val: "" , hidden: (application.reportStore.number===-1)?false:true , color: "#aad"},
+         { text: "0", cmd: "NUM", val: 0 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: ",", cmd: "SEP", val: "" , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf00c", cmd: "ENTER", val:"", hidden: false , color: "#3f3"},
 
          { text: ".", cmd: ".",val:"", hidden: true , color: mainStyle.colors.btnBackground},
@@ -141,7 +140,7 @@ Grid {
                          if (btn.enabled){
                              btn.enabled = false;
                              console.log(buttons[index].cmd);
-                             ReportStore.cmd(buttons[index].cmd,buttons[index].val);
+                             application.reportStore.cmd(buttons[index].cmd,buttons[index].val);
                              tmr.start();
                          }
                      }

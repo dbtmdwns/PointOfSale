@@ -2,13 +2,9 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
-import QtWebKit 3.0
-//import QtWebEngine 1.0
 import "../controlls"
 import "../views"
 import "../styles"
-import "../singleton"
-
 
 Rectangle {
   id: root
@@ -20,19 +16,14 @@ Rectangle {
 
   Component.onCompleted: {
 
-    ReportStore.styles = mainStyle;
-    ReportStore.reportView = webview;
-    ReportStore.update = function() {
-      webview.loadHtml(getReportHTML());
-
-    }
-
-    ReportStore.sum();
+    application.reportStore.styles = mainStyle;
+    application.reportStore.reportView = reportView;
+    application.reportStore.sum();
   }
 
 
   function getReportHTML() {
-    return ReportStore.getHTML(true);
+    console.log('ReportAndInput','line', 36,'fix me');
   }
 
 
@@ -45,7 +36,7 @@ Rectangle {
       id: reportDisplay
       color: "transparent"
       width: root.width
-      height: singleItemHeight * (maxRows - buttonPanelRows - App.totalDisplayRows)
+      height: singleItemHeight * (maxRows - buttonPanelRows - application.totalDisplayRows)
 
       Column {
         id: rep
@@ -55,7 +46,7 @@ Rectangle {
         Rectangle {
           id: numberDisplay
           width: reportDisplay.width
-          height: singleItemHeight * App.totalDisplayRows
+          height: singleItemHeight * application.totalDisplayRows
           color: "white"
           radius: 5
           Text {
@@ -71,8 +62,8 @@ Rectangle {
             horizontalAlignment: Text.AlignRight
 
             font.pointSize: numberDisplay.height * 0.4
-            color: (ReportStore.lastTotal === 0) ? "black" : "black"
-            text: (ReportStore.lastTotal === 0) ? (ReportStore.total.toFixed(2) + " €") : ("" + ReportStore.lastTotal.toFixed(2) + " €")
+            color: (application.reportStore.lastTotal === 0) ? "black" : "black"
+            text: (application.reportStore.lastTotal === 0) ? (application.reportStore.total.toFixed(2) + " €") : ("" + application.reportStore.lastTotal.toFixed(2) + " €")
           }
         }
 
@@ -83,12 +74,19 @@ Rectangle {
           height: reportDisplay.height - numberDisplay.height - rep.spacing
           clip: true
 
+          ReportView{
+            id: reportView
+            width: parent.width
+            height: parent.height
+          }
+          /*
           WebView {
             id: webview
             url: "about:blank"
             width: parent.width
             height: parent.height
           }
+          */
 
        /*
           ScrollView {

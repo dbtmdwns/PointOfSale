@@ -5,15 +5,14 @@ import QtQuick.Layouts 1.1
 import "../../controlls"
 import "../../views"
 import "../../styles"
-import "../../singleton"
 
 MatrixField{
 
     property var articles: []
     fields: articles
-    columns: App.articleColumns
-    rows: App.articleRows
+    columns: application.articleColumns
+    rows: application.articleRows
     onFieldSelected:{
-        ReportStore.add( item[index] );
+        application.reportStore.add( item[index] );
     }
 }

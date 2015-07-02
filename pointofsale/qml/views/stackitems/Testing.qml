@@ -4,7 +4,6 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 
 import "../../controlls"
-import "../../singleton"
 import "../matrix"
 
 

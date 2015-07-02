@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.1
 import "../controlls"
 import "../views"
 import "../styles"
-import "../singleton"
 
 Grid {
      id: grid

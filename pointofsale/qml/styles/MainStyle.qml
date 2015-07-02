@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import "../singleton"
 
 Item {
   property alias font: font
@@ -10,8 +9,8 @@ Item {
 
   Item {
     id: font
-    property int size: App.fontSize
-    property int buttonFontSize: App.buttonFontSize
+    property int size: application.fontSize
+    property int buttonFontSize: application.buttonFontSize
 
       property alias iconFont: fontAwesome
     FontLoader {
@@ -36,14 +35,14 @@ Item {
 
   Item {
     id: dimens
-    property int toolbarHeight: (App.dpi/113) * 40
+    property int toolbarHeight: (application.dpi/113) * 40
     property int backButtonWidth: toolbarHeight / 2
     property int backButtonHeight: toolbarHeight / 2
     property int nextButtonWidth: (toolbarHeight / 2) * 3
     property int nextButtonHeight: toolbarHeight / 2
 
-    property int leftMargin: (App.dpi/113) * 20
-    property int rightMargin: (App.dpi/113) * 20
+    property int leftMargin: (application.dpi/113) * 20
+    property int rightMargin: (application.dpi/113) * 20
 
   }
 }

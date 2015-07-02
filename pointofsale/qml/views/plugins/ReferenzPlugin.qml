@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.1
 
 import "../../controlls"
 import "../../styles"
-import "../../singleton"
 
 Rectangle {
 
@@ -17,7 +16,7 @@ Rectangle {
     anchors.fill: parent
     horizontalAlignment: Text.AlignHCenter
     verticalAlignment: Text.AlignVCenter
-    text: "Referenz: " + ReportStore.referenzString
+    text: "Referenz: " + application.reportStore.referenzString
   }
 
 }

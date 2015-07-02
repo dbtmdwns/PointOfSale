@@ -3,39 +3,50 @@ import QtQuick.Window 2.1
 import QtQuick.Controls 1.2
 
 import "./controlls"
-import "./views"
-import "./views/stackitems"
 import "./styles"
-import "./singleton"
+import "./views/stackitems"
+import "./controller"
+
+// import "./views"
+
 
 ApplicationWindow {
   id: appWindow
   visible: true
   width: 800
   height: 600
-  title: App.posTitle
+  title: "----"// App.posTitle
+
+  App {
+    id: application
+  }
+  /*
+
+  ReportStore {
+    id: reportStore
+  }
+  Remote {
+    id: local
+  }
+  Local {
+    id: remote
+  }
+  */
   MainStyle {
     id: mainStyle
   }
-  /*
-  menuBar: MenuBar {
-    Menu {
-      title: qsTr("File")
-      MenuItem {
-        text: qsTr("Exit")
-        onTriggered: Qt.quit();
-      }
-    }
-  }
-  */
+
   Component.onCompleted: {
     appWindow.showMaximized();
-    if (App.fullscreen === "1") {
+
+    if (application.fullscreen === "1") {
       appWindow.showFullScreen();
     }
-    App.windowWidth = width;
-    App.dpi = Screen.pixelDensity * 25.4
-    App.density = Screen.pixelDensity
+    /*
+    application.windowWidth = width;
+    application.dpi = Screen.pixelDensity * 25.4
+    application.density = Screen.pixelDensity
+    */
   }
 
   OverView {

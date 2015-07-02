@@ -4,7 +4,8 @@ import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
 import "../../views"
 import "../../controlls"
-import "../../singleton"
+
+
 import "../matrix"
 
 StackViewItem {
@@ -26,7 +27,7 @@ StackViewItem {
     Image{
       anchors.fill: parent
       fillMode: Image.PreserveAspectFit
-      source: App.left_logo_file
+      source: application.left_logo_file
     }
   }
 

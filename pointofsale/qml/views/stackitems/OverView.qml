@@ -2,7 +2,8 @@ import QtQuick 2.3
 import QtQuick.Window 2.1
 import QtQuick.Layouts 1.1
 import "../../controlls"
-import "../../singleton"
+
+
 
 
 
@@ -13,21 +14,7 @@ StackViewItem {
     ListModel {
         id: pageModel
 
-        /*
-        ListElement {
-            iconText: "\uf0c0"
-            title: "Login"
-            doneText: ""
-            page: "Authenticate.qml"
-        }
 
-        ListElement {
-            iconText: "\uf073"
-            title: "Test"
-            doneText: ""
-            page: "MainReport.qml"
-        }
-        */
 
         ListElement {
           iconText: "\uf073"
@@ -60,22 +47,6 @@ StackViewItem {
         }
 
 
-        ListElement {
-            iconText: "\uf08b"
-            title: "Testing"
-            doneText: ""
-            page: "Testing.qml"
-        }
-
-
-/*
-        ListElement {
-            iconText: "\uf08b"
-            title: "Screen"
-            doneText: ""
-            page: "stackitems/Screen.qml"
-        }
-*/
     }
 
     width: parent.width
@@ -89,28 +60,25 @@ StackViewItem {
         source: "qrc:/resources/image_source/logo.svg";
     }
     ListView {
-        model: pageModel
-        anchors.fill: parent
-        delegate: SimpleListItemDelegate {
-            text: title
-            icon: iconText
-            onClicked: {
-                if (
-                  (page==='MatrixInput.qml')
-                ){
-                    App.wawiLogin(function(){
-
-                      ReportStore.loadArticles(function(){
-                        stack.push(Qt.resolvedUrl(page))
-                        //stack.push(Qt.resolvedUrl('views/MatrixInput.qml'));
-                      });
-                    });
-                }else{
-                    stack.push(Qt.resolvedUrl(page))
-                }
-                //console.log('dpi',Screen.pixelDensity*25.4);
-
+      model: pageModel
+      anchors.fill: parent
+      delegate: SimpleListItemDelegate {
+          text: title
+          icon: iconText
+          onClicked: {
+            if (
+              (page==='MatrixInput.qml')
+            ){
+              console.log('74',typeof application)
+              application.login(function(){
+                application.reportStore.loadArticles(function(){
+                  stack.push(Qt.resolvedUrl(page))
+                });
+              });
+            }else{
+              stack.push(Qt.resolvedUrl(page))
             }
-        }
+          }
+      }
     }
 }

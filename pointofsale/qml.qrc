@@ -28,11 +28,15 @@
         <file>qml/controlls/MatrixField.qml</file>
         <file>qml/controlls/XMatrix.qml</file>
         <file>qml/controlls/XMatrixDelegate.qml</file>
+        <file>qml/controlls/ReportView.qml</file>
 
         <file>qml/styles/MainStyle.qml</file>
-        <file>qml/singleton/qmldir</file>
-        <file>qml/singleton/App.qml</file>
-        <file>qml/singleton/ReportStore.qml</file>
+
+
+        <file>qml/controller/App.qml</file>
+        <file>qml/controller/Local.qml</file>
+        <file>qml/controller/Remote.qml</file>
+        <file>qml/controller/ReportStore.qml</file>
 
         <file>qml/views/matrix/ArtikelMatrix.qml</file>
         <file>qml/views/matrix/WarengruppenMatrix.qml</file>
@@ -44,8 +48,6 @@
         <file>qml/views/plugins/ReferenzPlugin.qml</file>
         <file>qml/fontawesome-webfont.ttf</file>
 
-
-      <file>qml/singleton/Configurations.qml</file>
 
 
       <file>qml/js/Shunt.js</file>

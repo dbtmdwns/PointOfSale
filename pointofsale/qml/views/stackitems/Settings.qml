@@ -2,11 +2,8 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Layouts 1.1
-
-
 import "../../controlls"
 import "../../styles"
-import "../../singleton"
 
 StackViewItem {
     id: root
@@ -16,38 +13,38 @@ StackViewItem {
     doneText: qsTr("Fertig") + "\uf00c"
 
     function onDoneClicked(){
-        //App.debug('Settings','onDoneClicked', url.text)
-        App.url = url.text;
-        //App.aurl = aurl.text;
-        App.client = client.text;
-        App.username = username.text;
-        App.password = password.text;
+        //application.debug('Settings','onDoneClicked', url.text)
+        application.remote.url = url.text;
+        //application.aurl = aurl.text;
+        application.remote.client = client.text;
+        application.remote.username = username.text;
+        application.remote.password = password.text;
 
-        App.printerResolution = printerResolution.text;
-        App.paperWidth = paperWidth.text;
-        App.paperHeight = paperHeight.text;
+        application.printerResolution = printerResolution.text;
+        application.paperWidth = paperWidth.text;
+        application.paperHeight = paperHeight.text;
 
-        //App.department = department.text;
-        //App.receipt = receipt.text;
-        //App.items_group = items_group.text;
+        //application.department = department.text;
+        //application.receipt = receipt.text;
+        //application.items_group = items_group.text;
 
-        App.saveSettings();
+        application.saveSettings();
         stackView.pop();
     }
 
     Component.onCompleted: {
-        url.text = App.url;
-        //aurl.text = App.aurl;
-        client.text = App.client;
-        username.text = App.username;
-        password.text = App.password;
+        url.text = application.remote.url;
+        //aurl.text = application.aurl;
+        client.text = application.remote.client;
+        username.text = application.remote.username;
+        password.text = application.remote.password;
 
-        printerResolution.text = App.printerResolution;
-        paperWidth.text = App.paperWidth;
-        paperHeight.text = App.paperHeight;
-        //department.text = App.department;
-        //receipt.text = App.receipt;
-        //items_group.text = App.items_group;
+        printerResolution.text = application.printerResolution;
+        paperWidth.text = application.paperWidth;
+        paperHeight.text = application.paperHeight;
+        //department.text = application.department;
+        //receipt.text = application.receipt;
+        //items_group.text = application.items_group;
     }
 
 
@@ -222,8 +219,8 @@ StackViewItem {
                       anchors.fill: parent
                       anchors.margins: -10
                       onClicked: {
-                        App.posPrinter.setup( paperHeight.text*1, paperWidth.text*1, paperHeight.text*1)
-                        App.posPrinter.print("<html><body>Test Text</body></html>");
+                        application.posPrinter.setup( paperHeight.text*1, paperWidth.text*1, paperHeight.text*1)
+                        application.posPrinter.print("<html><body>Test Text</body></html>");
                       }
                     }
                 }

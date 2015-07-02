@@ -5,12 +5,11 @@ import QtQuick.Layouts 1.1
 import "../../controlls"
 import "../../views"
 import "../../styles"
-import "../../singleton"
 
 MatrixField{
     Component.onCompleted: {
-        ReportStore.oldReportsUpdate = function(){
-            fields = ReportStore.oldReports;
+        application.reportStore.oldReportsUpdate = function(){
+            fields = application.reportStore.oldReports;
         }
         console.log ('BelegeMatrix.qml','deprecated');
     }
