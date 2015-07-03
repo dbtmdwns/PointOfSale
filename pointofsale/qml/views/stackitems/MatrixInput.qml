@@ -388,7 +388,7 @@ StackViewItem {
 
       columns: 1
       rows: framedView.rows
-      template: "{belegnummer} {euro(brutto)}"
+      template: "{reportnumber} {euro(total)}"
 
       Component.onCompleted: {
         application.reportStore.onAddedReport = function(item){
@@ -404,7 +404,7 @@ StackViewItem {
       }
 
       onSelected: {
-        application.reportStore.cmd("OPENREPORT", item.belegnummer);
+        application.reportStore.cmd("OPENREPORT", item.reportnumber);
       }
     }
   }

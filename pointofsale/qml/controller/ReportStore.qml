@@ -503,9 +503,10 @@ Item {
     if (cmdtype === 'OPENREPORT') {
 
       for (var i = 0; i < oldReports.length; i++) {
-
+        console.log('OPENREPORT',val)
         if (val == oldReports[i].reportnumber) {
           positions = oldReports[i].positions;
+          console.log('OPENREPORT',JSON.stringify(positions,null,0))
           number = oldReports[i].reportnumber;
           datum = oldReports[i].date;
           zeit = oldReports[i].time;

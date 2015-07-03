@@ -20,9 +20,13 @@ ScrollView {
   }
   id: scrollView
   Image{
+
     opacity: 0
     id: logo
+    fillMode: Image.PreserveAspectFit
     source: ""
+    width: 512
+
   }
 
   contentItem : Canvas {
@@ -120,11 +124,14 @@ ScrollView {
           if (tag==='logo'){
             if (
               (typeof item.attr==='object') &&
-              (typeof item.attr.src!=='undefined')
+              (typeof item.attr.src!=='undefined') &&
+              (typeof item.attr.width!=='undefined') &&
+              (typeof item.attr.height!=='undefined')
             ){
+
               logo.source = item.attr.src;
-              context.drawImage(logo,x,0);
-              contextOffset+=logo.height;
+              context.drawImage(logo,x,0,(item.attr.width*pixelScale),(item.attr.height*pixelScale));
+              contextOffset+=(item.attr.height*pixelScale)+fontSize*pixelScale;
             }
           }
 
