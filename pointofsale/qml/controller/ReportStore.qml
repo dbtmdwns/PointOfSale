@@ -541,7 +541,7 @@ Item {
 
               application.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
 
-      
+
                 if (err) {
                   displayMessage(err.response,true);
                   console.log('saveReport error',err.response);
@@ -698,22 +698,13 @@ Item {
     total = 0;
     total_without_tax = 0;
 
+    var taxIndexHash = {}
+
     var data = {
       totalNet: 19.00 / 1.07 + 10.00 / 1.19,
       totalNetIncludingTax: 19.00 + 10.00,
-      positions: [
-
-      ],
-      taxes: [
-        /*{
-          rate: 7,
-          value: 19.5
-        },
-        {
-          rate: 19,
-          value: 1.5
-        }*/
-      ]
+      positions: [ ],
+      taxes: [ ]
     };
     for (var i = 0; i < positions.length; i++) {
       var item = positions[i];
@@ -732,20 +723,22 @@ Item {
         itemPriceIncludingTax: item.epreis*(1+item.steuersatz/100)
       })
 
+      if (typeof taxIndexHash['S'+item.steuersatz]=='undefined'){
+        taxIndexHash['S'+item.steuersatz]= data.taxes.length;
+        data.taxes.push({
+          rate: item.steuersatz,
+          value: 0
+        });
+      }
+      data.taxes[ taxIndexHash['S'+item.steuersatz] ].value += item.brutto - item.netto;
 
       total += positions[i].brutto;
       total_without_tax += positions[i].netto;
 
     }
-
     total_tax = total - total_without_tax;
-
     data.totalNet = total_without_tax;
     data.totalNetIncludingTax = total;
-    //reportData = data;
-
-    //reportView.loadHtml(getHTML(true));
-    console.log('ReportStore.qml #709','enable them')
     if ((typeof reportView!=='undefined')&&(reportView!==null)){
       reportView.refresh(data);
     }
