@@ -192,7 +192,6 @@ Item {
               } else {
                 result = http_result;
               }
-              console.log('catched success',JSON.stringify(result,null,0));
               callback(null, result);
 
             } catch (e) {
