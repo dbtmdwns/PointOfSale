@@ -17,6 +17,7 @@ ScrollView {
     canvas.refresh(dt);
     canvas.requestPaint();
   }
+  id: scrollView
   contentItem :  Canvas {
 
     id:canvas
@@ -74,7 +75,7 @@ ScrollView {
       <foreach item="positions">
         <line>
           <box fontSize="0.2" width="0.5" align="right" paddingLeft="0">{amount}x</box>
-          <box fontSize="0.2" width="1.0" align="right" paddingLeft="0.01"> {fixed(itemPriceIncludingTax)}</box>
+          <box fontSize="0.2" width="1.0" align="right" paddingLeft="0.01"> {fixedZero(itemPriceIncludingTax)}</box>
           <box fontSize="0.3" width="4" paddingLeft="0.01">{article}</box>
           <box fontSize="0.2" width="0.5" align="right" paddingLeft="0.01">{percent(taxRate)}</box>
           <box fontSize="0.3" width="1.3" align="right" paddingLeft="0.01" paddingRight="0.1">{fixed(includingTax)}</box>
@@ -102,10 +103,13 @@ ScrollView {
 
       var oldY = 0;
       var newY = 0;
+      var maxWidth = 0;
+      var lineHeight = 0;
       var item,width,padding,paddingRight,paddingLeft,paddingTop,paddingBottom,align;
 
       var fontStyle = "black";
       var fontSize = 0.22;
+
       var fontName = "sans-serif";
 
       //ctx.fillStyle = "black"
@@ -193,6 +197,7 @@ ScrollView {
 
             context.font = fontPixelSize+"px "+fontName;
             //console.log(fontPixelSize+"px "+fontName);
+            lineHeight = Math.max(lineHeight,fontPixelSize * 1.5);
             newY =  wrapText(
               context,
               item.value,
@@ -204,6 +209,7 @@ ScrollView {
             ) + paddingTop + paddingBottom ;
             oldY = Math.max(newY,oldY);
             x += width;
+            maxWidth = Math.max(width,maxWidth);
           }else if (tag==='line'){
             contextOffset=oldY;
             x = 0;
@@ -227,7 +233,18 @@ ScrollView {
           }
         }
       }
+
+
       sax.parse(data)
+      try{
+        scrollView.__verticalScrollBar.value = newY - scrollView.height *0.6
+      }catch(e){
+
+      }
+      return {
+        h: newY + lineHeight * 5,
+        w: maxWidth
+      };
     }
 
     function wrapText(context, text, x, y, maxWidth, lineHeight, align) {
@@ -279,6 +296,9 @@ ScrollView {
       tplCtx.def("fixed", function(v) {
         return Number(v).toFixed(2)
       });
+      tplCtx.def("fixedZero", function(v) {
+        return Number(v).toFixed(0)
+      });
       tplCtx.def("percent", function(v) {
         return Number(v).toFixed(0) + " %"
       });
@@ -298,8 +318,25 @@ ScrollView {
       ctx.strokeStyle = "transparent"
       ctx.fillStyle = "black"
       ctx.font = "15px sans-serif";
-      draw(ctx,tpl.render(data));
+      var metrics = draw(ctx,tpl.render(data));
       ctx.scale(0.5,0.5);
+
+      //console.log(JSON.stringify(metrics,null,0));
+      //canvas.height = metrics.h*2;
+      //canvas.width = metrics.w*2;
+      /*
+      var sourceX = 0;
+      var sourceY = 0;
+      var sourceWidth = 150;
+      var sourceHeight = 150;
+      var destWidth = sourceWidth;
+      var destHeight = sourceHeight;
+      var destX = 0;
+      var destY = 0;
+
+      context.drawImage(imageObj, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight)
+      */
+
       //console.log(canvas.getImageData());
 
     }
