@@ -60,35 +60,14 @@ ScrollView {
     }
 
 
-    function refresh(dt){
+    function refresh(dt,print){
       data = dt
+      data.print = '0'
+      if (print===true){
+        data.print='1'
+      }
+      template = application.template
       timeoutTimer.start();
-      template = '
-      <line>
-        <box fontSize="0.22" width="8" padding="0.01">
-        Musterfirma
-        Musterweg 1
-        98765 Musterort
-        </box>
-      </line>
-
-      <foreach item="positions">
-        <line>
-          <box fontSize="0.2" width="0.5" align="right" paddingLeft="0">{amount}x</box>
-          <box fontSize="0.2" width="1.0" align="right" paddingLeft="0.01"> {fixedZero(itemPriceIncludingTax)}</box>
-          <box fontSize="0.3" width="4" paddingLeft="0.01">{article}</box>
-          <box fontSize="0.2" width="0.5" align="right" paddingLeft="0.01">{percent(taxRate)}</box>
-          <box fontSize="0.3" width="1.3" align="right" paddingLeft="0.01" paddingRight="0.1">{fixed(includingTax)}</box>
-        </line>
-        <if term="isNot(additionalText,\'\')">
-          <line>
-            <box fontSize="0.22" width="7.6" paddingLeft="0.2">{additionalText}</box>
-          </line>
-        </if>
-      </foreach>
-      ';
-
-
     }
 
 
@@ -115,6 +94,17 @@ ScrollView {
       //ctx.fillStyle = "black"
       //ctx.font = "15px sans-serif";
       sax.emit = function(key,stack,tag){
+        if (key==='open'){
+          if (tag==='line'){
+            width = 0;
+            padding = 0;
+            x =0;
+            paddingLeft = padding;
+            paddingTop = padding;
+            paddingRight = padding;
+            paddingBottom = padding;
+          }
+        }
         if (key==='tag'){
           item = stack[stack.length - 1];
           if (tag==='box'){
@@ -237,7 +227,7 @@ ScrollView {
 
       sax.parse(data)
       try{
-        scrollView.__verticalScrollBar.value = newY - scrollView.height *0.6
+        scrollView.__verticalScrollBar.value = newY - scrollView.height *0.95
       }catch(e){
 
       }
@@ -290,6 +280,9 @@ ScrollView {
       tplCtx.def('isNot',function(a,b){
         return a!==b;
       });
+      tplCtx.def('equal',function(a,b){
+        return a==b;
+      });
       tplCtx.def("euro", function(v) {
         return Number(v).toFixed(2) + " €"
       });
@@ -306,7 +299,6 @@ ScrollView {
 
       var tpl = new Template.Template(template,tplCtx);
 
-
       canvas.height = 15000;
       var ctx = canvas.getContext('2d');
       ctx.fillStyle = "white";
@@ -321,23 +313,6 @@ ScrollView {
       var metrics = draw(ctx,tpl.render(data));
       ctx.scale(0.5,0.5);
 
-      //console.log(JSON.stringify(metrics,null,0));
-      //canvas.height = metrics.h*2;
-      //canvas.width = metrics.w*2;
-      /*
-      var sourceX = 0;
-      var sourceY = 0;
-      var sourceWidth = 150;
-      var sourceHeight = 150;
-      var destWidth = sourceWidth;
-      var destHeight = sourceHeight;
-      var destX = 0;
-      var destY = 0;
-
-      context.drawImage(imageObj, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight)
-      */
-
-      //console.log(canvas.getImageData());
 
     }
   }

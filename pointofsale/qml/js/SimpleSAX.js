@@ -167,6 +167,7 @@ SimpleSAX.prototype.parse = function(data) {
           });
           temp = [];
           state = STATES.NONE;
+          me.emit('open', stack, stag);
         } else if (char == 32) { // * * Tagname found
           // tag opened maybe with attributes
           tag = temp;
@@ -176,6 +177,7 @@ SimpleSAX.prototype.parse = function(data) {
           });
           temp = [];
           state = STATES.INSIDESTARTTAG;
+          me.emit('open', stack, stag);
         }
         break;
       case STATES.INSIDESTARTTAG:
@@ -232,6 +234,7 @@ SimpleSAX.prototype.parse = function(data) {
           // closed tag
           if (stag == stack[stack.length - 1].tag) {
             me.emit('tag', stack, stag);
+            //me.emit('etag', stack, stag);
             stack.pop();
           } else {
             throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1].tag + ' ');

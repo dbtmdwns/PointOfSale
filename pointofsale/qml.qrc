@@ -12,12 +12,8 @@
         <file>qml/views/stackitems/Testing.qml</file>
 
         <file>qml/views/Authenticate.qml</file>
-        <file>qml/views/MainReport.qml</file>
         <file>qml/views/ReportAndInput.qml</file>
         <file>qml/views/ButtonPanel.qml</file>
-        <file>qml/views/ArticleMatrix.qml</file>
-        <file>qml/views/WaregroupMatrix.qml</file>
-        <file>qml/views/RelationMatrix.qml</file>
 
 
         <file>qml/controlls/StackViewItem.qml</file>

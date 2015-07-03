@@ -15,11 +15,13 @@ ApplicationWindow {
   visible: true
   width: 800
   height: 600
-  title: "----"// App.posTitle
+  //title: "tualo"// App.posTitle
 
   App {
     id: application
   }
+
+  title: application.posTitle
   /*
 
   ReportStore {

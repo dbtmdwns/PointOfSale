@@ -9,6 +9,8 @@ ScrollView {
   id: scrollview
 
   property string defaultBackgroundColor: '#111122'
+  verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+  horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
 
   function addItem(item) {
     gridModel.append(prepareItem(item));

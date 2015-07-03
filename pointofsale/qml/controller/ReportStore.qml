@@ -738,6 +738,7 @@ Item {
     }
     total_tax = total - total_without_tax;
     data.totalNet = total_without_tax;
+    data.totalTax = total_tax;
     data.totalNetIncludingTax = total;
     if ((typeof reportView!=='undefined')&&(reportView!==null)){
       reportView.refresh(data);

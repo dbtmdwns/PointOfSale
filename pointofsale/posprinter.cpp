@@ -137,6 +137,16 @@ bool PosPrinter::sendImageToPrinter(QString printerName, QString imageName){
   file.write(ar);
   file.close();
   return true;
+
+  /*
+  char escp_seq[BYTES_FOR_SEQUENCE];
+
+// ...initialize the ESC/P sequence.
+
+int printer_fd = open("/dev/lp0", O_WRONLY);
+ssize_t bytes_written = write(printer_fd, escp_seq, sizeof(escp_seq));
+close(printer_fd);
+  */
 }
 
 bool PosPrinter::sendToPrinter(QString printerName, QString data){

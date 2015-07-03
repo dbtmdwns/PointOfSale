@@ -37,15 +37,15 @@ Item {
   property string reference_number: ""
   property string items_group: ""
   property string fullscreen: ""
-  property string posTitle: ""
+  property string posTitle: "tualo POS"
 
   property int leftMatrixWidth: 100
   property int rightMatrixWidth: 100
   property int scale: 2
-  property int fontSize: (density/scale) * configFontSize
-  property int buttonFontSize: (density/scale) * configButtonFontSize
-  property int configFontSize: 32
-  property int configButtonFontSize: 32
+  property int fontSize: (dpi/109) * configFontSize
+  property int buttonFontSize: (dpi/109) * configButtonFontSize
+  property int configFontSize: 14
+  property int configButtonFontSize: 14
 
   property int totalDisplayRows: 1
 
@@ -138,6 +138,62 @@ Item {
 
 
   Component.onCompleted: {
+
+    template = '
+    <line>
+      <box fontSize="0.22" width="8" padding="0.01">
+      Musterfirma
+      Musterweg 1
+      98765 Musterort
+      </box>
+    </line>
+
+    <foreach item="positions">
+      <line>
+        <box fontSize="0.2" width="0.5" align="right" paddingLeft="0">
+          {amount}x
+        </box>
+        <box fontSize="0.2" width="1.0" align="right" paddingLeft="0.01">
+          {fixed(itemPriceIncludingTax)}
+        </box>
+        <box fontSize="0.3" width="4" paddingLeft="0.01">{article}
+        </box>
+        <box fontSize="0.2" width="0.5" align="right" paddingLeft="0.01">
+          {percent(taxRate)}
+        </box>
+        <box fontSize="0.3" width="1.3" align="right" paddingLeft="0.01" paddingRight="0.1">{fixed(includingTax)}</box>
+      </line>
+      <if term="isNot(additionalText,\'\')">
+        <line>
+          <box fontSize="0.22" width="7.6" paddingLeft="0.2">{additionalText}</box>
+        </line>
+      </if>
+    </foreach>
+    <foreach item="taxes">
+      <line>
+        <box fontSize="0.3" width="6" align="right" paddingLeft="0">
+          Steuersatz:
+        </box>
+        <box fontSize="0.3" width="0.6" align="right" paddingLeft="0">
+          {fixed(rate)}
+        </box>
+        <box fontSize="0.3" width="1" align="right" paddingLeft="0.2">
+          {fixed(value)}
+        </box>
+      </line>
+    </foreach>
+    ';
+
+    /*
+
+
+
+        */
+
+    //    property int dpi: 72
+    //    property double density: 1
+    dpi = Screen.pixelDensity * 24.5
+    console.log('App',Screen.pixelDensity * 24.5);
 
     use_date = new Date();
     db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", dbsize);
@@ -324,30 +380,31 @@ Item {
   function config(cb){
     if (async=='1'){
       Local.config(function(res){
-        async = (res.async)?async:'0';
-        kasse = res.kasse;
-        lager = res.lager;
-        zahlart = res.zahlart;
-        tabellenzusatz = res.tabellenzusatz;
+        processConfig(res);
         cb();
       });
     }else{
       myRemote.config(function(res){
-
-        if (template_file === "") {
-          template = res.template
-        }
-        if (left_logo_file === "") {
-          left_logo_file = res.left_logo
-        }
-
-        async = (res.async)?async:'0';
-        kasse = res.kasse;
-        lager = res.lager;
-        zahlart = res.zahlart;
-        tabellenzusatz = res.tabellenzusatz;
+        processConfig(res);
         cb();
       });
+    }
+  }
+
+  function processConfig(res){
+    async = (res.async)?async:'0';
+    kasse = res.kasse;
+    lager = res.lager;
+    zahlart = res.zahlart;
+    tabellenzusatz = res.tabellenzusatz;
+    if (typeof res.posTitle==='string'){
+      posTitle = res.posTitle;
+    }
+    if (typeof res.template==='string'){
+      template = res.template;
+    }
+    if (left_logo_file === "") {
+      left_logo_file = res.left_logo
     }
   }
 

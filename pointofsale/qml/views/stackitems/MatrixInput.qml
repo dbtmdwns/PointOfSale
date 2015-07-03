@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Layouts 1.1
+import QtQuick.Window 2.1
 
 
 import "../../views"
@@ -52,29 +53,15 @@ StackViewItem {
 
   }
 
-  Rectangle {
-    id: rightFrame
-    width: framedView.itemWidth * application.leftSideColumns
-    height: framedView.height
 
-      color: "transparent"
-    /*Image {
-      width: parent.width
-        //anchors.fill: parent
-      fillMode: Image.PreserveAspectFit
-      source: application.left_logo_file
-      Component.onCompleted: {}
-    }
-    */
-  }
 
   Rectangle {
     id: view
     clip: true
     color: "transparent"
-    width: framedView.width - rightFrame.width - leftFrame.width
-    height: rightFrame.height
-    x: rightFrame.width
+    width: framedView.width - leftFrame.width
+    height: framedView.height
+    x: 0
     y: 0
 
 
@@ -313,7 +300,8 @@ StackViewItem {
       id: rai
       x: mmFrame.width + mmFrame.x + spacing
       y: spacing
-      width: view.width / (8 + application.waregroupColumns + buttonPanelColumns) * (buttonPanelColumns) - spacing * (8 + application.waregroupColumns)
+      //width: view.width / (8 + application.waregroupColumns + buttonPanelColumns) * (buttonPanelColumns) - spacing * (8 + application.waregroupColumns)
+      width: Screen.pixelDensity * 85
       height: view.height - spacing * 2
     }
 
@@ -383,7 +371,7 @@ StackViewItem {
   */
   Rectangle {
     id: leftFrame
-    x: view.width + rightFrame.width
+    x: view.width
     width: application.reportStore.reportMode ? ( framedView.itemWidth * application.rightSideColumns) : 0
     height: framedView.height
     Behavior on opacity {

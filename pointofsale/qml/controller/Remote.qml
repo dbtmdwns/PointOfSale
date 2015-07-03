@@ -24,6 +24,16 @@ Item {
     }
   }
 
+  Timer {
+    id: pingTimer
+    interval: 60000
+    running: false
+    repeat: true
+    onTriggered: {
+      ping()
+    }
+  }
+
 
   function login(cb){
     post(url, {
@@ -38,7 +48,7 @@ Item {
       }else if (res.success) {
         sessionID = res.sid;
         cb();
-
+        pingTimer.start();
       }else if (res.success == false) {
         // ToDo
       }
@@ -47,6 +57,7 @@ Item {
 
   function logout(cb) {
     sessionID = '';
+    pingTimer.stop();
     cb();
     post(url, {
       TEMPLATE: 'NO',
@@ -57,13 +68,7 @@ Item {
   }
 
   function ping(){
-    post(url, {
-      TEMPLATE: 'NO',
-      cmp: 'cmp_mde_sync',
-      sid: sessionID
-    }, function(err, res) {
-
-    }, false);
+    config(application.processConfig)
   }
 
   function config(cb) {
@@ -182,8 +187,7 @@ Item {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-          console.log(http_result);
-
+          
           if (typeof callback !== 'undefined') {
             try {
               if (parse === true) {
