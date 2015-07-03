@@ -36,7 +36,6 @@ PosPrinter::PosPrinter(QObject *parent) :
 
 QString PosPrinter::getEnv(QString name,QString defaultvalue){
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
     return env.value(name,defaultvalue);
 }
 
@@ -84,13 +83,11 @@ void PosPrinter::cut(){
         }
     }else{
         QPainter painter(&printer); // create a painter which will paint 'on printer'.
-
         painter.setFont(QFont("control",10));
         QString s = QString(" \n \n \n").toLocal8Bit();
         painter.drawText(0,0,s);
         painter.end();
     }
-
 }
 
 void PosPrinter::openDrawer(){
@@ -247,6 +244,8 @@ QString PosPrinter::readFile(QString path){
     return fileContent;
 }
 
+
+
 void PosPrinter::print(QString htmlContent){
 
 
@@ -282,5 +281,89 @@ void PosPrinter::allPrinters(){
         qDebug() << pInfo.supportedResolutions();
     }
 
+
+}
+
+
+
+void PosPrinter::printFile(QString printer, QString filename, QString height){
+  QString convertProgram = "png2pos";
+  QStringList convertArguments;
+  convertArguments << "-l" << height;
+  convertArguments << "-o" << filename+".bin";
+  convertArguments << filename;
+  QProcess *convertProcess = new QProcess();
+  convertProcess->start(convertProgram, convertArguments);
+  convertProcess->waitForFinished();
+
+  QString printProgram = "lp";
+  QStringList arguments;
+  arguments << "-d" << printer;
+  arguments << filename+".bin";
+
+  QProcess *printProcess = new QProcess();
+  printProcess->start(printProgram, arguments);
+  printProcess->waitForFinished(1000);
+  QFile::remove(filename+".bin");
+  QFile::remove(filename);
+
+}
+
+void PosPrinter::cut(QString printer){
+  QStringList codes = getEnv("POSCUT","27,109").split(",");
+  int codes_i;
+  QString data = "";
+  for(codes_i=0;codes_i<codes.count();codes_i++){
+      data.append(QChar(codes.at(codes_i).toInt()));
+  }
+
+  QString filename="cut.prn";
+  QFile file( filename );
+  if ( file.open(QIODevice::ReadWrite) )
+  {
+      QTextStream stream( &file );
+      stream << data;
+  }
+
+  QString printProgram = "lp";
+  QStringList arguments;
+  arguments << "-d" << printer;
+  arguments << "cut.prn";
+
+  QProcess *printProcess = new QProcess();
+  printProcess->start(printProgram, arguments);
+  printProcess->waitForFinished(1000);
+  QFile::remove("cut.prn");
+}
+
+
+void PosPrinter::open(QString printer){
+
+  QStringList codes = getEnv("POSOPEN","27,112,0,25,250").split(",");
+  qDebug() << "PosPrinter::open" << printer << codes;
+  int codes_i;
+  QString data = "";
+  for(codes_i=0;codes_i<codes.count();codes_i++){
+      data.append(QChar(codes.at(codes_i).toInt()));
+  }
+
+  QString filename="open.prn";
+  QFile file( filename );
+  if ( file.open(QIODevice::ReadWrite) )
+  {
+      QTextStream stream( &file );
+      stream << data;
+  }
+
+  QString printProgram = "lp";
+  QStringList arguments;
+  arguments << "-d" << printer;
+  arguments << "open.prn";
+
+  QProcess *printProcess = new QProcess();
+  printProcess->start(printProgram, arguments);
+  printProcess->waitForFinished(1000);
+
+  QFile::remove("open.prn");
 
 }

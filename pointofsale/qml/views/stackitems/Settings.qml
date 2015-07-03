@@ -39,9 +39,11 @@ StackViewItem {
         username.text = application.remote.username;
         password.text = application.remote.password;
 
-        printerResolution.text = application.printerResolution;
-        paperWidth.text = application.paperWidth;
-        paperHeight.text = application.paperHeight;
+        printerName.text = application.printerName;
+
+        //printerResolution.text = application.printerResolution;
+        //paperWidth.text = application.paperWidth;
+        //paperHeight.text = application.paperHeight;
         //department.text = application.department;
         //receipt.text = application.receipt;
         //items_group.text = application.items_group;
@@ -138,7 +140,25 @@ StackViewItem {
             }
 
 
+            Rectangle {
+                id: line4
+                y: 80 * 4
+                width: parent.width
+                height: client.height
 
+
+                LabeledTextField {
+                    id: printerName
+                    width: parent.width
+                    label: qsTr("Drucker-Name")
+                    text: ""
+                    style: touchStyle
+                    labelWidth: _labelWidth
+                    labelLeftSpace: 40
+                }
+            }
+
+            /*
 
             Rectangle {
                 id: line4
@@ -194,7 +214,7 @@ StackViewItem {
                 }
             }
 
-
+            */
 /*
             Rectangle {
                 id: line7

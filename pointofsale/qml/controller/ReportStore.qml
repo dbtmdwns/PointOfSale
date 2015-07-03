@@ -40,14 +40,11 @@ Item {
   property var _staffeln: []
   property var _artikel: []
   property var _kombiartikel: []
-  property string lastReport: ""
-  property double lastTotal: 0
 
+  property double lastTotal: 0
   property string datum;
   property string zeit;
-
   property string findString;
-
   property string ticketHeader;
   property string ticketItem;
   property string ticketFooter;
@@ -436,8 +433,12 @@ Item {
       }
 
     }
+    if (cmdtype === 'SUM') {
+      sum();
+    }
 
     if (cmdtype === 'CANCLE LAST') {
+
       if (number === -1) {
 
         while ((positions.length>0) && (positions[positions.length - 1].kombiartikel===true)){
@@ -463,22 +464,30 @@ Item {
     if (cmdtype === 'CUT') {
       // open drawer
 
-      application.posPrinter.cut() //.print(getHTML());
+      application.posPrinter.cut(application.printerName);
+
     }
 
 
     if (cmdtype === 'OPEN') {
       // open drawer
-
-      application.posPrinter.openDrawer() //.print(getHTML());
+      application.posPrinter.open(application.printerName)
     }
 
     if (cmdtype === 'PRINT') {
-      application.posPrinter.allPrinters();
+      //application.posPrinter.allPrinters();
+      //application.posPrinter.setup( application.printerResolution*1, application.paperWidth*1, application.paperHeight*1)
 
-      application.posPrinter.setup( application.printerResolution*1, application.paperWidth*1, application.paperHeight*1)
+      if (application.usePOSPrinter===true){
+        application.posPrinter.open(application.printerName);
+      }
 
-      application.posPrinter.print(lastReport);
+      if (oldReports.length>0){
+        printReport( oldReports[oldReports.length-1] ) // printimage
+      }
+
+
+      return;
     }
 
 
@@ -494,16 +503,15 @@ Item {
     if (cmdtype === 'OPENREPORT') {
 
       for (var i = 0; i < oldReports.length; i++) {
-        if (val == oldReports[i].belegnummer) {
+
+        if (val == oldReports[i].reportnumber) {
           positions = oldReports[i].positions;
-          number = oldReports[i].belegnummer;
-          datum = oldReports[i].datum;
-          zeit = oldReports[i].zeit;
-          kundennummer = oldReports[i].kundennummer;
-          kostenstelle = oldReports[i].kostenstelle;
-          positions = oldReports[i].positionen;
-          total = oldReports[i].brutto;
-          lastReport = oldReports[i].html;
+          number = oldReports[i].reportnumber;
+          datum = oldReports[i].date;
+          zeit = oldReports[i].time;
+          kundennummer = oldReports[i].customerno;
+          kostenstelle = oldReports[i].costcenter;
+          total = oldReports[i].total;
         }
       }
     }
@@ -537,7 +545,9 @@ Item {
             if (given >= total) {
               displayMessage("Der Beleg wird gespeichert.", true);
               currentMode = 'paysave';
-              application.posPrinter.openDrawer();
+              if (application.usePOSPrinter===true){
+                application.posPrinter.open(application.printerName);
+              }
 
               application.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
 
@@ -551,32 +561,26 @@ Item {
                     number = res.belegnummer;
                     zeit = (new Date()).toISOString().substring(11, 16);
                     datum = (new Date()).toISOString().substring(0, 10);
-                    //lastReport = getHTML();
                     var item = {
-                      zeit: zeit,
-                      kundennummer: kundennummer,
-                      kostenstelle: kostenstelle,
-                      datum: datum,
-                      belegnummer: number,
-                      brutto: total,
-                      positionen: application.html_decode_entities_object(positions),
-                      //html: lastReport,
-                      displayBackgroundColor: "#41414f",
-                      //displayText: ""+number+" "+zeit+" | <b>"+total.toFixed(2)+" €</b>"
+                      time: zeit,
+                      customerno: kundennummer,
+                      costcenter: kostenstelle,
+                      date: datum,
+                      reportnumber: number,
+                      total: total,
+                      positions: positions,
+                      displayBackgroundColor: "#41414f"
                     }
                     try {
-                      pushOldReport(item);
+                      pushOldReport(application.html_decode_entities_object(item));
                     } catch (e) {
                       console.log(e);
                     }
                     positions = [];
+                    displayMessage(number + " gespeichert.");
                     number = -1;
-                    displayMessage(res.belegnummer + " gespeichert.");
                     lastTotal = total;
-
                     currentMode = 'amount';
-                    //application.posPrinter.openDrawer();
-
                   } else {
                     displayMessage(res.msg);
                   }
@@ -694,13 +698,40 @@ Item {
     }
   }
 
-  function sum() {
+
+
+  function sum(print) {
     total = 0;
     total_without_tax = 0;
+    for (var i = 0; i < positions.length; i++) {
+      total += positions[i].brutto;
+      total_without_tax += positions[i].netto;
+    }
+    var item = {
+      time: zeit,
+      customerno: kundennummer,
+      costcenter: kostenstelle,
+      date: datum,
+      reportnumber: number,
+      total: total,
+      positions: positions
+    }
+    if ((typeof reportView!=='undefined')&&(reportView!==null)){
+      reportView.refresh( toData(item) , false);
+    }
+  }
 
+  function toData(item){
     var taxIndexHash = {}
-
+    var stotal_without_tax=0;
+    var stotal = 0;
+    var positions = item.positions;
     var data = {
+      time: item.time,
+      customerno: item.customerno,
+      costcenter: item.costcenter,
+      date: item.date,
+      reportnumber: item.reportnumber,
       totalNet: 19.00 / 1.07 + 10.00 / 1.19,
       totalNetIncludingTax: 19.00 + 10.00,
       positions: [ ],
@@ -708,8 +739,6 @@ Item {
     };
     for (var i = 0; i < positions.length; i++) {
       var item = positions[i];
-
-
       data.positions.push({
         article: item.artikel,
         reference: item.referenz,
@@ -722,7 +751,6 @@ Item {
         itemPrice: item.epreis,
         itemPriceIncludingTax: item.epreis*(1+item.steuersatz/100)
       })
-
       if (typeof taxIndexHash['S'+item.steuersatz]=='undefined'){
         taxIndexHash['S'+item.steuersatz]= data.taxes.length;
         data.taxes.push({
@@ -731,21 +759,20 @@ Item {
         });
       }
       data.taxes[ taxIndexHash['S'+item.steuersatz] ].value += item.brutto - item.netto;
-
-      total += positions[i].brutto;
-      total_without_tax += positions[i].netto;
-
+      stotal += positions[i].brutto;
+      stotal_without_tax += positions[i].netto;
     }
-    total_tax = total - total_without_tax;
-    data.totalNet = total_without_tax;
-    data.totalTax = total_tax;
-    data.totalNetIncludingTax = total;
-    if ((typeof reportView!=='undefined')&&(reportView!==null)){
-      reportView.refresh(data);
-    }
-
+    data.totalNet = stotal_without_tax;
+    data.totalTax = stotal - stotal_without_tax;
+    data.totalNetIncludingTax = stotal;
+    return data;
   }
 
+  function printReport(positions) {
+    if ((typeof reportView!=='undefined')&&(reportView!==null)){
+      reportView.refresh( toData(positions) , true);
+    }
+  }
 
 
 

@@ -21,6 +21,12 @@ public:
     Q_INVOKABLE void setup(int res,double width,double height);
 
     bool sendToPrinter(QString printerName,QString data);
+
+
+    Q_INVOKABLE void printFile(QString printer, QString filename, QString height);
+    Q_INVOKABLE void cut(QString printer);
+    Q_INVOKABLE void open(QString printer);
+
     QString osName();
 signals:
 

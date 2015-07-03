@@ -31,6 +31,7 @@ Item {
   property string sessionID: ""
   property string async: "0"
 
+  property bool usePOSPrinter: true
 
   property string receipt: ""
   property string department: ""
@@ -63,9 +64,7 @@ Item {
   property int articleColumns: 8
   property int articleRows: 10
 
-  property string paperWidth: "80"
-  property string paperHeight: "500"
-  property string printerResolution: "180"
+
 
   property string template_file: ""
   property string template: ""
@@ -74,10 +73,11 @@ Item {
   property string fixview: ""
 
 
-  property string kasse: "Göppingen"
-  property string zahlart: "Bar"
+  property string kasse: ""
+  property string zahlart: ""
   property string lager: "0"
   property string tabellenzusatz: "BARVERKAUF"
+  property string printerName: "EPSON_TM_T88V"
 
 
   property var use_date
@@ -226,7 +226,10 @@ Item {
               myRemote.password = rs.rows.item(i).value;
               break;
 
-
+            case "printerName":
+                printerName = rs.rows.item(i).value;
+                break;
+            /*
             case "paperWidth":
               paperWidth = rs.rows.item(i).value;
               break;
@@ -236,7 +239,7 @@ Item {
             case "printerResolution":
               printerResolution = rs.rows.item(i).value;
               break;
-
+              */
           }
         }
 
@@ -255,6 +258,8 @@ Item {
 
         // Add (another) greeting row
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['async', async]);
+        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerName', printerName]);
+
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperWidth', paperWidth]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperHeight', paperHeight]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerResolution', printerResolution]);
@@ -266,6 +271,9 @@ Item {
 
 
         tx.executeSql('UPDATE settings set value = ? where key = ?', [async, 'async']);
+        tx.executeSql('UPDATE settings set value = ? where key = ?', [printerName, 'printerName']);
+
+
         tx.executeSql('UPDATE settings set value = ? where key = ?', [paperWidth, 'paperWidth']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [paperHeight, 'paperHeight']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [printerResolution, 'printerResolution']);
@@ -432,6 +440,7 @@ Item {
 
 
   function html_encode_entities_object(_object) {
+
     for (var _property in _object) {
       if (_object.hasOwnProperty(_property)) {
         if (typeof _object[_property] === 'string') {
@@ -444,10 +453,12 @@ Item {
         }
       }
     }
+
     return _object;
   }
 
   function html_decode_entities_object(_object) {
+
     for (var _property in _object) {
       if (_object.hasOwnProperty(_property)) {
         if (typeof _object[_property] === 'string') {
@@ -461,6 +472,7 @@ Item {
         }
       }
     }
+
     return _object;
   }
 

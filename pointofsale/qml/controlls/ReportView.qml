@@ -13,18 +13,26 @@ import "../js/SimpleSAX.js" as SimpleSAX
 ScrollView {
   //anchors.fill: parent
   flickableItem.interactive: true
-  function refresh(dt){
-    canvas.refresh(dt);
+  function refresh(dt,print){
+    canvas.refresh(dt,print);
     canvas.requestPaint();
+
   }
   id: scrollView
-  contentItem :  Canvas {
+  Image{
+    opacity: 0
+    id: logo
+    source: ""
+  }
+
+  contentItem : Canvas {
 
     id:canvas
 
     width: (Screen.pixelDensity * 80 * 2)
     height: 15000
 
+    property bool doPrint: false
     antialiasing: true
     property bool isConverting: false
     transform: Scale {
@@ -45,7 +53,6 @@ ScrollView {
          var ctx = canvas.getContext('2d');
          var imageData = ctx.getImageData(0, 0, 255, 255);
          var data = imageData.data;
-         //console.log(canvas.getImage());
          canvas.isConverting=false;
        }
      }
@@ -62,22 +69,24 @@ ScrollView {
 
     function refresh(dt,print){
       data = dt
+
       data.print = '0'
       if (print===true){
         data.print='1'
+        doPrint = true
       }
       template = application.template
       timeoutTimer.start();
     }
 
 
-    function draw(context,data){
+    function draw(context,data,drawreal){
 
 
       var sax = new SimpleSAX.SimpleSAX();
       var contextOffset = 0;
 
-      var pixelPerMM = Screen.pixelDensity;
+      var pixelPerMM = (512/80)/2; //Screen.pixelDensity;
       var pixelScale = pixelPerMM*10;
 
       var oldY = 0;
@@ -107,6 +116,18 @@ ScrollView {
         }
         if (key==='tag'){
           item = stack[stack.length - 1];
+
+          if (tag==='logo'){
+            if (
+              (typeof item.attr==='object') &&
+              (typeof item.attr.src!=='undefined')
+            ){
+              logo.source = item.attr.src;
+              context.drawImage(logo,x,0);
+              contextOffset+=logo.height;
+            }
+          }
+
           if (tag==='box'){
             width = 0;
             padding = 0;
@@ -186,7 +207,6 @@ ScrollView {
             }
 
             context.font = fontPixelSize+"px "+fontName;
-            //console.log(fontPixelSize+"px "+fontName);
             lineHeight = Math.max(lineHeight,fontPixelSize * 1.5);
             newY =  wrapText(
               context,
@@ -195,8 +215,8 @@ ScrollView {
               contextOffset + paddingTop,
               width - paddingLeft - paddingRight ,
               fontPixelSize * 1.5 ,
-              align
-            ) + paddingTop + paddingBottom ;
+              align,
+              drawreal) + paddingTop + paddingBottom ;
             oldY = Math.max(newY,oldY);
             x += width;
             maxWidth = Math.max(width,maxWidth);
@@ -237,7 +257,7 @@ ScrollView {
       };
     }
 
-    function wrapText(context, text, x, y, maxWidth, lineHeight, align) {
+    function wrapText(context, text, x, y, maxWidth, lineHeight, align,drawreal) {
       var textLines = text.split("\n");
       for(var i=0;i<textLines.length;i++){
         var words = textLines[i].trim().split(' ');
@@ -247,14 +267,18 @@ ScrollView {
           var metrics = context.measureText(testLine);
           var testWidth = metrics.width;
           if ( ((testWidth ) > maxWidth) && (n > 0) ) {
-            fillTextAligned(context,line, x, y,maxWidth,align);
+            if (drawreal){
+              fillTextAligned(context,line, x, y,maxWidth,align);
+            }
             line = words[n] + ' ';
             y += lineHeight;
           } else {
             line = testLine;
           }
         }
-        fillTextAligned(context,line, x, y,maxWidth,align);
+        if (drawreal){
+          fillTextAligned(context,line, x, y,maxWidth,align);
+        }
         y += lineHeight;
         //context.stroke();
       }
@@ -300,20 +324,37 @@ ScrollView {
       var tpl = new Template.Template(template,tplCtx);
 
       canvas.height = 15000;
+      canvas.width =512;
+
       var ctx = canvas.getContext('2d');
       ctx.fillStyle = "white";
       ctx.fillRect(0,0,5000,5000);
 
       ctx.scale(2,2);
-      ctx.beginPath();
+      //ctx.beginPath();
       ctx.fillStyle = "black"
       ctx.strokeStyle = "transparent"
       ctx.fillStyle = "black"
       ctx.font = "15px sans-serif";
-      var metrics = draw(ctx,tpl.render(data));
+      var metrics = draw(ctx,tpl.render(data),true);
+      //resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, width, height);
       ctx.scale(0.5,0.5);
+      ctx.save();
+      //ctx.clearRect( 0, 0, metrics.w, metrics.h );
 
 
+
+
+      if (doPrint===true){
+        //canvas.width = 512
+        canvas.save(data.reportnumber+'.png');
+        application.posPrinter.printFile(application.printerName,data.reportnumber+'.png',metrics.h*2);
+        application.posPrinter.cut(application.printerName);
+        application.posPrinter.open(application.printerName);
+        application.reportStore.cmd('SUM','');
+
+      }
+      doPrint=false
     }
   }
 }

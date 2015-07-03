@@ -187,7 +187,7 @@ Item {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-          
+
           if (typeof callback !== 'undefined') {
             try {
               if (parse === true) {
@@ -199,6 +199,7 @@ Item {
               callback(null, result);
 
             } catch (e) {
+              console.log(xhr.responseText);
               console.log('catched error',e.toString());
               callback({
                 error: e,
