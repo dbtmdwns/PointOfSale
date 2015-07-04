@@ -315,7 +315,7 @@ StackViewItem {
       color: "white"
       radius: 5
       width: view.width * 0.30
-      height: view.height * 0.10
+      height: view.height * 0.30
       Behavior on opacity {
         OpacityAnimator {
           easing.type: Easing.InCubic;
@@ -324,6 +324,7 @@ StackViewItem {
       }
       Text {
         anchors.centerIn: parent
+        clip: true
         text: application.reportStore.message
       }
     }

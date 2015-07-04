@@ -35,6 +35,73 @@ Item {
   }
 
 
+  Timer {
+    id: asyncTimer
+    interval: 15000
+    running: true
+    repeat: true
+    onTriggered: {
+      console.log('asyncTimer','triggered')
+      if (application.async=='1'){
+        var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+        db.transaction(
+          function(tx) {
+            var sql = 'select * from reports where key = \''+client+'\' ';
+            var rs = tx.executeSql(sql);
+            console.log('asyncTimer','reports for submission',rs.rows.length)
+
+            post(url, {
+              username: username,
+              mandant: client,
+              password: password,
+              "return": "json"
+            }, function(err, res) {
+
+              if (err){
+                // ToDo
+              }else if (res.success) {
+                var csession = res.sid;
+
+                asyncList(csession,rs.rows,0,function(){
+                  post(url, {
+                    TEMPLATE: 'NO',
+                    cmp: 'cmp_logout',
+                    sid: csession
+                  }, function(err, res) {
+                  }, false);
+
+                });
+
+              }else if (res.success == false) {
+                // ToDo
+              }
+            });
+
+          }
+        );
+      }
+    }
+  }
+
+  function asyncList(csession,list,index,cb){
+    if (index<list.length){
+      var json = application.remote.unEscapeResult(list[0].value);
+      json.id = list[0].id+' '+json.id;
+      save(json,function(err,res){
+        if (res.success==true){
+          console.log('asyncList','save',res.belegnummer,'id',json.id);
+        }else{
+          console.log('asyncList','save error',res.msg);
+        }
+        asyncList(csession,list,index+1,cb);
+      },csession);
+
+    }else{
+      cb();
+    }
+  }
+
+
   function login(cb){
     post(url, {
       username: username,
@@ -159,12 +226,15 @@ Item {
   }
 
 
-  function save(json,cb){
+  function save(json,cb,csession){
+    if (typeof csession==='undefined'){
+      csession = sessionID;
+    }
     post(url, {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
       page: 'single_report',
-      sid: sessionID,
+      sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
       cb(err, res);
@@ -234,6 +304,6 @@ Item {
   }
 
   function unEscapeResult(res){
-    return JSON.stringify(res,null,0).replace(/#qoute;/gm,"'");
+    return JSON.parse(res.replace(/#qoute;/gm,"'"));
   }
 }

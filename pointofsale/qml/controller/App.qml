@@ -186,10 +186,7 @@ Item {
 
     /*
 
-
-
-        */
-
+    */
     //    property int dpi: 72
     //    property double density: 1
     dpi = Screen.pixelDensity * 24.5
@@ -227,8 +224,8 @@ Item {
               break;
 
             case "printerName":
-                printerName = rs.rows.item(i).value;
-                break;
+              printerName = rs.rows.item(i).value;
+              break;
             /*
             case "paperWidth":
               paperWidth = rs.rows.item(i).value;
@@ -242,7 +239,10 @@ Item {
               */
           }
         }
-
+        console.log('App.qml','complete',async);
+        console.log('App.qml','complete',printerName);
+        console.log('App.qml','complete',myRemote.client);
+        console.log('App.qml','complete',myRemote.username);
       }
     )
   }
@@ -273,10 +273,11 @@ Item {
         tx.executeSql('UPDATE settings set value = ? where key = ?', [async, 'async']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [printerName, 'printerName']);
 
-
+        /*
         tx.executeSql('UPDATE settings set value = ? where key = ?', [paperWidth, 'paperWidth']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [paperHeight, 'paperHeight']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [printerResolution, 'printerResolution']);
+        */
 
         tx.executeSql('UPDATE settings set value = ? where key = ?', [myRemote.url, 'url']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [myRemote.client, 'client']);
@@ -312,6 +313,7 @@ Item {
     json.kundennummer = kundennummer;
     json.kostenstelle = kostenstelle;
 
+    console.log('App.qml','using async',async)
     if (async=='1'){
       myLocal.save(json,cb);
     }else{
@@ -321,12 +323,16 @@ Item {
   }
 
   function login(cb) {
+    console.log('App.qml','login',async);
     var cbx = function(){
+      console.log('App.qml','login1',async);
       config(function() {
+        console.log('App.qml','login2',async);
         relations(cb);
       }.bind(this));
     }.bind(this)
 
+    console.log('App.qml','loginx',async);
     if (async=='1'){
       cbx();
     }else{
@@ -387,7 +393,7 @@ Item {
 
   function config(cb){
     if (async=='1'){
-      Local.config(function(res){
+      myLocal.config(function(res){
         processConfig(res);
         cb();
       });
@@ -400,7 +406,10 @@ Item {
   }
 
   function processConfig(res){
-    async = (res.async)?async:'0';
+    async = res.async;
+    console.log('processConfig',JSON.stringify(res,null,1))
+    myLocal.maxReportNumber = res.maxReportNumber;
+    myLocal.minReportNumber = res.minReportNumber;
     kasse = res.kasse;
     lager = res.lager;
     zahlart = res.zahlart;
