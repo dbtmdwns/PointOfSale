@@ -3,12 +3,14 @@ TEMPLATE = app
 QT += qml quick widgets printsupport webkitwidgets
 
 SOURCES += main.cpp \
-    posprinter.cpp
+    posprinter.cpp \
+    escimage.cpp
 
 RESOURCES += qml.qrc
 
 win32-g++{
-    LIBS += C:\Qt5.4\Tools\mingw491_32\i686-w64-mingw32\lib\libwinspool.a
+  message(Qt is installed in $$[QT_INSTALL_PREFIX])
+  LIBS += C:\Qt5.4\Tools\mingw491_32\i686-w64-mingw32\lib\libwinspool.a
 }
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -23,7 +25,8 @@ OTHER_FILES += \
 RC_FILE = app.rc
 
 HEADERS += \
-    posprinter.h
+    posprinter.h \
+    escimage.h
 
 DISTFILES += \
     README.md

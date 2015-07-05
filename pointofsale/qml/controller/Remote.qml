@@ -88,6 +88,7 @@ Item {
       var json = application.remote.unEscapeResult(list[0].value);
       json.id = list[0].id+' '+json.id;
       save(json,function(err,res){
+        console.log(err,res);
         if (res.success==true){
           console.log('asyncList','save',res.belegnummer,'id',json.id);
         }else{
@@ -237,6 +238,7 @@ Item {
       sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
+
       cb(err, res);
     }, true);
   }

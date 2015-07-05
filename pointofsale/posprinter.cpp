@@ -119,6 +119,7 @@ void PosPrinter::openDrawer(){
 }
 
 bool PosPrinter::sendImageToPrinter(QString printerName, QString imageName){
+  /*
   QByteArray ar;
 
 
@@ -134,7 +135,7 @@ bool PosPrinter::sendImageToPrinter(QString printerName, QString imageName){
   file.write(ar);
   file.close();
   return true;
-
+  */
   /*
   char escp_seq[BYTES_FOR_SEQUENCE];
 
@@ -287,6 +288,10 @@ void PosPrinter::allPrinters(){
 
 
 void PosPrinter::printFile(QString printer, QString filename, QString height){
+  QImage *img = new QImage(filename);
+  ESCPOSImage *esc = new ESCPOSImage();
+  esc->saveImage(img,filename+".bin",height);
+  /*
   QString convertProgram = "png2pos";
   QStringList convertArguments;
   convertArguments << "-l" << height;
@@ -295,18 +300,31 @@ void PosPrinter::printFile(QString printer, QString filename, QString height){
   QProcess *convertProcess = new QProcess();
   convertProcess->start(convertProgram, convertArguments);
   convertProcess->waitForFinished();
-
-  QString printProgram = "lp";
+  */
+  QString printProgram = "";
   QStringList arguments;
-  arguments << "-d" << printer;
-  arguments << filename+".bin";
+  if( (osName().compare("osx")==0) ||
+      (osName().compare("linux")==0)
+  ){
+    printProgram = "lp";
+    arguments << "-d" << printer;
+    arguments << filename+".bin";
+  }else if (
+    (osName().compare("windows")==0)
+  ){
+    // print /D:"\\%COMPUTERNAME%\PRINTER" "%~dpn1.bin"
+    printProgram = "print";
+    arguments << "/D:\""+printer+"\"";
+    arguments << filename+".bin";
+  }
 
-  QProcess *printProcess = new QProcess();
-  printProcess->start(printProgram, arguments);
-  printProcess->waitForFinished(1000);
-  QFile::remove(filename+".bin");
-  QFile::remove(filename);
-
+  if (printProgram.compare("")!=0){
+    QProcess *printProcess = new QProcess();
+    printProcess->start(printProgram, arguments);
+    printProcess->waitForFinished(1000);
+    QFile::remove(filename+".bin");
+    QFile::remove(filename);
+  }
 }
 
 void PosPrinter::cut(QString printer){
