@@ -1,3 +1,19 @@
+/*
+This file contains source code parts form https://github.com/petrkutalek/png2pos
+modified to work with QImage instead of loadpng.
+
+(c) 2012 - 2015 Petr Kutalek: png2pos
+
+Licensed under the MIT License:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+*/
+
 #include "escimage.h"
 
 
@@ -166,119 +182,6 @@ void ESCPOSImage::saveImage(QImage *img, QString fname, QString imageHeight){
 
   config.maxImageHeight = atoi(imageHeight.toLocal8Bit().data());
   config.output = fname.toLocal8Bit().data();
-  /*
-  while ((optc = getopt(argc, argv, ":Vhca:rtl:plo:")) != -1) {
-      switch (optc) {
-          case 'o':
-              config.output = optarg;
-              break;
-
-          case 'c':
-              config.cut = 1;
-              break;
-
-          case 'a':
-              config.align = toupper(optarg[0]);
-              if (!strchr("LCR", config.align)) {
-                  fprintf(stderr, "Unknown horizontal alignment '%c'\n", config.align);
-                  goto fail;
-              }
-              break;
-
-          case 'r':
-              config.rotate = 1;
-              break;
-
-          case 't':
-              config.threshold = strtoul(optarg, NULL, 0);
-              if (config.threshold > 255) {
-                  config.threshold = 0x80;
-                  fprintf(stderr, "B/W threshold must be in the interval <0; 255>. Falling back to the default value 0x80\n");
-              }
-              break;
-
-          case 'p':
-              config.photo = 1;
-              break;
-
-          case 'l':
-              config.maxImageHeight = strtoul(optarg, NULL, 0);
-              if (config.maxImageHeight > 15000) {
-                  config.maxImageHeight = 15000;
-                  fprintf(stderr, "maxImageHeight must be in the interval <0; 15000>. Falling back to the default value 15000\n");
-              }
-              fprintf(stderr, "%d set \n", config.maxImageHeight);
-              break;
-
-          case 'V':
-              fprintf(stderr, "%s %s (%s)\n", "png2pos", PNG2POS_VERSION, PNG2POS_BUILTON);
-              fprintf(stderr, "%s %s\n", "LodePNG", LODEPNG_VERSION_STRING);
-              ret = EXIT_SUCCESS;
-              goto fail;
-
-          case 'h':
-              fprintf(stderr,
-                  "png2pos is a utility to convert PNG to ESC/POS\n"
-                  "Usage: png2pos [-V] [-h] [-c] [-a L|C|R] [-l MAXHEIGHT] [-r] [-t THRESHOLD] [-p] [-o FILE] INPUT_FILES...\n"
-                  "\n"
-                  "  -V           display the version number and exit\n"
-                  "  -h           display this short help and exit\n"
-                  "  -c           cut the paper at the end of job\n"
-                  "  -a L|C|R     horizontal image alignment (Left, Center, Right)\n"
-                  "  -r           rotate image upside down before it is printed\n"
-                  "  -t THRESHOLD set the treshold value for conversion to B/W\n"
-                  "  -p           switch to photo mode (post-process input files)\n"
-                  "  -l           max length to print\n"
-                  "  -o FILE      output file\n"
-                  "\n"
-                  "With no FILE, or when FILE is -, write to standard output\n"
-                  "\n"
-                  "The following environment variables are recognized by png2pos:\n"
-                  "  PNG2POS_PRINTER_MAX_WIDTH\n"
-                  "  PNG2POS_GS8L_MAX_Y\n"
-                  "\n"
-                  "Please read the manual page (man png2pos)\n"
-                  "Report bugs at https://github.com/petrkutalek/png2pos/issues\n"
-                  "(c) Petr Kutalek <petr@kutalek.cz>, 2012 - 2015, Licensed under the MIT license\n"
-              );
-              ret = EXIT_SUCCESS;
-              goto fail;
-
-          case ':':
-              fprintf(stderr, "Option '%c' requires an argument\n", optopt);
-              fprintf(stderr, "For usage options run 'png2pos -h'\n");
-              goto fail;
-
-          default:
-          case '?':
-              fprintf(stderr, "'%c' is an unknown option\n", optopt);
-              fprintf(stderr, "For usage options run 'png2pos -h'\n");
-              goto fail;
-      }
-  }
-  */
-  /*
-  argc -= optind;
-  argv += optind;
-  */
-  /*
-  optind = 0;
-  {
-      const char *printer_max_width_env = getenv("PNG2POS_PRINTER_MAX_WIDTH");
-      if (printer_max_width_env) {
-          config.printer_max_width = strtoul(printer_max_width_env, NULL, 0);
-      }
-      // printer_max_width must be divisible by 8!!
-      config.printer_max_width &= ~0x7u;
-  }
-
-  {
-      const char *gs8l_max_y_env = getenv("PNG2POS_GS8L_MAX_Y");
-      if (gs8l_max_y_env) {
-          config.gs8l_max_y = strtoul(gs8l_max_y_env, NULL, 0);
-      }
-  }
-  */
 
   // open output file and disable line buffering
   if (!config.output || !strcmp(config.output, "-")) {
