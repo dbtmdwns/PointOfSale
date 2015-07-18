@@ -69,9 +69,10 @@ StackViewItem {
             if (
               (page==='MatrixInput.qml')
             ){
-              console.log('74',typeof application)
+              application.message="Bitte warten"
               application.login(function(){
                 application.reportStore.loadArticles(function(){
+                  application.message=""
                   stack.push(Qt.resolvedUrl(page))
                 });
               });

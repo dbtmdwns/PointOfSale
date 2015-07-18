@@ -34,6 +34,10 @@ ApplicationWindow {
     id: remote
   }
   */
+
+
+
+
   MainStyle {
     id: mainStyle
   }
@@ -97,7 +101,11 @@ ApplicationWindow {
       }
       //console.log("main","input",inputText)
     }
+
+    
   }
+
+
 
 
 

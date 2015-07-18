@@ -37,10 +37,11 @@ Item {
 
   Timer {
     id: asyncTimer
-    interval: 15000
+    interval: 10000
     running: true
     repeat: true
     onTriggered: {
+
       console.log('asyncTimer','triggered')
       if (application.async=='1'){
         var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
@@ -80,19 +81,31 @@ Item {
           }
         );
       }
+
     }
   }
 
   function asyncList(csession,list,index,cb){
     if (index<list.length){
       var json = application.remote.unEscapeResult(list[0].value);
+      var xid = list[0].id
       json.id = list[0].id+' '+json.id;
       save(json,function(err,res){
-        console.log(err,res);
+        //console.log('----',err,JSON.stringify(res,null,0));
         if (res.success==true){
           console.log('asyncList','save',res.belegnummer,'id',json.id);
         }else{
           console.log('asyncList','save error',res.msg);
+        }
+        if ((res.success==true) || ((res.success==false) && (res.code===1))){
+          var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+          db.transaction(
+            function(tx) {
+              var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
+              console.log('asyncList',sql);
+              tx.executeSql(sql);
+            }
+          );
         }
         asyncList(csession,list,index+1,cb);
       },csession);
@@ -149,7 +162,7 @@ Item {
     }, function(err, res) {
       if (err) {
         // todo
-        console.log('error',err);
+        console.log('error',err.toString());
       } else if (res.success) {
         try{
           var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
@@ -161,10 +174,10 @@ Item {
               tx.executeSql(sql);
             }
           );
-          cb(res);
         }catch(e){
           console.log( e)
         }
+          cb(res);
         //cb(res);
       } else if (res.success==false) {
         //todo
@@ -247,6 +260,7 @@ Item {
     if (typeof parse === 'undefined') {
       parse = true;
     }
+    //console.log('post',JSON.stringify(data,null,0));
     var xhr = new XMLHttpRequest();
     var send_data = "";
     for (var i in data) {
@@ -259,7 +273,8 @@ Item {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-
+          //console.log('post',http_result.substring(0,200));
+          //console.log(xhr.responseText);
           if (typeof callback !== 'undefined') {
             try {
               if (parse === true) {
@@ -268,8 +283,6 @@ Item {
               } else {
                 result = http_result;
               }
-              callback(null, result);
-
             } catch (e) {
               console.log(xhr.responseText);
               console.log('catched error',e.toString());
@@ -278,7 +291,11 @@ Item {
                 status: xhr.status,
                 response: xhr.responseText
               }, null);
+              return;
             }
+            callback(null, result);
+
+
           }
         } else {
           callback({

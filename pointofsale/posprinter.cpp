@@ -6,8 +6,8 @@
 #include <QDir>
 #include <QPrinter>
 #include <QTextDocument>
-#include <QtWebKitWidgets/QWebView>
-#include <QtWebKitWidgets/QWebFrame>
+//#include <QtWebKitWidgets/QWebView>
+//#include <QtWebKitWidgets/QWebFrame>
 
 #include <QFile>
 #include <QPainter>
@@ -249,7 +249,7 @@ QString PosPrinter::readFile(QString path){
 
 void PosPrinter::print(QString htmlContent){
 
-
+    /*
     QPrinter printer(QPrinter::ScreenResolution);
     printer.setResolution(printerResolution);
     printer.setPaperSize(QSizeF(paperWidth,paperHeight),QPrinter::Millimeter);
@@ -262,7 +262,7 @@ void PosPrinter::print(QString htmlContent){
     //printer.setPageMargins(4,4,4,15,QPrinter::Millimeter);
     //printer.setPaperSize(QSizeF(80,200),QPrinter::Millimeter);
     m_pWebView->print(&printer);
-
+    */
 }
 
 void PosPrinter::setup(int res,double width,double height){

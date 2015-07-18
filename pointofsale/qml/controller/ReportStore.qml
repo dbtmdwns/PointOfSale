@@ -9,7 +9,7 @@ Item {
   property double total: 0
   property double total_tax: 0
   property double total_without_tax: 0
-  property int number: -1
+  property double number: -1
   property var positions: []
 
   property var styles
@@ -23,7 +23,7 @@ Item {
   property bool givenModeInit: true
   property bool givenPModeInit: true
 
-  property string message: ""
+
   property string steuerschluessel: "innen"
   property int preiskategorie: 1
   property string relation: "Normal - innen"
@@ -59,16 +59,6 @@ Item {
   property var onFind: null
 
 
-  Timer {
-    id: messageHideTimer
-    interval: 1000
-    running: false
-    repeat: false
-    onTriggered: {
-      messageHideTimer.stop();
-      message = "";
-    }
-  }
 
   Timer {
     id: clearFindString
@@ -87,18 +77,6 @@ Item {
     }
   }
 
-  function displayMessage(msg, hold) {
-    if (typeof hold === 'undefined') {
-      hold = false;
-    }
-    if (hold) {
-      messageHideTimer.interval = 30000;
-    } else {
-      messageHideTimer.interval = 1000;
-    }
-    message = msg;
-    messageHideTimer.start();
-  }
 
   function loadArticles(cb) {
     application.articles(function(res) {
@@ -359,7 +337,7 @@ Item {
         } else if (currentMode === 'price') {
 
           if (positions[positions.length - 1].kombiartikel===true){
-            displayMessage("Preisänderung ist bei Kombiartikeln nicht erlaubt");
+            application.displayMessage("Preisänderung ist bei Kombiartikeln nicht erlaubt");
             return;
           }
           val *=1;
@@ -544,7 +522,7 @@ Item {
 
           if (currentMode === 'pay') {
             if (given >= total) {
-              displayMessage("Der Beleg wird gespeichert.", true);
+              application.displayMessage("Der Beleg wird gespeichert.", true);
               currentMode = 'paysave';
               if (application.usePOSPrinter===true){
                 application.posPrinter.open(application.printerName);
@@ -554,7 +532,7 @@ Item {
 
 
                 if (err) {
-                  displayMessage(err.response,true);
+                  application.displayMessage(err.response,true);
                   console.log('saveReport error',err.response);
                 } else {
 
@@ -578,12 +556,12 @@ Item {
                       console.log(e);
                     }
                     positions = [];
-                    displayMessage(number + " gespeichert.");
+                    application.displayMessage(number + " gespeichert.");
                     number = -1;
                     lastTotal = total;
                     currentMode = 'amount';
                   } else {
-                    displayMessage(res.msg);
+                    application.displayMessage(res.msg);
                   }
                   sum();
                 }

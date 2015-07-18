@@ -191,6 +191,25 @@ Rectangle {
 
 
 
+    Rectangle {
+      anchors.centerIn: parent
+      opacity: (application.message === "") ? 0 : 1
+      color: "white"
+      radius: 5
+      width: parent.width * 0.30
+      height: parent.height * 0.30
+      Behavior on opacity {
+        OpacityAnimator {
+          easing.type: Easing.InCubic;
+          duration: 150
+        }
+      }
+      Text {
+        anchors.centerIn: parent
+        clip: true
+        text: application.message
+      }
+    }
 
 
 }

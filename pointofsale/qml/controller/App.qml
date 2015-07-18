@@ -6,9 +6,33 @@ import com.tualo 1.0
 
 Item {
 
-
+  property string message: ""
   property alias local: myLocal
   property alias remote: myRemote
+
+  Timer {
+    id: messageHideTimer
+    interval: 1000
+    running: false
+    repeat: false
+    onTriggered: {
+      messageHideTimer.stop();
+      message = "";
+    }
+  }
+
+  function displayMessage(msg, hold) {
+    if (typeof hold === 'undefined') {
+      hold = false;
+    }
+    if (hold) {
+      messageHideTimer.interval = 30000;
+    } else {
+      messageHideTimer.interval = 1000;
+    }
+    message = msg;
+    messageHideTimer.start();
+  }
 
 
   Local {
@@ -103,6 +127,9 @@ Item {
     var green = 0;
     var blue = 0;
     var alpha = 1;
+    if (typeof str==='undefined'){
+      str='rgb(100,100,100)';
+    }
     if (str.indexOf("rgb(") === 0) {
       str = str.replace("rgb(", "");
       str = str.replace(")", "");
@@ -259,11 +286,11 @@ Item {
         // Add (another) greeting row
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['async', async]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerName', printerName]);
-
+/*
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperWidth', paperWidth]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperHeight', paperHeight]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerResolution', printerResolution]);
-
+*/
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['url', myRemote.url]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['username', myRemote.username]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['password', myRemote.password]);
@@ -406,10 +433,11 @@ Item {
   }
 
   function processConfig(res){
-    async = res.async;
+    async = res.async||'0';
     console.log('processConfig',JSON.stringify(res,null,1))
     myLocal.maxReportNumber = res.maxReportNumber;
     myLocal.minReportNumber = res.minReportNumber;
+
     kasse = res.kasse;
     lager = res.lager;
     zahlart = res.zahlart;

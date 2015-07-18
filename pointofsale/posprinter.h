@@ -2,7 +2,7 @@
 #define POSPRINTER_H
 
 #include <QObject>
-#include <QtWebKitWidgets/QWebView>
+//#include <QtWebKitWidgets/QWebView>
 
 class PosPrinter : public QObject
 {

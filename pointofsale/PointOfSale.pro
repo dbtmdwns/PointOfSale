@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets printsupport webkitwidgets
+QT += qml quick widgets printsupport
 
 SOURCES += main.cpp \
     posprinter.cpp \

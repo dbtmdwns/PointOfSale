@@ -59,7 +59,7 @@ StackViewItem {
     id: view
     clip: true
     color: "transparent"
-    width: framedView.width - leftFrame.width
+    width: framedView.width
     height: framedView.height
     x: 0
     y: 0
@@ -309,25 +309,7 @@ StackViewItem {
 
 
 
-    Rectangle {
-      anchors.centerIn: view
-      opacity: (application.reportStore.message === "") ? 0 : 1
-      color: "white"
-      radius: 5
-      width: view.width * 0.30
-      height: view.height * 0.30
-      Behavior on opacity {
-        OpacityAnimator {
-          easing.type: Easing.InCubic;
-          duration: 150
-        }
-      }
-      Text {
-        anchors.centerIn: parent
-        clip: true
-        text: application.reportStore.message
-      }
-    }
+    
     Rectangle {
       anchors.centerIn: view
       opacity: (application.reportStore.findString === "") ? 0 : 1

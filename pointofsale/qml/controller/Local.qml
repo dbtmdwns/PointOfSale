@@ -92,6 +92,7 @@ Item {
             belegnummer: newID,
             msg: "Gespeichert"
           }
+          minReportNumber = newID+1;
         }else{
           cbMessage.msg="Der Nummernkreis ist erschöpft."
         }

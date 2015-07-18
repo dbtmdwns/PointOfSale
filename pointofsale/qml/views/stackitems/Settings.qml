@@ -20,10 +20,11 @@ StackViewItem {
         application.remote.username = username.text;
         application.remote.password = password.text;
 
-        application.printerResolution = printerResolution.text;
+        application.printerName = printerName.text;
+/*        application.printerResolution = printerResolution.text;
         application.paperWidth = paperWidth.text;
         application.paperHeight = paperHeight.text;
-
+*/
         //application.department = department.text;
         //application.receipt = receipt.text;
         //application.items_group = items_group.text;
