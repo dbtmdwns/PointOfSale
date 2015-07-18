@@ -147,7 +147,7 @@ close(printer_fd);
   */
 }
 
-bool PosPrinter::sendToPrinter(QString printerName, QString data){
+bool PosPrinter::sendToPrinter(QString printerName, QString filename){
 #if defined(_WIN32)
     // Windows
     HANDLE hPrinter;
@@ -155,8 +155,14 @@ bool PosPrinter::sendToPrinter(QString printerName, QString data){
     DWORD dwJob;
     DWORD dwBytesWritten;
 
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) return false;
+    QByteArray data = file.readAll();
+
+
     LPSTR szPrinterName=(char*)printerName.toLocal8Bit().data();
-    LPBYTE lpData = (unsigned char*)data.toLocal8Bit().data();
+    LPBYTE lpData = (unsigned char*) data.data();//data.toLocal8Bit().data();
     DWORD dwCount = (long) data.length();
 
     if (!OpenPrinterA(szPrinterName,&hPrinter,NULL)){
@@ -309,21 +315,28 @@ void PosPrinter::printFile(QString printer, QString filename, QString height){
     printProgram = "lp";
     arguments << "-d" << printer;
     arguments << filename+".bin";
-  }else if (
-    (osName().compare("windows")==0)
-  ){
-    // print /D:"\\%COMPUTERNAME%\PRINTER" "%~dpn1.bin"
-    printProgram = "print";
-    arguments << "/D:\""+printer+"\"";
-    arguments << filename+".bin";
-  }
 
-  if (printProgram.compare("")!=0){
     QProcess *printProcess = new QProcess();
     printProcess->start(printProgram, arguments);
     printProcess->waitForFinished(1000);
     QFile::remove(filename+".bin");
     QFile::remove(filename);
+
+  }else if (
+    (osName().compare("windows")==0)
+  ){
+
+    sendToPrinter(printer, filename+".bin");
+    /*
+    // print /D:"\\%COMPUTERNAME%\PRINTER" "%~dpn1.bin"
+    printProgram = "print";
+    arguments << "/D:\""+printer+"\"";
+    arguments << filename+".bin";
+    qDebug() << arguments;
+    */
+    QFile::remove(filename+".bin");
+    QFile::remove(filename);
+
   }
 }
 
@@ -343,6 +356,12 @@ void PosPrinter::cut(QString printer){
       stream << data;
   }
 
+  if (
+      (osName().compare("windows")==0)
+    ){
+
+      sendToPrinter(printer, "cut.prn");
+   }else{
   QString printProgram = "lp";
   QStringList arguments;
   arguments << "-d" << printer;
@@ -351,6 +370,7 @@ void PosPrinter::cut(QString printer){
   QProcess *printProcess = new QProcess();
   printProcess->start(printProgram, arguments);
   printProcess->waitForFinished(1000);
+  }
   QFile::remove("cut.prn");
 }
 
@@ -373,6 +393,13 @@ void PosPrinter::open(QString printer){
       stream << data;
   }
 
+  if (
+      (osName().compare("windows")==0)
+    ){
+
+      sendToPrinter(printer, "open.prn");
+   }else{
+
   QString printProgram = "lp";
   QStringList arguments;
   arguments << "-d" << printer;
@@ -381,7 +408,7 @@ void PosPrinter::open(QString printer){
   QProcess *printProcess = new QProcess();
   printProcess->start(printProgram, arguments);
   printProcess->waitForFinished(1000);
-
+}
   QFile::remove("open.prn");
 
 }
