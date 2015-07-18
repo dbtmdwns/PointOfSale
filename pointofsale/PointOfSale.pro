@@ -10,7 +10,7 @@ RESOURCES += qml.qrc
 
 win32-g++{
   message(Qt is installed in $$[QT_INSTALL_PREFIX])
-  LIBS += C:\Qt5.4\Tools\mingw491_32\i686-w64-mingw32\lib\libwinspool.a
+  LIBS += $$[QT_INSTALL_PREFIX]\..\..\Tools\mingw491_32\i686-w64-mingw32\lib\libwinspool.a
 }
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
