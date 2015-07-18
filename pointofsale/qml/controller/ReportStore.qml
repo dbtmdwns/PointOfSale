@@ -705,6 +705,9 @@ Item {
     var stotal_without_tax=0;
     var stotal = 0;
     var positions = item.positions;
+      var l1=[ ];
+      var l2=[ ];
+
     var data = {
       time: item.time,
       customerno: item.customerno,
@@ -713,31 +716,31 @@ Item {
       reportnumber: item.reportnumber,
       totalNet: 19.00 / 1.07 + 10.00 / 1.19,
       totalNetIncludingTax: 19.00 + 10.00,
-      positions: [ ],
-      taxes: [ ]
+      positions: l1,
+      taxes: l2
     };
     for (var i = 0; i < positions.length; i++) {
-      var item = positions[i];
+      var xitem = positions[i];
       data.positions.push({
-        article: item.artikel,
-        reference: item.referenz,
-        amount: item.anzahl,
-        additionalText: item.zusatztext,
-        tax: item.brutto - item.netto,
-        taxRate: item.steuersatz,
-        net: item.netto,
-        includingTax: item.brutto,
-        itemPrice: item.epreis,
-        itemPriceIncludingTax: item.epreis*(1+item.steuersatz/100)
+        article: xitem.artikel,
+        reference: xitem.referenz,
+        amount: xitem.anzahl,
+        additionalText: xitem.zusatztext,
+        tax: xitem.brutto - xitem.netto,
+        taxRate: xitem.steuersatz,
+        net: xitem.netto,
+        includingTax: xitem.brutto,
+        itemPrice: xitem.epreis,
+        itemPriceIncludingTax: xitem.epreis*(1+xitem.steuersatz/100)
       })
-      if (typeof taxIndexHash['S'+item.steuersatz]=='undefined'){
-        taxIndexHash['S'+item.steuersatz]= data.taxes.length;
+      if (typeof taxIndexHash['S'+xitem.steuersatz]=='undefined'){
+        taxIndexHash['S'+xitem.steuersatz]= data.taxes.length;
         data.taxes.push({
-          rate: item.steuersatz,
+          rate: xitem.steuersatz,
           value: 0
         });
       }
-      data.taxes[ taxIndexHash['S'+item.steuersatz] ].value += item.brutto - item.netto;
+      data.taxes[ taxIndexHash['S'+xitem.steuersatz] ].value += xitem.brutto - xitem.netto;
       stotal += positions[i].brutto;
       stotal_without_tax += positions[i].netto;
     }

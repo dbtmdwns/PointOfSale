@@ -230,6 +230,10 @@ Item {
     db.transaction(
       function(tx) {
         // Create the database if it doesn't already exist
+      tx.executeSql('CREATE TABLE IF NOT EXISTS config (key varchar(255) primary key, value TEXT)');
+          tx.executeSql('CREATE TABLE IF NOT EXISTS reports ( key varchar(255), id integer, value TEXT, primary key (key,id) )');
+          tx.executeSql('CREATE TABLE IF NOT EXISTS articles (key varchar(255) primary key, value TEXT)');
+          tx.executeSql('CREATE TABLE IF NOT EXISTS relations (key varchar(255) primary key, value TEXT)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
         var rs = tx.executeSql('SELECT key,value FROM settings');
         for (var i = 0; i < rs.rows.length; i++) {

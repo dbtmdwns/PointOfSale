@@ -354,7 +354,7 @@ StackViewItem {
   */
   Rectangle {
     id: leftFrame
-    x: 0
+    x: application.reportStore.reportMode ? 0: -1*view.width
     width: view.width / 2 //application.reportStore.reportMode ?  : 0
     height: framedView.height
     Behavior on opacity {

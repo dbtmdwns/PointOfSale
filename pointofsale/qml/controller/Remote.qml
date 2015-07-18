@@ -128,10 +128,13 @@ Item {
         // ToDo
       }else if (res.success) {
         sessionID = res.sid;
-        cb();
+        cb(true);
         pingTimer.start();
       }else if (res.success == false) {
         // ToDo
+        displayMessage(res.msg,true)
+        application.message=res.msg
+        cb(false);
       }
     });
   }

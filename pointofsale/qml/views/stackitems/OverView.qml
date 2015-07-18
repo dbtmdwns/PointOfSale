@@ -70,11 +70,14 @@ StackViewItem {
               (page==='MatrixInput.qml')
             ){
               application.message="Bitte warten"
-              application.login(function(){
+              application.login(function(success){
+
                 application.reportStore.loadArticles(function(){
                   application.message=""
                   stack.push(Qt.resolvedUrl(page))
                 });
+
+
               });
             }else{
               stack.push(Qt.resolvedUrl(page))
