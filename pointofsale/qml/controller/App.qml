@@ -239,6 +239,7 @@ Item {
             break;
             case "async":
               async = rs.rows.item(i).value;
+              console.log( 'DB',async);
               break;
             case "client":
               myRemote.client = rs.rows.item(i).value;
@@ -428,13 +429,16 @@ Item {
       myRemote.config(function(res){
         processConfig(res);
         cb();
+        saveSettings();
       });
     }
   }
 
   function processConfig(res){
     async = res.async||'0';
-    console.log('processConfig',JSON.stringify(res,null,1))
+    console.log('processConfig',res.async)
+
+    //console.log('processConfig',JSON.stringify(res,null,1))
     myLocal.maxReportNumber = res.maxReportNumber;
     myLocal.minReportNumber = res.minReportNumber;
 
@@ -446,7 +450,7 @@ Item {
       posTitle = res.posTitle;
     }
     if (typeof res.template==='string'){
-      template = res.template;
+      template = res.template.replace(/#qoute;/gm,"'");
     }
     if (left_logo_file === "") {
       left_logo_file = res.left_logo

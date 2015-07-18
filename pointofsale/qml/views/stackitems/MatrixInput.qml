@@ -309,7 +309,7 @@ StackViewItem {
 
 
 
-    
+
     Rectangle {
       anchors.centerIn: view
       opacity: (application.reportStore.findString === "") ? 0 : 1
@@ -354,8 +354,8 @@ StackViewItem {
   */
   Rectangle {
     id: leftFrame
-    x: view.width
-    width: application.reportStore.reportMode ? ( framedView.itemWidth * application.rightSideColumns) : 0
+    x: 0
+    width: view.width / 2 //application.reportStore.reportMode ?  : 0
     height: framedView.height
     Behavior on opacity {
       OpacityAnimator {
@@ -363,7 +363,7 @@ StackViewItem {
         duration: 500
       }
     }
-    color: "transparent"
+    color: "black"
     opacity: application.reportStore.reportMode ? 1 : 0
     Matrix {
       id: leftFrameMatrix
@@ -387,6 +387,7 @@ StackViewItem {
       }
 
       onSelected: {
+        application.reportStore.reportMode = false
         application.reportStore.cmd("OPENREPORT", item.reportnumber);
       }
     }
