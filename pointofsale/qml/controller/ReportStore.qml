@@ -117,6 +117,8 @@ Item {
       ){
         for (var s in _staffeln) {
           if (_staffeln[s].gruppe === _artikel[i].gruppe) {
+
+
             if (preiskategorie * 1 === _staffeln[s].preiskategorie * 1) {
               var item = {};
               item.gruppe = _staffeln[s].gruppe;
@@ -129,6 +131,9 @@ Item {
               item.brutto_preis = _staffeln[s].brutto * 1;
               item.brutto = _staffeln[s].brutto * 1;
               item.zusatztext = _artikel[i].zusatztext;
+              if ( item.gruppe == 'Obstsalat' ){
+                console.log(JSON.stringify(item,null,2))
+              }
               res.push(item);
             }
           }

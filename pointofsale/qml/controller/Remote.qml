@@ -44,6 +44,8 @@ Item {
 
       console.log('asyncTimer','triggered')
       if (application.async=='1'){
+
+
         var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
         db.transaction(
           function(tx) {
@@ -62,13 +64,15 @@ Item {
                 // ToDo
               }else if (res.success) {
                 var csession = res.sid;
-
+                sessionID = csession;
+                ping();
                 asyncList(csession,rs.rows,0,function(){
                   post(url, {
                     TEMPLATE: 'NO',
                     cmp: 'cmp_logout',
                     sid: csession
                   }, function(err, res) {
+                    sessionID="";
                   }, false);
 
                 });
@@ -153,6 +157,9 @@ Item {
 
   function ping(){
     config(application.processConfig)
+    articles(function(){
+
+    });
   }
 
   function config(cb) {
