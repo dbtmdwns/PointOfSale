@@ -376,13 +376,14 @@ StackViewItem {
       Component.onCompleted: {
         application.reportStore.onAddedReport = function(item){
           function compare(a,b) {
-            if (a.belegnummer < b.belegnummer)
+            if (a.reportnumber < b.reportnumber)
                return 1;
-            if (a.belegnummer > b.belegnummer)
+            if (a.reportnumber > b.reportnumber)
               return -1;
             return 0;
           }
-          leftFrameMatrix.addList(application.reportStore.oldReports.sort(compare).slice(0,30));
+          var list = application.reportStore.oldReports.slice(0);
+          leftFrameMatrix.addList(list.sort(compare).slice(0,30));
         };
       }
 

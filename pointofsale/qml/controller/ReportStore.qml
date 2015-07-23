@@ -95,6 +95,28 @@ Item {
     });
   }
 
+  function comp(a,b){
+      if (a.reportnumber > b.reportnumber){
+          return 1;
+      }else if (a.reportnumber < b.reportnumber){
+          return -1;
+      }else{
+          return 0;
+      }
+  }
+  function getOldReport(number){
+    oldReports.sort(comp);
+    if (number===-1){
+      return oldReports[oldReports.length-1];
+    }else{
+      for(var i=0,m=oldReports.length;i<m;i++){
+        if (oldReports[i].reportnumber===number){
+            return oldReports[i];
+        }
+      }
+    }
+  }
+
   function pushOldReport(item) {
     oldReports.push(item);
     if (typeof onAddedReport === 'function') {
@@ -466,7 +488,7 @@ Item {
       }
 
       if (oldReports.length>0){
-        printReport( oldReports[oldReports.length-1] ) // printimage
+        printReport( getOldReport(number) ) // printimage
       }
 
 
@@ -602,7 +624,7 @@ Item {
         var brutto_preis = item.brutto_preis;
         var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
-        var item = {
+        var xitem = {
           artikel: item.gruppe,
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
           referenz: (typeof item.referenz === 'string') ? item.referenz : '',
@@ -614,12 +636,12 @@ Item {
           brutto: brutto,
           netto: netto
         }
-        var kombi_liste = _kombiartikel[item.artikel];
-        positions.push(item);
+        var kombi_liste = _kombiartikel[xitem.artikel];
+        positions.push(xitem);
         for(var ki=0;ki<kombi_liste.length;ki++){
           var nitem = singleArticle(kombi_liste[ki].resultartikel);
           nitem.artikel = nitem.gruppe;
-          nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '',
+          nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
           nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
           nitem.epreis =  nitem.preis * kombi_liste[ki].resultpfaktor;
           nitem.brutto_preis =  nitem.brutto_preis * kombi_liste[ki].resultpfaktor;
@@ -644,7 +666,7 @@ Item {
         var brutto_preis = item.brutto_preis;
         var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
-        var item = {
+        var yitem = {
           artikel: item.gruppe,
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
           referenz: (typeof item.referenz === 'string') ? item.referenz : '',
@@ -656,7 +678,7 @@ Item {
           brutto: brutto,
           netto: netto
         }
-        positions.push(item);
+        positions.push(yitem);
         currentMode = 'amount';
         amountModeInit = true;
         sum();

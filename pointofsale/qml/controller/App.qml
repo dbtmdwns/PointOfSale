@@ -31,6 +31,7 @@ Item {
       messageHideTimer.interval = 1000;
     }
     message = msg;
+    console.log(message);
     messageHideTimer.start();
   }
 
