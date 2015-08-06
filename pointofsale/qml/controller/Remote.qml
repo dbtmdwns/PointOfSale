@@ -42,7 +42,7 @@ Item {
     repeat: true
     onTriggered: {
 
-      console.log('asyncTimer','triggered')
+      //console.log('asyncTimer','triggered')
       if (application.async=='1'){
 
 
@@ -51,7 +51,7 @@ Item {
           function(tx) {
             var sql = 'select * from reports where key = \''+client+'\' ';
             var rs = tx.executeSql(sql);
-            console.log('asyncTimer','reports for submission',rs.rows.length)
+            //console.log('asyncTimer','reports for submission',rs.rows.length)
 
             post(url, {
               username: username,
@@ -106,7 +106,7 @@ Item {
           db.transaction(
             function(tx) {
               var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
-              console.log('asyncList',sql);
+              //console.log('asyncList',sql);
               tx.executeSql(sql);
             }
           );
@@ -157,9 +157,7 @@ Item {
 
   function ping(){
     config(application.processConfig)
-    articles(function(){
-
-    });
+    articles(function(){ });
   }
 
   function config(cb) {
@@ -278,12 +276,13 @@ Item {
     }
     var http_result = "";
     __callback = callback;
+    //console.log('post',send_data.substring(0,200));
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-          //console.log('post',http_result.substring(0,200));
+          console.log('post',http_result.substring(0,200));
           //console.log(xhr.responseText);
           if (typeof callback !== 'undefined') {
             try {
