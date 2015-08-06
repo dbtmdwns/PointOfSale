@@ -23,39 +23,61 @@ Rectangle {
 
 
     Rectangle {
-        color: "white"//mainStyle.colors.stackViewBackground
+        color: mainStyle.colors.stackViewBackground
         anchors.fill: parent
     }
 
+
+
+    Rectangle {
+
+      opacity: 0.3//(application.message === "") ? 0 : 1
+      color: "white"
+      radius: 5
+      width: 10 //  parent.width * 0.30
+      height: 10 // parent.height * 0.30
+      Behavior on opacity {
+        OpacityAnimator {
+          easing.type: Easing.InCubic;
+          duration: 150
+        }
+      }
+      Text {
+        anchors.centerIn: parent
+        clip: true
+        text: application.message
+      }
+    }
 
     StackView {
         id: stackView
         y: toolbar.height
         height: parent.height - toolbar.height
         delegate: StackViewDelegate {
-                function transitionFinished(properties)
-                {
-                    properties.exitItem.opacity = 1
-                }
 
-                pushTransition: StackViewTransition {
-                    PropertyAnimation {
-                        duration: 100
-                        target: enterItem
-                        property: "opacity"
-                        from: 0
-                        to: 1
-                    }
-                    PropertyAnimation {
-                        duration: 100
-                        target: exitItem
-                        property: "opacity"
-                        from: 1
-                        to: 0
-                    }
-                }
-
+            function transitionFinished(properties)
+            {
+                properties.exitItem.opacity = 1
             }
+
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    duration: 100
+                    target: enterItem
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                }
+                PropertyAnimation {
+                    duration: 100
+                    target: exitItem
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                }
+            }
+
+        }
     }
 
     Rectangle {
@@ -96,7 +118,9 @@ Rectangle {
                 id: backmouse
                 anchors.fill: parent
                 anchors.margins: -10
-                onClicked: stackView.pop()
+                onClicked: {
+                  stackView.pop()
+                }
             }
         }
 
@@ -106,7 +130,7 @@ Rectangle {
             x: backButton.x + backButton.width + mainStyle.dimens.leftMargin
             anchors.verticalCenter: parent.verticalCenter
             color: mainStyle.colors.toolbarText
-            text: backButton.opacity ? (
+            text: ( backButton.opacity ? (
 
               (
 
@@ -116,7 +140,7 @@ Rectangle {
 
               ) ? ( title+": "+stackView.currentItem.title ) : title
 
-            ) : title
+            ) : title )
         }
 
 
@@ -171,9 +195,8 @@ Rectangle {
                   }
                 }
                 anchors.fill: parent
-                anchors.margins: -10
+                //anchors.margins: -10
                 onClicked: {
-
 
                     if (canClick){
                         canClick = false;
@@ -191,25 +214,7 @@ Rectangle {
 
 
 
-    Rectangle {
-      anchors.centerIn: parent
-      opacity: (application.message === "") ? 0 : 1
-      color: "white"
-      radius: 5
-      width: parent.width * 0.30
-      height: parent.height * 0.30
-      Behavior on opacity {
-        OpacityAnimator {
-          easing.type: Easing.InCubic;
-          duration: 150
-        }
-      }
-      Text {
-        anchors.centerIn: parent
-        clip: true
-        text: application.message
-      }
-    }
+
 
 
 }
