@@ -223,7 +223,7 @@ Item {
     use_date = new Date();
     db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", dbsize);
 
-    myRemote.url = "https://tualoserver.de/wawi/index.php"
+    myRemote.url = "https://tualoserver.de/ts/index.php"
     myRemote.client = "admin"
     myRemote.username = "admin"
     myRemote.password = "admin"
