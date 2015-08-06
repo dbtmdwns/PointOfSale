@@ -254,9 +254,11 @@ ScrollView {
 
       sax.parse(data)
       try{
-        scrollView.__verticalScrollBar.value = newY - scrollView.height *0.95
+        //console.log(newY,scrollView.height)
+        scrollView.flickableItem.contentY = newY - scrollView.height *0.95
+        //scrollView.__verticalScrollBar.value = newY //- scrollView.height *0.95
       }catch(e){
-
+        console.log(e);
       }
       return {
         h: newY + lineHeight * 5,
@@ -344,6 +346,7 @@ ScrollView {
       ctx.fillStyle = "black"
       ctx.font = "15px sans-serif";
       var metrics = draw(ctx,tpl.render(data),true);
+      //console.log(JSON.stringify(metrics,null,2));
       //resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, width, height);
       ctx.scale(0.5,0.5);
       ctx.save();
