@@ -1,5 +1,5 @@
 import QtQuick 2.3
-import QtQuick.Window 2.1
+import QtQuick.Window 2.0
 import QtQuick.Layouts 1.1
 import "../../controlls"
 
@@ -59,13 +59,21 @@ StackViewItem {
         opacity: 0.1
         source: "qrc:/resources/image_source/logo.svg";
     }
+
     ListView {
+      id: list
       model: pageModel
       anchors.fill: parent
       delegate: SimpleListItemDelegate {
+
+          //anchors.fill: parent
+          //color: "green"
+
           text: title
           icon: iconText
+
           onClicked: {
+            // console.log('ok');
             if (
               (page==='MatrixInput.qml')
             ){
