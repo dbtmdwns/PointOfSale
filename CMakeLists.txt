@@ -7,6 +7,11 @@ SET(CMAKE_BUILD_TYPE "Release")
 
 set(CMAKE_PREFIX_PATH $ENV{QTDIR})
 set(CMAKE_MODULE_PATH ${PointOfSale_SOURCE_DIR}/cmake)
+
+set(QT5_PATH $ENV{HOME}/Qt/5.5/clang_64/ CACHE PATH "Path to Qt5")
+set(QT5_MODULE_PATH ${QT5_PATH}/lib/cmake)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT5_MODULE_PATH})
+
 message("including ${PointOfSale_SOURCE_DIR}/cmake ")
 
 include(BuildType)

@@ -1,6 +1,5 @@
 # Find the Qt components we need.
 
-
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
@@ -19,7 +18,7 @@ find_package(Qt5WebKitWidgets REQUIRED)
 find_package(Qt5Location REQUIRED)
 find_package(Qt5Script REQUIRED)
 find_package(Qt5Declarative REQUIRED)
-find_package(Qt5WebView REQUIRED)
+#find_package(Qt5WebView REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5WebEngine REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -96,7 +95,6 @@ qt5_use_modules(pointofsale
   Location
   Script
   Declarative
-  WebView
   PrintSupport
   WebEngine
   Widgets
