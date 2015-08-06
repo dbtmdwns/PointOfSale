@@ -24,7 +24,7 @@ Item {
     property string background: "#54545f"
     property string basicFontColor: "white"
     property string buttonPressed: "#212121"
-    property string toolbarPrevIcon: "red"
+    property string toolbarPrevIcon: "#eeffffff"
     property string toolbarNextIcon: "green"
 
     property string toolbarText: "#aaaaff"
@@ -40,7 +40,7 @@ Item {
     property int backButtonHeight: toolbarHeight / 2
     property int nextButtonWidth: (toolbarHeight / 2) * 3
     property int nextButtonHeight: toolbarHeight / 2
-
+    property int iconWidth: 30
     property int leftMargin: (application.dpi/113) * 20
     property int rightMargin: (application.dpi/113) * 20
 
