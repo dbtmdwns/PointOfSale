@@ -79,29 +79,7 @@ Rectangle {
             width: parent.width
             height: parent.height
           }
-          /*
-          WebView {
-            id: webview
-            url: "about:blank"
-            width: parent.width
-            height: parent.height
-          }
-          */
-
-       /*
-          ScrollView {
-            id: webview_scroll
-            width: parent.width
-            height: parent.height
-            verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-            WebEngineView {
-              id: webview
-              url: "about:blank"
-              //url: "http://google.de"
-            }
-          }
-          */
+          
         }
       }
 

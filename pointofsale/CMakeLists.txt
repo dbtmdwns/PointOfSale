@@ -3,28 +3,29 @@
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
-find_package(Qt5WebEngineCore REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Sql REQUIRED)
-find_package(Qt5WebEngineWidgets REQUIRED)
 find_package(Qt5XmlPatterns REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Svg REQUIRED)
-find_package(Qt5WebKit REQUIRED)
 find_package(Qt5QuickWidgets REQUIRED)
-find_package(Qt5WebKitWidgets REQUIRED)
 find_package(Qt5Location REQUIRED)
 find_package(Qt5Script REQUIRED)
 find_package(Qt5Declarative REQUIRED)
-#find_package(Qt5WebView REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
-find_package(Qt5WebEngine REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5OpenGLExtensions REQUIRED)
 find_package(Qt5Positioning REQUIRED)
+
+#find_package(Qt5WebEngineWidgets REQUIRED)
+#find_package(Qt5WebEngineCore REQUIRED)
+#find_package(Qt5WebKit REQUIRED)
+#find_package(Qt5WebView REQUIRED)
+#find_package(Qt5WebEngine REQUIRED)
+#find_package(Qt5WebKitWidgets REQUIRED)
 
 set(pointofsale_srcs
   main.cpp
@@ -76,27 +77,23 @@ add_executable(pointofsale WIN32 MACOSX_BUNDLE
   ${pointofsale_srcs} ${ui_srcs} ${rcc_srcs})
 qt5_use_modules(pointofsale Widgets OpenGL Network Concurrent)
 
+
 qt5_use_modules(pointofsale
   Quick
   Core
   Qml
-  WebEngineCore
   Xml
   Gui
   Network
   Sql
-  WebEngineWidgets
   XmlPatterns
   Concurrent
   Svg
-  WebKit
   QuickWidgets
-  WebKitWidgets
   Location
   Script
   Declarative
   PrintSupport
-  WebEngine
   Widgets
   OpenGL
   OpenGLExtensions

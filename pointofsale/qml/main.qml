@@ -193,8 +193,8 @@ ApplicationWindow {
     // Implements back key navigation
     focus: true
     Keys.onReleased: {
-      if (event.key === Qt.Key_Back && stackView.depth > 1) {
-         stackView.pop();
+      if (event.key === Qt.Key_Back && stack.depth > 1) {
+         stack.pop();
          event.accepted = true;
      }
    }

@@ -654,12 +654,19 @@ Item {
         amountModeInit = true;
         sum();
       }
-    }else if ((item.plugin === 'Ext.plugin.Referenz') && (noPlugin !== true)) {
+    }else if (
+      (
+        (item.plugin === 'Ext.plugin.Referenz') ||
+        (item.plugin === 'reportplugin.referenz')
+      ) && (noPlugin !== true)
+    ) {
+
       currentMode = 'Referenz';
       referenzString = '';
       refItem = item;
       refItem.referenz = '';
       refItem.anzahl = 1;
+
     } else {
       if (number === -1) {
         lastTotal = 0;

@@ -4,6 +4,6 @@
 #-verbose=3 \
 #-qmldir=/Users/thomashoffmann/Documents/Projects/qt/PointOfSale/pointofsale/qml
 
-~/Qt/5.5/clang_64/bin/macdeployqt bin/PointOfSale.app -qmldir=/Users/thomashoffmann/Documents/Projects/qt/PointOfSale/pointofsale/qml
+~/Qt/5.5/clang_64/bin/macdeployqt bin/PointOfSale.app -executable=bin/PointOfSale.app/Contents/MacOS/PointOfSale -qmldir=/Users/thomashoffmann/Documents/Projects/qt/PointOfSale/pointofsale/qml
 cp -r ~/Qt/5.5/clang_64/qml bin/PointOfSale.app/Contents/Resources/
 find bin/PointOfSale.app/Contents/Resources/qml -name "*_debug*" -exec rm -rf {} \;

@@ -1,0 +1,27 @@
+
+qt5_use_modules(pointofsale
+  Quick
+  Core
+  Qml
+  WebEngineCore
+  Xml
+  Gui
+  Network
+  Sql
+  WebEngineWidgets
+  XmlPatterns
+  Concurrent
+  Svg
+  WebKit
+  QuickWidgets
+  WebKitWidgets
+  Location
+  Script
+  Declarative
+  PrintSupport
+  WebEngine
+  Widgets
+  OpenGL
+  OpenGLExtensions
+  Positioning
+  )

@@ -30,7 +30,7 @@ StackViewItem {
         //application.items_group = items_group.text;
 
         application.saveSettings();
-        stackView.pop();
+        stack.pop();
     }
 
     Component.onCompleted: {
