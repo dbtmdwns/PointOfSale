@@ -1,23 +1,24 @@
 import QtQuick 2.1
 
-Item {
+Rectangle {
     id: root
     width: parent.width
     height: mainStyle.dimens.rightMargin +mainStyle.font.size +mainStyle.dimens.rightMargin
 
+    color: "#11ffffff"
 
     property alias text: textitem.text
     property alias icon: texticon.text
     signal clicked
 
     Component.onCompleted: {
-
+      //console.log("ok");
     }
 
     Rectangle {
         anchors.fill: parent
         color: "#11ffffff"
-        visible: mouse.pressed
+        //visible: mouse.pressed
     }
 
     Text {
@@ -38,7 +39,7 @@ Item {
         text: modelData
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: mainStyle.dimens.leftMargin + mainStyle.dimens.leftMargin + texticon.width
+        anchors.leftMargin: mainStyle.dimens.leftMargin + mainStyle.dimens.leftMargin + mainStyle.dimens.iconWidth
     }
 
     Rectangle {
@@ -46,20 +47,19 @@ Item {
         anchors.right: parent.right
         anchors.margins: mainStyle.dimens.rightMargin
         height: 1
-        color: "#424246"
+        color: mainStyle.colors.listDelimiter
     }
 
     Image {
         anchors.right: parent.right
         anchors.rightMargin: mainStyle.dimens.rightMargin
         anchors.verticalCenter: parent.verticalCenter
-        //source: "../images/navigation_next_item.png"
     }
 
     MouseArea {
-        id: mouse
         anchors.fill: parent
-        onClicked: root.clicked()
-
+        onClicked: {
+          root.clicked()
+        }
     }
 }
