@@ -31,6 +31,7 @@ Item {
     property string stackViewBackground: "#110000"
     property string toolbarBackground: "black"
     property string buttonBackground: "#aaaaff"
+    property string listDelimiter: "#4242a6"
   }
 
   Item {
