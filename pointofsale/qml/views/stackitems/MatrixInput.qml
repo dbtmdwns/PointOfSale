@@ -45,14 +45,19 @@ StackViewItem {
     }
   }
 
-  function textInput(txt) {
+  function textInput(txt,enter) {
 
   }
 
   Component.onCompleted: {
+    if ((typeof application.reportStore.modeReferences=='undefined') || (application.reportStore.modeReferences==null)){
+      application.reportStore.modeReferences= {};
+    }
+    application.reportStore.modeReferences[simpleReferenz.plugin.modeText] = simpleReferenz.plugin.cmd;
+    application.reportStore.modeReferences[gutscheinEinloesen.plugin.modeText] = gutscheinEinloesen.plugin.cmd;
+    application.reportStore.modeReferences[gutscheinAusgabe.plugin.modeText] = gutscheinAusgabe.plugin.cmd;
 
   }
-
 
 
   Rectangle {
@@ -266,8 +271,12 @@ StackViewItem {
 
 
 
+
+      //******************************************
+
       Rectangle {
         id: simpleReferenz
+        property alias plugin: plugIn
         opacity: ((application.reportStore.currentMode === 'Referenz')) ? 1 : 0
         Behavior on opacity {
           OpacityAnimator {
@@ -287,6 +296,7 @@ StackViewItem {
         width: parent.width
         height: parent.height
         ReferenzPlugin {
+          id: plugIn
           y: 0
           x: 0
           width: parent.width
@@ -294,6 +304,76 @@ StackViewItem {
           color: "transparent"
         }
       }
+
+
+      Rectangle {
+        id: gutscheinEinloesen
+        property alias plugin: gplugIn
+        opacity: ((application.reportStore.currentMode === "GutscheinEinloesen")) ? 1 : 0
+        Behavior on opacity {
+          OpacityAnimator {
+            easing.type: Easing.InCubic;
+            duration: 250
+          }
+        }
+        Behavior on x {
+          NumberAnimation {
+            easing.type: Easing.InCubic;
+            duration: 250
+          }
+        }
+        color: "transparent"
+        x: ((application.reportStore.currentMode === "GutscheinEinloesen")) ? 0 : -1.2 * parent.width
+        y: 0
+        width: parent.width
+        height: parent.height
+        GutscheinEinloesenPlugin {
+          id: gplugIn
+          y: 0
+          x: 0
+          width: parent.width
+          height: parent.height
+          color: "transparent"
+        }
+      }
+
+      Rectangle {
+        id: gutscheinAusgabe
+        property alias plugin: gaplugIn
+        opacity: ((application.reportStore.currentMode === "GutscheinAusgeben")) ? 1 : 0
+        Behavior on opacity {
+          OpacityAnimator {
+            easing.type: Easing.InCubic;
+            duration: 250
+          }
+        }
+        Behavior on x {
+          NumberAnimation {
+            easing.type: Easing.InCubic;
+            duration: 250
+          }
+        }
+        color: "transparent"
+        x: ((application.reportStore.currentMode === "GutscheinAusgeben")) ? 0 : -1.2 * parent.width
+        y: 0
+        width: parent.width
+        height: parent.height
+        GutscheinAusgebenPlugin {
+          id: gaplugIn
+          y: 0
+          x: 0
+          width: parent.width
+          height: parent.height
+          color: "transparent"
+        }
+      }
+
+
+
+
+
+
+
     }
 
     ReportAndInput {

@@ -264,6 +264,19 @@ Item {
     }, true);
   }
 
+  function shortPost(data, callback) {
+    var pdata = {
+      TEMPLATE: 'NO',
+      sid: sessionID
+    }
+    for(var key in data){
+      pdata[key] = data[key];
+    }
+    post(url, pdata, function(err, res) {
+      callback(err, res);
+    }, true);
+  }
+
   function post(url, data, callback, parse) {
     if (typeof parse === 'undefined') {
       parse = true;

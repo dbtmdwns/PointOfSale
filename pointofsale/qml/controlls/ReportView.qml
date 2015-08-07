@@ -345,6 +345,9 @@ ScrollView {
       ctx.strokeStyle = "transparent"
       ctx.fillStyle = "black"
       ctx.font = "15px sans-serif";
+
+      data.referenz = data.reference; //backward compatibility
+      //      console.log(JSON.stringify(data,null,2));
       var metrics = draw(ctx,tpl.render(data),true);
       //console.log(JSON.stringify(metrics,null,2));
       //resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, width, height);

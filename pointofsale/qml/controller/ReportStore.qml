@@ -58,6 +58,9 @@ Item {
   property var onAddedReport: null
   property var onFind: null
 
+  property var modeReferences: null
+
+
 
 
   Timer {
@@ -229,6 +232,14 @@ Item {
       input='numpad';
     }
 
+
+    if (modeReferences!=null){
+      //console.log(typeof modeReferences[currentMode]);
+      if (typeof modeReferences[currentMode]==='function'){
+        modeReferences[currentMode](cmdtype, val, input);
+      }
+    }
+
     if (cmdtype === 'PLUSMINUS') {
       if (number === -1) {
         if (currentMode === 'amount') {
@@ -238,14 +249,7 @@ Item {
       }
     }
 
-    if (cmdtype === 'BACK') {
-      if (currentMode === 'Referenz') {
-        if (referenzString.length > 0) {
-          referenzString = referenzString.substring(0, referenzString.length - 1);
-        }
-        return;
-      }
-    }
+
 
     if (cmdtype === 'SEP') {
       if (number === -1) {
@@ -306,10 +310,7 @@ Item {
 
       if (number === -1) {
 
-        if (currentMode === 'Referenz') {
-          referenzString += val + ""
-          return;
-        }
+
 
 
 
@@ -537,12 +538,7 @@ Item {
         return;
       }
 
-      if (currentMode === 'Referenz') {
-        refItem.referenz = referenzString;
-        currentMode = 'amount';
-        add(refItem, true);
-        return;
-      }
+
 
       if (total !== 0) {
         if (number === -1) {
@@ -667,6 +663,32 @@ Item {
       refItem.referenz = '';
       refItem.anzahl = 1;
 
+    }else if (
+      (
+        (item.plugin === 'Ext.plugin.Gutschein') ||
+        (item.plugin === 'reportplugin.gutschein')
+      ) && (noPlugin !== true)
+    ) {
+
+      currentMode = 'GutscheinEinloesen';
+      referenzString = '';
+      refItem = item;
+      refItem.referenz = '';
+      refItem.anzahl = 1;
+
+    }else if (
+      (
+        (item.plugin === 'Ext.plugin.Gutscheinausgabe') ||
+        (item.plugin === 'reportplugin.gutscheinausgabe')
+      ) && (noPlugin !== true)
+    ) {
+
+      currentMode = 'GutscheinAusgeben';
+      referenzString = '';
+      refItem = item;
+      refItem.referenz = '';
+      refItem.anzahl = 1;
+
     } else {
       if (number === -1) {
         lastTotal = 0;
@@ -676,7 +698,8 @@ Item {
         var yitem = {
           artikel: item.gruppe,
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
-          referenz: (typeof item.referenz === 'string') ? item.referenz : '',
+          referenz: (typeof item.referenz !== 'undefined') ? item.referenz : '',
+          referenzphp: (typeof item.referenzphp !== 'undefined') ? item.referenzphp : '',
           steuersatz: item.steuersatz,
           anzahl: item.anzahl,
           xref: item.xref,
@@ -685,6 +708,7 @@ Item {
           brutto: brutto,
           netto: netto
         }
+        console.log(JSON.stringify(yitem,null,2))
         positions.push(yitem);
         currentMode = 'amount';
         amountModeInit = true;
@@ -695,6 +719,9 @@ Item {
   }
 
   function calcPos(index) {
+    if (typeof index==='undefined'){
+      index = positions.length-1;
+    }
     if (number === -1) {
       var brutto_preis = positions[index].brutto_preis; // Math.round( positions[index].epreis*(1+positions[index].steuersatz/100) * 100) /100;
 
