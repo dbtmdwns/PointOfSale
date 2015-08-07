@@ -120,7 +120,9 @@ StackViewItem {
             }
             onSelected: {
               articleMatrix.defaultBackgroundColor = item.displayBackgroundColor;
-              articleMatrix.addList(application.reportStore.getArtikel(item.warengruppe));
+              application.reportStore.getArtikel(item.warengruppe,function(res){
+                articleMatrix.addList(res);
+              })
             }
           }
 
@@ -146,8 +148,11 @@ StackViewItem {
             Component.onCompleted: {
               application.reportStore.onFind = function(str){
                 application.reportStore.currentMode = 'find';
-                var l = (application.reportStore.findArticle(str));
-                articleMatrix.addList(l);
+                (application.reportStore.findArticle(str,function(l){
+                  articleMatrix.addList(l);
+                  application.reportStore.currentMode = 'amount';
+                }));
+
               }
             }
             onSelected: {
@@ -178,7 +183,9 @@ StackViewItem {
             }
             onSelected: {
               application.reportStore.cmd("SET RELATION", item);
-              articleMatrix.addList(application.reportStore.getArtikel(application.reportStore._warengruppe));
+              application.reportStore.getArtikel(application.reportStore._warengruppe,function(res){
+                articleMatrix.addList(res);
+              })
 
             }
           }

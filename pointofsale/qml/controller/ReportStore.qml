@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.LocalStorage 2.0
 import "../styles"
 import "../controlls"
 
@@ -71,11 +72,13 @@ Item {
     onTriggered: {
       currentMode = 'amount';
       clearFindString.stop();
-      var l = findArticle(findString);
-      if (l.length==1){
-        add(l[0]);
-      }
-      findString = "";
+      findArticle(findString,function(l){
+        console.log('findArticle',findString,l.length);
+        if (l.length==1){
+          add(l[0]);
+        }
+        findString = "";
+      });
 
     }
   }
@@ -83,6 +86,7 @@ Item {
 
   function loadArticles(cb) {
     application.articles(function(res) {
+
       _steuergruppen = res.steuergruppen;
       for (var i in res.warengruppen) {
         res.warengruppen[i].f = res.warengruppen[i].farbe;
@@ -132,9 +136,45 @@ Item {
     return _warengruppen;
   }
 
-  function findArticle(find){
+  function findArticle(find,cb){
     var res = [];
 
+    var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+    db.transaction(
+      function(tx) {
+        var sql = 'SELECT * FROM searchablearticles
+        where key=\''+application.remote.client+'\'
+        and (
+          lower(article) like \'%'+find.toLowerCase()+'%\' or
+          lower(articlenumber) like \'%'+find.toLowerCase()+'%\'
+        )
+        ';
+        var rs = tx.executeSql(sql);
+        for (var i = 0; i < rs.rows.length; i++) {
+          var item = {};
+          var staffeln = application.remote.unEscapeResult(rs.rows.item(i).staffeln);
+          var artikel = application.remote.unEscapeResult(rs.rows.item(i).value);
+
+          if (preiskategorie * 1 === staffeln.preiskategorie * 1) {
+            item.gruppe = staffeln.gruppe;
+            item.plugin = artikel.plugin;
+            item.anzahl = 1;
+            item.steuersatz = 1 * artikel["steuer" + feld];
+            item.bpreis = staffeln.brutto;
+            item.preis = staffeln.brutto / (1 + item.steuersatz / 100);
+            item.netto = item.preis;
+            item.brutto_preis = staffeln.brutto * 1;
+            item.brutto = staffeln.brutto * 1;
+            item.zusatztext = artikel.zusatztext;
+            res.push(item);
+
+          }
+
+        }
+        cb(res);
+      }
+    );
+    /*
     for (var i in _artikel) {
       if (
         (_artikel[i].artikelnummer.toLowerCase().indexOf(find.toLowerCase())>=0) ||
@@ -166,10 +206,45 @@ Item {
       }
     }
     return res;
+    */
   }
 
 
-  function singleArticle(name){
+  function singleArticle(name,cb){
+
+    var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+    db.transaction(
+      function(tx) {
+        var sql = 'SELECT * FROM searchablearticles
+        where key=\''+application.remote.client+'\'
+        and lower(article) like \''+name.toLowerCase()+'%\'
+        ';
+        var rs = tx.executeSql(sql);
+        for (var i = 0; i < 1; i++) {
+          var item = {};
+          var staffeln = application.remote.unEscapeResult(rs.rows.item(i).staffeln);
+          var artikel = application.remote.unEscapeResult(rs.rows.item(i).value);
+
+          if (preiskategorie * 1 === staffeln.preiskategorie * 1) {
+            item.gruppe = staffeln.gruppe;
+            item.plugin = artikel.plugin;
+            item.anzahl = 1;
+            item.steuersatz = 1 * artikel["steuer" + feld];
+            item.bpreis = staffeln.brutto;
+            item.preis = staffeln.brutto / (1 + item.steuersatz / 100);
+            item.netto = item.preis;
+            item.brutto_preis = staffeln.brutto * 1;
+            item.brutto = staffeln.brutto * 1;
+            item.zusatztext = artikel.zusatztext;
+            //res.push(item);
+            cb(item);
+          }
+
+        }
+
+      }
+    );
+    /*
     for (var i in _artikel) {
       if (
         (_artikel[i].gruppe.toLowerCase().indexOf(name.toLowerCase())>=0)
@@ -195,12 +270,44 @@ Item {
       }
     }
     return res;
+    */
   }
 
-  function getArtikel(warengruppe) {
+  function getArtikel(warengruppe,cb) {
     _warengruppe = warengruppe;
     var res = [];
 
+    var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+    db.transaction(
+      function(tx) {
+        var sql = 'SELECT * FROM searchablearticles where key=\''+application.remote.client+'\' and waregroup=\''+_warengruppe.replace(/'/gm,"#qoute;")+'\'';
+        var rs = tx.executeSql(sql);
+        //console.log(sql,JSON.stringify(rs,null,2),rs.rows.length);
+        for (var i = 0; i < rs.rows.length; i++) {
+          var item = {};
+          var staffeln = application.remote.unEscapeResult(rs.rows.item(i).staffeln);
+          var artikel = application.remote.unEscapeResult(rs.rows.item(i).value);
+
+          if (preiskategorie * 1 === staffeln.preiskategorie * 1) {
+            item.gruppe = staffeln.gruppe;
+            item.plugin = artikel.plugin;
+            item.anzahl = 1;
+            item.steuersatz = 1 * artikel["steuer" + feld];
+            item.bpreis = staffeln.brutto;
+            item.preis = staffeln.brutto / (1 + item.steuersatz / 100);
+            item.netto = item.preis;
+            item.brutto_preis = staffeln.brutto * 1;
+            item.brutto = staffeln.brutto * 1;
+            item.zusatztext = artikel.zusatztext;
+            res.push(item);
+          }
+
+        }
+        cb(res);
+      }
+    )
+
+    /*
     for (var i in _artikel) {
       if (_artikel[i].warengruppe === warengruppe) {
         for (var s in _staffeln) {
@@ -224,6 +331,7 @@ Item {
       }
     }
     return res;
+    */
   }
 
   function cmd(cmdtype, val, input) {
@@ -635,16 +743,18 @@ Item {
         var kombi_liste = _kombiartikel[xitem.artikel];
         positions.push(xitem);
         for(var ki=0;ki<kombi_liste.length;ki++){
-          var nitem = singleArticle(kombi_liste[ki].resultartikel);
-          nitem.artikel = nitem.gruppe;
-          nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
-          nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
-          nitem.epreis =  nitem.preis * kombi_liste[ki].resultpfaktor;
-          nitem.brutto_preis =  nitem.brutto_preis * kombi_liste[ki].resultpfaktor;
-          nitem.brutto =  nitem.brutto * kombi_liste[ki].resultpfaktor;
-          nitem.netto =  nitem.netto * kombi_liste[ki].resultpfaktor;
-          nitem.kombiartikel = true;
-          positions.push(nitem);
+          singleArticle(kombi_liste[ki].resultartikel,function(nitem){
+            nitem.artikel = nitem.gruppe;
+            nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
+            nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
+            nitem.epreis =  nitem.preis * kombi_liste[ki].resultpfaktor;
+            nitem.brutto_preis =  nitem.brutto_preis * kombi_liste[ki].resultpfaktor;
+            nitem.brutto =  nitem.brutto * kombi_liste[ki].resultpfaktor;
+            nitem.netto =  nitem.netto * kombi_liste[ki].resultpfaktor;
+            nitem.kombiartikel = true;
+            positions.push(nitem);
+            sum();
+          });
         }
         currentMode = 'amount';
         amountModeInit = true;

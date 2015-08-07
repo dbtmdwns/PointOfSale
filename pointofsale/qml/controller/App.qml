@@ -52,7 +52,7 @@ Item {
 
   property int dpi: 72
   property double density: 1
-  property int dbsize: 1024*1024* 20 // 20MB
+  property int dbsize: 1024*1024* 50 // 50MB
   property string sessionID: ""
   property string async: "0"
 

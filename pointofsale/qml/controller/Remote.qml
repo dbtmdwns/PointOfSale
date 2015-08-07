@@ -211,6 +211,46 @@ Item {
             tx.executeSql('CREATE TABLE IF NOT EXISTS articles (key varchar(255) primary key, value TEXT)');
             tx.executeSql('delete from articles where key = \''+client+'\' ');
             tx.executeSql('insert into articles (key,value) values (\''+client+'\',\''+escapeResult(res)+'\') ');
+
+            tx.executeSql('DROP TABLE searchablearticles');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS searchablearticles (
+              key varchar(255),
+              id integer,
+              article varchar(255),
+              waregroup varchar(255),
+              articlenumber varchar(255),
+
+              staffeln TEXT,
+              value TEXT,
+              primary key (key,id)
+            )');
+
+            tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_article on searchablearticles(article)');
+            tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_waregroup on searchablearticles(waregroup)');
+            tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_articlenumber on searchablearticles(articlenumber)');
+
+            //console.log(JSON.stringify(res,null,2));
+            var sql = 'delete from searchablearticles where key=\''+client+'\'';
+            tx.executeSql(sql);
+
+            var list = res.staffeln;
+            for(var i =0;i< list.length;i++){
+              var item = list[i];
+              var sql = ' insert into searchablearticles
+              (key,id,article,waregroup,articlenumber,staffeln,value)
+              values (
+                \''+client+'\',
+                '+i+',
+                \''+item.gruppe.replace(/'/gm,"#qoute;")+'\',
+                \''+res.artikel[item.gruppe].warengruppe.replace(/'/gm,"#qoute;")+'\',
+                \''+res.artikel[item.gruppe].artikelnummer.replace(/'/gm,"#qoute;")+'\',
+                \''+escapeResult(item)+'\',
+                \''+escapeResult(res.artikel[item.gruppe])+'\'
+              )
+              ';
+              tx.executeSql(sql);
+            }
+
           }
         );
         cb(res);
