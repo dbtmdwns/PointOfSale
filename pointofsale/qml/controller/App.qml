@@ -7,6 +7,7 @@ import com.tualo 1.0
 Item {
 
   property string message: ""
+  property var configs: []
   property alias local: myLocal
   property alias remote: myRemote
 
@@ -31,7 +32,6 @@ Item {
       messageHideTimer.interval = 1000;
     }
     message = msg;
-    console.log(message);
     messageHideTimer.start();
   }
 
@@ -119,7 +119,6 @@ Item {
     if(typeof nDPI=='undefined'){
       nDPI = Screen.pixelDensity  * 24.5;
     }
-    console.log('nDPI',nDPI);
     return nDPI/72;
   }
 
@@ -218,7 +217,6 @@ Item {
     //    property int dpi: 72
     //    property double density: 1
     dpi = Screen.pixelDensity * 24.5
-    console.log('App',Screen.pixelDensity * 24.5);
 
     use_date = new Date();
     db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", dbsize);
@@ -244,7 +242,6 @@ Item {
             break;
             case "async":
               async = rs.rows.item(i).value;
-              console.log( 'DB',async);
               break;
             case "client":
               myRemote.client = rs.rows.item(i).value;
@@ -262,10 +259,11 @@ Item {
 
           }
         }
-        console.log('App.qml','complete',async);
-        console.log('App.qml','complete',printerName);
-        console.log('App.qml','complete',myRemote.client);
-        console.log('App.qml','complete',myRemote.username);
+
+        myLocal.config(function(result){
+          processConfig(result);
+
+        });
       }
     )
   }
@@ -321,8 +319,6 @@ Item {
     json.zahlungsart = zahlart;
     json.kundennummer = kundennummer;
     json.kostenstelle = kostenstelle;
-
-    console.log('App.qml','using async',async)
     if (async=='1'){
       myLocal.save(json,cb);
     }else{
@@ -332,22 +328,11 @@ Item {
   }
 
   function login(cb) {
-    async=0;
-    console.log('App.qml','login',async);
-
-
     var cbx = function(){
-      console.log('App.qml','query config',async);
-
       config(function() {
-
-        console.log('App.qml','login2',async,JSON.stringify(cb,null,3));
         relations(cb);
-
-      }.bind(this));
-    }.bind(this)
-
-    console.log('App.qml','loginx',async);
+      });
+    };
     if (async=='1'){
       cbx();
     }else{
@@ -368,6 +353,9 @@ Item {
   }
 
   function relations(cb) {
+    processRelations(relationList,cb);
+
+    /*
     var cbx = function(res){
       processRelations(res,cb);
     }
@@ -376,6 +364,7 @@ Item {
     }else{
       myRemote.relations(cbx);
     }
+    */
   }
 
   function processRelations(res,cb){
@@ -401,7 +390,8 @@ Item {
       wgs.push(_hash[w]);
     }
     relationList = wgs;
-    console.log(JSON.stringify(relationList,null,0))
+
+
     cb();
   }
 
@@ -413,35 +403,110 @@ Item {
         cb();
       });
     }else{
-      console.log('app.qml', 'myRemote config');
       myRemote.config(function(res){
-        console.log('app.qml', 'myRemote config res',JSON.stringify(res,null,1));
         processConfig(res);
-        console.log('app.qml', 'myRemote calling cb ***********');
         cb();
         saveSettings();
       });
     }
   }
 
-  function processConfig(res){
-    async = res.async||'0';
-    
-    myLocal.maxReportNumber = res.maxReportNumber;
-    myLocal.minReportNumber = res.minReportNumber;
-    kasse = res.kasse;
-    lager = res.lager;
-    zahlart = res.zahlart;
-    tabellenzusatz = res.tabellenzusatz;
-    if (typeof res.posTitle==='string'){
-      posTitle = res.posTitle;
+  function setConfigs(index){
+
+    if (typeof configs[index]=='object'){
+      var res = configs[index];
+      async = res.async||'0';
+      myLocal.maxReportNumber = res.maxReportNumber;
+      myLocal.minReportNumber = res.minReportNumber;
+      kasse = res.kasse;
+      relationList = res.relations;
+
+      console.log('app','res.relations',JSON.stringify(res.relations,null,2));
+      lager = res.lager;
+      zahlart = res.zahlart;
+      tabellenzusatz = res.tabellenzusatz;
+      if (typeof res.posTitle==='string'){
+        posTitle = res.posTitle;
+      }else{
+        posTitle = res.name;
+      }
+
+      if (typeof res.template==='string'){
+        template = res.template.replace(/#qoute;/gm,"'");
+      }
+
+      if ( (typeof res.left_logo_file === "string") && (res.left_logo_file !== "")) {
+        left_logo_file = res.left_logo
+      }
+      return true;
+    }else{
+      return false;
     }
-    if (typeof res.template==='string'){
-      template = res.template.replace(/#qoute;/gm,"'");
+
+  }
+
+  function processConfig(result){
+
+    var model = overview.model;
+
+    model.clear();
+    configs=[];
+    for(var i=0;i<result.cnf.length;i++){
+      var item = {};
+      var res = result.cnf[i];
+
+      item.async = res.async||'0';
+      item.maxReportNumber = res.maxReportNumber;
+      item.minReportNumber = res.minReportNumber;
+      item.kasse = res.kasse;
+      item.lager = res.lager;
+      item.zahlart = res.zahlart;
+      item.relations = res.relations;
+      item.tabellenzusatz = res.tabellenzusatz;
+      if (typeof res.posTitle==='string'){
+        item.posTitle = res.posTitle;
+      }
+      if (typeof res.template==='string'){
+        item.template = res.template.replace(/#qoute;/gm,"'");
+      }
+      if (left_logo_file === "") {
+        item.left_logo_file = res.left_logo
+      }
+      item.name = res.name;
+
+      model.append({
+        iconText: "\uf073",
+        title: res.name,
+        doneText: "",
+        page: "MatrixInput.qml",
+        configIndex: i
+      });
+
+      configs.push(item);
     }
-    if (left_logo_file === "") {
-      left_logo_file = res.left_logo
-    }
+
+    model.append({
+      iconText: "\uf0f6",
+      title: "About",
+      doneText: "",
+      page: "About.qml"
+    })
+
+    model.append({
+      iconText: "\uf085",
+      title:  "Settings",
+      doneText: "\uf00c Fertig",
+      page: "Settings.qml"
+    })
+
+    model.append({
+      iconText: "\uf08b",
+      title: "Exit",
+      doneText: "",
+      page: "Exit.qml"
+    })
+
+
   }
 
   /**
@@ -491,7 +556,6 @@ Item {
       if (_object.hasOwnProperty(_property)) {
         if (typeof _object[_property] === 'string') {
           _object[_property] = _object[_property].replace(/&#\d+;/gm, function(s) {
-            console.log(s.match(/\d+/gm)[0]);
             return String.fromCharCode(s.match(/\d+/gm)[0]);
           });
         }

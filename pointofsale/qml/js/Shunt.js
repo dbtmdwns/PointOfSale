@@ -187,7 +187,6 @@ var Shunt;
       if ((token = match[1]).length === 0)
         throw new Error('syntax error: empty token matched. abort');
 
-      //console.log(match,token,'---');
 
       if(
         ((token.substring(0,1)==='\'') && (token.substring(token.length - 1)==='\'')) ||
@@ -196,7 +195,6 @@ var Shunt;
         ctx.def(token,token.substring(1,token.length - 1));
       }
       term = term.substr(token.length);
-      //console.log('#',term,'#');
 
       if ((token = token.trim()).length === 0)
         continue; // whitespace

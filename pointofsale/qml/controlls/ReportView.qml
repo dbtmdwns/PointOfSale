@@ -259,7 +259,6 @@ ScrollView {
             }
             newY+=h;
             oldY = newY;
-            //console.log('draw code 39',item.value,w,s,w/s);
 
           }
 
@@ -457,7 +456,6 @@ ScrollView {
         return Number(v).toFixed(0) + " %"
       });
 
-      //console.log(template);
       var tpl = new Template.Template(template,tplCtx);
 
       canvas.height = 15000;
@@ -477,19 +475,15 @@ ScrollView {
 
         data.referenz = data.reference; //backward compatibility
       }
-      //      console.log(JSON.stringify(data,null,2));
       var metrics = draw(ctx,tpl.render(data),true);
-      //console.log(JSON.stringify(metrics,null,2));
-      //resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, width, height);
       ctx.scale(0.5,0.5);
       ctx.save();
-      //ctx.clearRect( 0, 0, metrics.w, metrics.h );
 
 
 
 
       if (doPrint===true){
-        //canvas.width = 512
+
         canvas.save(data.reportnumber+'.png');
         application.posPrinter.printFile(application.printerName,data.reportnumber+'.png',metrics.h*2);
         application.posPrinter.cut(application.printerName);

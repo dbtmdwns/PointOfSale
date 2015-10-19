@@ -42,7 +42,6 @@ Item {
     repeat: true
     onTriggered: {
 
-      //console.log('asyncTimer','triggered')
       if (application.async=='1'){
 
 
@@ -51,7 +50,6 @@ Item {
           function(tx) {
             var sql = 'select * from reports where key = \''+client+'\' ';
             var rs = tx.executeSql(sql);
-            //console.log('asyncTimer','reports for submission',rs.rows.length)
 
             post(url, {
               username: username,
@@ -95,18 +93,14 @@ Item {
       var xid = list[0].id
       json.id = list[0].id+' '+json.id;
       save(json,function(err,res){
-        //console.log('----',err,JSON.stringify(res,null,0));
         if (res.success==true){
-          console.log('asyncList','save',res.belegnummer,'id',json.id);
         }else{
-          console.log('asyncList','save error',res.msg);
         }
         if ((res.success==true) || ((res.success==false) && (res.code===1))){
           var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
           db.transaction(
             function(tx) {
               var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
-              //console.log('asyncList',sql);
               tx.executeSql(sql);
             }
           );
@@ -132,7 +126,6 @@ Item {
         // ToDo
         console.log('err',err);
       }else if (res.success) {
-        console.log('sessionID',sessionID);
         sessionID = res.sid;
         cb(true);
         pingTimer.start();
@@ -146,7 +139,6 @@ Item {
   }
 
   function logout(cb) {
-    console.log('logout sessionID',sessionID);
     sessionID = '';
     pingTimer.stop();
     cb();
@@ -159,7 +151,6 @@ Item {
   }
 
   function ping(){
-    console.log(application.processConfig);
     config(application.processConfig)
     articles(function(){ });
   }
@@ -169,7 +160,7 @@ Item {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
       sid: sessionID,
-      page: "pos_get_config",
+      page: "pos_get_config_v1.0.0",
       "return": "json"
     }, function(err, res) {
       if (err) {
@@ -206,6 +197,7 @@ Item {
       page: "pos_articles",
       "return": "json"
     }, function(err, res) {
+      
       if (err) {
         //todo
       } else if (res.success) {
@@ -293,7 +285,7 @@ Item {
 
       }
     });
-  }
+  }// 27009
 
 
   function save(json,cb,csession){
@@ -303,7 +295,7 @@ Item {
     post(url, {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
-      page: 'single_report',
+      page: 'single_report_v1.0.0',
       sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
@@ -329,7 +321,6 @@ Item {
     if (typeof parse === 'undefined') {
       parse = true;
     }
-    //console.log('post',JSON.stringify(data,null,0));
     var xhr = new XMLHttpRequest();
     var send_data = "";
     for (var i in data) {
@@ -337,14 +328,11 @@ Item {
     }
     var http_result = "";
     __callback = callback;
-    console.log('post',url,send_data.substring(0,200));
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-          //console.log('post',http_result.substring(0,200));
-          console.log(xhr.responseText);
           if (typeof callback !== 'undefined') {
             try {
               if (parse === true) {
@@ -354,8 +342,6 @@ Item {
                 result = http_result;
               }
             } catch (e) {
-              console.log(xhr.responseText);
-              console.log('catched error',e.toString());
               callback({
                 error: e,
                 status: xhr.status,

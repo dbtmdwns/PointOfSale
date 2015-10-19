@@ -8,20 +8,27 @@ import "../../controlls"
 
 
 StackViewItem {
-
     title: qsTr("Overview")
-
+    property var configs: ['name','name2']
+    property alias model: pageModel;
     ListModel {
         id: pageModel
 
-
-
+        /*
         ListElement {
           iconText: "\uf073"
-          title: "Kasse"
+          title: config[0]
           doneText: ""
           page: "MatrixInput.qml"
         }
+
+        ListElement {
+          iconText: "\uf073"
+          title: config[1].name
+          doneText: ""
+          page: "MatrixInput.qml"
+        }
+
 
         ListElement {
             iconText: "\uf0f6"
@@ -45,7 +52,7 @@ StackViewItem {
             doneText: ""
             page: "Exit.qml"
         }
-
+        */
 
     }
 
@@ -77,16 +84,25 @@ StackViewItem {
             if (
               (page==='MatrixInput.qml')
             ){
-              application.message="Bitte warten"
-              application.login(function(success){
+              var me = application;
+              var stk = stack;
+              var p = page;
 
-                application.reportStore.loadArticles(function(){
-                  application.message=""
-                  stack.push(Qt.resolvedUrl(page))
+              if (me.setConfigs(configIndex)){
+
+                var screen = stack.push(Qt.resolvedUrl(page));
+                //me.message="Bitte warten";
+
+                me.login(function(success){
+                  me.reportStore.loadArticles(function(){
+                    me.message=""
+                    screen.update();
+                  } );
                 });
 
+              }
 
-              });
+
             }else{
               stack.push(Qt.resolvedUrl(page))
             }

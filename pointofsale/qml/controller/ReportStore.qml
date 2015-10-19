@@ -74,7 +74,6 @@ Item {
       currentMode = 'amount';
       clearFindString.stop();
       findArticle(findString,function(l){
-        console.log('findArticle',findString,l.length);
         if (l.length==1){
           add(l[0]);
         }
@@ -87,8 +86,6 @@ Item {
 
   function loadArticles(cb) {
     application.articles(function(res) {
-console.log('loadArticles',JSON.stringify(res,null,2));
-
       _steuergruppen = res.steuergruppen;
       for (var i in res.warengruppen) {
         res.warengruppen[i].f = res.warengruppen[i].farbe;
@@ -176,39 +173,7 @@ console.log('loadArticles',JSON.stringify(res,null,2));
         cb(res);
       }
     );
-    /*
-    for (var i in _artikel) {
-      if (
-        (_artikel[i].artikelnummer.toLowerCase().indexOf(find.toLowerCase())>=0) ||
-        (_artikel[i].gruppe.toLowerCase().indexOf(find.toLowerCase())>=0)
-      ){
-        for (var s in _staffeln) {
-          if (_staffeln[s].gruppe === _artikel[i].gruppe) {
 
-
-            if (preiskategorie * 1 === _staffeln[s].preiskategorie * 1) {
-              var item = {};
-              item.gruppe = _staffeln[s].gruppe;
-              item.plugin = _artikel[i].plugin;
-              item.anzahl = 1;
-              item.steuersatz = 1 * _artikel[i]["steuer" + feld];
-              item.bpreis = _staffeln[s].brutto;
-              item.preis = _staffeln[s].brutto / (1 + item.steuersatz / 100);
-              item.netto = item.preis;
-              item.brutto_preis = _staffeln[s].brutto * 1;
-              item.brutto = _staffeln[s].brutto * 1;
-              item.zusatztext = _artikel[i].zusatztext;
-              if ( item.gruppe == 'Obstsalat' ){
-                console.log(JSON.stringify(item,null,2))
-              }
-              res.push(item);
-            }
-          }
-        }
-      }
-    }
-    return res;
-    */
   }
 
 
@@ -309,31 +274,7 @@ console.log('loadArticles',JSON.stringify(res,null,2));
       }
     )
 
-    /*
-    for (var i in _artikel) {
-      if (_artikel[i].warengruppe === warengruppe) {
-        for (var s in _staffeln) {
-          if (_staffeln[s].gruppe === _artikel[i].gruppe) {
-            if (preiskategorie * 1 === _staffeln[s].preiskategorie * 1) {
-              var item = {};
-              item.gruppe = _staffeln[s].gruppe;
-              item.plugin = _artikel[i].plugin;
-              item.anzahl = 1;
-              item.steuersatz = 1 * _artikel[i]["steuer" + feld];
-              item.bpreis = _staffeln[s].brutto;
-              item.preis = _staffeln[s].brutto / (1 + item.steuersatz / 100);
-              item.netto = item.preis;
-              item.brutto_preis = _staffeln[s].brutto * 1;
-              item.brutto = _staffeln[s].brutto * 1;
-              item.zusatztext = _artikel[i].zusatztext;
-              res.push(item);
-            }
-          }
-        }
-      }
-    }
-    return res;
-    */
+
   }
 
   function cmd(cmdtype, val, input) {
@@ -344,7 +285,6 @@ console.log('loadArticles',JSON.stringify(res,null,2));
 
 
     if (modeReferences!=null){
-      //console.log(typeof modeReferences[currentMode]);
       if (typeof modeReferences[currentMode]==='function'){
         modeReferences[currentMode](cmdtype, val, input);
       }
@@ -566,8 +506,12 @@ console.log('loadArticles',JSON.stringify(res,null,2));
 
     if (cmdtype === 'SET RELATION') {
       if (typeof val==='object'){
-        console.log('SET REALTION',val);
-        feld = _steuergruppen[val.steuerschluessel].feld;
+        console.log('val.steuerschluessel',val.steuerschluessel,JSON.stringify(_steuergruppen,null,2));
+        if (_steuergruppen[val.steuerschluessel]){
+          feld = _steuergruppen[val.steuerschluessel].feld;
+        }else{
+          feld = '';
+        }
         relation = val.name;
         kundennummer = val.kundennummer;
         kostenstelle = val.kostenstelle;
@@ -621,10 +565,9 @@ console.log('loadArticles',JSON.stringify(res,null,2));
     if (cmdtype === 'OPENREPORT') {
 
       for (var i = 0; i < oldReports.length; i++) {
-        console.log('OPENREPORT',val)
+
         if (val == oldReports[i].reportnumber) {
           positions = oldReports[i].positions;
-          console.log('OPENREPORT',JSON.stringify(positions,null,0))
           number = oldReports[i].reportnumber;
           datum = oldReports[i].date;
           zeit = oldReports[i].time;
@@ -665,10 +608,12 @@ console.log('loadArticles',JSON.stringify(res,null,2));
 
               application.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
 
-
+                console.log('saveReport',JSON.stringify(err,null,1));
+                console.log('saveReport',JSON.stringify(res,null,1));
                 if (err) {
-                  application.displayMessage(err.response,true);
+                  application.displayMessage(err.response);
                   console.log('saveReport error',err.response);
+
                 } else {
 
                   if (res.success) {
@@ -709,6 +654,7 @@ console.log('loadArticles',JSON.stringify(res,null,2));
                   } else {
                     application.displayMessage(res.msg);
                   }
+                  currentMode = 'amount';
                   sum();
                 }
 
@@ -838,7 +784,6 @@ console.log('loadArticles',JSON.stringify(res,null,2));
           brutto: brutto,
           netto: netto
         }
-        console.log(JSON.stringify(yitem,null,2))
         positions.push(yitem);
         currentMode = 'amount';
         amountModeInit = true;

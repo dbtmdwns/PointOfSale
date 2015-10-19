@@ -59,6 +59,10 @@ StackViewItem {
 
   }
 
+  function update(){
+    waregroupMatrix.addList(application.reportStore.getWarengrupen());
+    //relationMatrix.addList(application.relationList);
+  }
 
   Rectangle {
     id: view
@@ -177,7 +181,7 @@ StackViewItem {
             template: "{name}"
             columns: 4
             Component.onCompleted: {
-              console.log('relationMatrix onCompleted',JSON.stringify(application.relationList,null,0))
+
               relationMatrix.addList(application.relationList);
               application.reportStore.cmd("SET RELATION", application.relationList[0]);
             }

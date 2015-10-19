@@ -201,6 +201,7 @@ ApplicationWindow {
      if (typeof stack.currentItem.keyInput==='function'){
        stack.currentItem.keyInput(event);
      }
+     
      /*
      console.log(event.key);
      switch (event.key) {

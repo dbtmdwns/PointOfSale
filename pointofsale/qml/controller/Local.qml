@@ -60,8 +60,6 @@ Item {
               break;
           }
         }
-
-        console.log('App.qml','config',async)
         //ok we are here, so there are no relations out there
         application.remote.config(cb);
       }
@@ -85,7 +83,7 @@ Item {
           success: false,
           msg: "Ok we are here "+newID
         }
-        if ((newID>=minReportNumber) && (newID<=maxReportNumber)){
+        //if ((newID>=minReportNumber) && (newID<=maxReportNumber)){
           tx.executeSql('insert into reports (key,id,value) values (\''+application.remote.client+'\','+newID+',\''+application.remote.escapeResult(json)+'\') ');
           cbMessage = {
             success: true,
@@ -93,9 +91,9 @@ Item {
             msg: "Gespeichert"
           }
           minReportNumber = newID+1;
-        }else{
+        /*}else{
           cbMessage.msg="Der Nummernkreis ist erschöpft."
-        }
+        }*/
 
         cb(null,cbMessage);
 

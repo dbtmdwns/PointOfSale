@@ -13,24 +13,27 @@ StackViewItem {
     doneText: qsTr("Fertig") + "\uf00c"
 
     function onDoneClicked(){
-        //application.debug('Settings','onDoneClicked', url.text)
+
         application.remote.url = url.text;
-        //application.aurl = aurl.text;
         application.remote.client = client.text;
         application.remote.username = username.text;
         application.remote.password = password.text;
-
         application.printerName = printerName.text;
-/*        application.printerResolution = printerResolution.text;
-        application.paperWidth = paperWidth.text;
-        application.paperHeight = paperHeight.text;
-*/
-        //application.department = department.text;
-        //application.receipt = receipt.text;
-        //application.items_group = items_group.text;
 
         application.saveSettings();
-        stack.pop();
+        application.remote.login(function(state){
+          if (state===true){
+            application.remote.config(function(res){
+              console.log(JSON.stringify(res,null,4));
+              application.processConfig(res);
+              stack.pop();
+            });
+          }else{
+            application.displayMessage("Das Login war fehlerhaft");
+          }
+        });
+
+
     }
 
     Component.onCompleted: {

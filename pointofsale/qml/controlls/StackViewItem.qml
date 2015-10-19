@@ -6,7 +6,7 @@ Rectangle {
     property string doneText: qsTr("")
 
     function textInput(text){
-        //console.log(text)
+
     }
 
     Rectangle {
