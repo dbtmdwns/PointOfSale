@@ -197,7 +197,7 @@ Item {
       page: "pos_articles",
       "return": "json"
     }, function(err, res) {
-      
+
       if (err) {
         //todo
       } else if (res.success) {
@@ -208,7 +208,7 @@ Item {
             tx.executeSql('delete from articles where key = \''+client+'\' ');
             tx.executeSql('insert into articles (key,value) values (\''+client+'\',\''+escapeResult(res)+'\') ');
 
-            tx.executeSql('DROP TABLE searchablearticles');
+            tx.executeSql('DROP TABLE IF EXISTS searchablearticles');
             tx.executeSql('CREATE TABLE IF NOT EXISTS searchablearticles (
               key varchar(255),
               id integer,
