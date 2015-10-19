@@ -451,40 +451,41 @@ Item {
 
     model.clear();
     configs=[];
-    for(var i=0;i<result.cnf.length;i++){
-      var item = {};
-      var res = result.cnf[i];
+    if (result && result.cnf){
+      for(var i=0;i<result.cnf.length;i++){
+        var item = {};
+        var res = result.cnf[i];
 
-      item.async = res.async||'0';
-      item.maxReportNumber = res.maxReportNumber;
-      item.minReportNumber = res.minReportNumber;
-      item.kasse = res.kasse;
-      item.lager = res.lager;
-      item.zahlart = res.zahlart;
-      item.relations = res.relations;
-      item.tabellenzusatz = res.tabellenzusatz;
-      if (typeof res.posTitle==='string'){
-        item.posTitle = res.posTitle;
-      }
-      if (typeof res.template==='string'){
-        item.template = res.template.replace(/#qoute;/gm,"'");
-      }
-      if (left_logo_file === "") {
-        item.left_logo_file = res.left_logo
-      }
-      item.name = res.name;
+        item.async = res.async||'0';
+        item.maxReportNumber = res.maxReportNumber;
+        item.minReportNumber = res.minReportNumber;
+        item.kasse = res.kasse;
+        item.lager = res.lager;
+        item.zahlart = res.zahlart;
+        item.relations = res.relations;
+        item.tabellenzusatz = res.tabellenzusatz;
+        if (typeof res.posTitle==='string'){
+          item.posTitle = res.posTitle;
+        }
+        if (typeof res.template==='string'){
+          item.template = res.template.replace(/#qoute;/gm,"'");
+        }
+        if (left_logo_file === "") {
+          item.left_logo_file = res.left_logo
+        }
+        item.name = res.name;
 
-      model.append({
-        iconText: "\uf073",
-        title: res.name,
-        doneText: "",
-        page: "MatrixInput.qml",
-        configIndex: i
-      });
+        model.append({
+          iconText: "\uf073",
+          title: res.name,
+          doneText: "",
+          page: "MatrixInput.qml",
+          configIndex: i
+        });
 
-      configs.push(item);
+        configs.push(item);
+      }
     }
-
     model.append({
       iconText: "\uf0f6",
       title: "About",
