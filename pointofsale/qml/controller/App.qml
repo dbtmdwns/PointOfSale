@@ -259,17 +259,7 @@ Item {
             case "printerName":
               printerName = rs.rows.item(i).value;
               break;
-            /*
-            case "paperWidth":
-              paperWidth = rs.rows.item(i).value;
-              break;
-            case "paperHeight":
-              paperHeight = rs.rows.item(i).value;
-              break;
-            case "printerResolution":
-              printerResolution = rs.rows.item(i).value;
-              break;
-              */
+
           }
         }
         console.log('App.qml','complete',async);
@@ -292,26 +282,12 @@ Item {
         // Add (another) greeting row
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['async', async]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerName', printerName]);
-/*
-        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperWidth', paperWidth]);
-        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['paperHeight', paperHeight]);
-        tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['printerResolution', printerResolution]);
-*/
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['url', myRemote.url]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['username', myRemote.username]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['password', myRemote.password]);
         tx.executeSql('INSERT OR IGNORE INTO settings (key,value) VALUES (?, ?)', ['client', myRemote.client]);
-
-
         tx.executeSql('UPDATE settings set value = ? where key = ?', [async, 'async']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [printerName, 'printerName']);
-
-        /*
-        tx.executeSql('UPDATE settings set value = ? where key = ?', [paperWidth, 'paperWidth']);
-        tx.executeSql('UPDATE settings set value = ? where key = ?', [paperHeight, 'paperHeight']);
-        tx.executeSql('UPDATE settings set value = ? where key = ?', [printerResolution, 'printerResolution']);
-        */
-
         tx.executeSql('UPDATE settings set value = ? where key = ?', [myRemote.url, 'url']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [myRemote.client, 'client']);
         tx.executeSql('UPDATE settings set value = ? where key = ?', [myRemote.username, 'username']);
@@ -450,12 +426,9 @@ Item {
 
   function processConfig(res){
     async = res.async||'0';
-    console.log('processConfig',res.async)
-
-    //console.log('processConfig',JSON.stringify(res,null,1))
+    
     myLocal.maxReportNumber = res.maxReportNumber;
     myLocal.minReportNumber = res.minReportNumber;
-
     kasse = res.kasse;
     lager = res.lager;
     zahlart = res.zahlart;
