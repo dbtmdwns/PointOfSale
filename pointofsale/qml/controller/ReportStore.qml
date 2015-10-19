@@ -12,6 +12,7 @@ Item {
   property double total_without_tax: 0
   property double number: -1
   property var positions: []
+  property var printCommands: []
 
   property var styles
   property var refItem
@@ -86,6 +87,7 @@ Item {
 
   function loadArticles(cb) {
     application.articles(function(res) {
+console.log('loadArticles',JSON.stringify(res,null,2));
 
       _steuergruppen = res.steuergruppen;
       for (var i in res.warengruppen) {
@@ -563,15 +565,17 @@ Item {
     }
 
     if (cmdtype === 'SET RELATION') {
+      if (typeof val==='object'){
+        console.log('SET REALTION',val);
+        feld = _steuergruppen[val.steuerschluessel].feld;
+        relation = val.name;
+        kundennummer = val.kundennummer;
+        kostenstelle = val.kostenstelle;
+        preiskategorie = val.preiskategorie;
 
-      feld = _steuergruppen[val.steuerschluessel].feld;
-      relation = val.name;
-      kundennummer = val.kundennummer;
-      kostenstelle = val.kostenstelle;
-      preiskategorie = val.preiskategorie;
-
-      for (var i in positions) {
-        calcPos(i);
+        for (var i in positions) {
+          calcPos(i);
+        }
       }
     }
 
@@ -668,6 +672,17 @@ Item {
                 } else {
 
                   if (res.success) {
+                    /*
+                    for(var pn = printCommands.length-1;pn>=0;pn--){
+                      ;
+                    }
+                    */
+                    while(printCommands.length>0){
+                      var pfn = printCommands.pop();
+                      pfn(positions,function(){ });
+                    }
+                    //return;
+
                     number = res.belegnummer;
                     zeit = (new Date()).toISOString().substring(11, 16);
                     datum = (new Date()).toISOString().substring(0, 10);
@@ -699,6 +714,11 @@ Item {
 
               });
             }
+          } else if (currentMode == 'price'){
+
+            currentMode = 'amount';
+            amountModeInit = true;
+
           } else {
 
             _givenfraction = "";
@@ -825,7 +845,7 @@ Item {
         sum();
       }
     }
-
+    return positions.length - 1;
   }
 
   function calcPos(index) {

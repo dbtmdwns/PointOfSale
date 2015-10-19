@@ -13,8 +13,8 @@ import "../js/SimpleSAX.js" as SimpleSAX
 ScrollView {
   //anchors.fill: parent
   flickableItem.interactive: true
-  function refresh(dt,print){
-    canvas.refresh(dt,print);
+  function refresh(dt,print,tpl){
+    canvas.refresh(dt,print,tpl);
     canvas.requestPaint();
 
   }
@@ -46,7 +46,7 @@ ScrollView {
 
    Timer {
      id: timeoutTimer
-     interval: 2000
+     interval: 500
      running: false
      repeat: false
      onTriggered: {
@@ -70,16 +70,35 @@ ScrollView {
 
     }
 
+    function unescapeEntities(txt){
+      txt = txt.replace('&uuml;','ü');
+      txt = txt.replace('&ouml;','ö');
+      txt = txt.replace('&auml;','ä');
+      txt = txt.replace('&szlig;','ß');
+      txt = txt.replace('&Uuml;','Ü');
+      txt = txt.replace('&Ouml;','Ö');
+      txt = txt.replace('&Auml;','Ä');
+      txt = txt.replace('&amp;','&');
 
-    function refresh(dt,print){
+      return txt;
+    }
+
+
+    function refresh(dt,print,tpl){
+
+
+      if (typeof tpl==='undefined'){
+        template = unescapeEntities(application.template);
+      }else{
+        template = unescapeEntities(tpl);
+      }
       data = dt
-
       data.print = '0'
+
       if (print===true){
         data.print='1'
         doPrint = true
       }
-      template = application.template
       timeoutTimer.start();
     }
 
@@ -104,6 +123,71 @@ ScrollView {
 
       var fontName = "sans-serif";
 
+      var getCode39=function(data){
+      	var charHash={};
+      	charHash['0'] = 'nnnwwnwnn';
+      	charHash['1'] = 'wnnwnnnnw';
+      	charHash['2'] = 'nnwwnnnnw';
+      	charHash['3'] = 'wnwwnnnnn';
+      	charHash['4'] = 'nnnwwnnnw';
+      	charHash['5'] = 'wnnwwnnnn';
+      	charHash['6'] = 'nnwwwnnnn';
+      	charHash['7'] = 'nnnwnnwnw';
+      	charHash['8'] = 'wnnwnnwnn';
+      	charHash['9'] = 'nnwwnnwnn';
+      	charHash['A'] = 'wnnnnwnnw';
+      	charHash['B'] = 'nnwnnwnnw';
+      	charHash['C'] = 'wnwnnwnnn';
+      	charHash['D'] = 'nnnnwwnnw';
+      	charHash['E'] = 'wnnnwwnnn';
+      	charHash['F'] = 'nnwnwwnnn';
+      	charHash['G'] = 'nnnnnwwnw';
+      	charHash['H'] = 'wnnnnwwnn';
+      	charHash['I'] = 'nnwnnwwnn';
+      	charHash['J'] = 'nnnnwwwnn';
+      	charHash['K'] = 'wnnnnnnww';
+      	charHash['L'] = 'nnwnnnnww';
+      	charHash['M'] = 'wnwnnnnwn';
+      	charHash['N'] = 'nnnnwnnww';
+      	charHash['O'] = 'wnnnwnnwn';
+      	charHash['P'] = 'nnwnwnnwn';
+      	charHash['Q'] = 'nnnnnnwww';
+      	charHash['R'] = 'wnnnnnwwn';
+      	charHash['S'] = 'nnwnnnwwn';
+      	charHash['T'] = 'nnnnwnwwn';
+      	charHash['U'] = 'wwnnnnnnw';
+      	charHash['V'] = 'nwwnnnnnw';
+      	charHash['W'] = 'wwwnnnnnn';
+      	charHash['X'] = 'nwnnwnnnw';
+      	charHash['Y'] = 'wwnnwnnnn';
+      	charHash['Z'] = 'nwwnwnnnn';
+      	charHash['-'] = 'nwnnnnwnw';
+      	charHash['.'] = 'wwnnnnwnn';
+      	charHash[' '] = 'nwwnnnwnn';
+      	charHash['*'] = 'nwnnwnwnn';
+      	charHash['$'] = 'nwnwnwnnn';
+      	charHash['/'] = 'nwnwnnnwn';
+      	charHash['+'] = 'nwnnnwnwn';
+      	charHash['%'] = 'nnnwnwnwn';
+      	data = '*'+data.toUpperCase()+'*';
+      	var result='';
+      	for(var i=0; i<data.length; i++){
+      		if (typeof charHash[data.charAt(i)]==='undefined'){
+      			throw new Error('invalid character at position '+i);
+      		}else{
+      			var sequence = charHash[data.charAt(i)];
+      			for (var j=0;j<9;j++){
+      				var bt = sequence.charAt(j);
+      				if (j%2==0){
+      					bt = bt.toUpperCase();
+      				}
+      				result+=bt;
+      			}
+      		}
+      		result+='n';
+      	}
+      	return result;
+      };
       //ctx.fillStyle = "black"
       //ctx.font = "15px sans-serif";
       sax.emit = function(key,stack,tag){
@@ -133,6 +217,50 @@ ScrollView {
               context.drawImage(logo,x,0,(item.attr.width*pixelScale),(item.attr.height*pixelScale));
               contextOffset+=(item.attr.height*pixelScale)+fontSize*pixelScale;
             }
+          }
+
+          if (tag==='code39'){
+            var c = getCode39(item.value);
+
+            var w = pixelScale;
+            var h = 10;
+
+            if (typeof item.attr.width!=='undefined'){
+              w =parseFloat(item.attr.width)*pixelScale;
+            }
+            if (typeof item.attr.height!=='undefined'){
+              h = parseFloat(item.attr.height)*pixelScale;
+            }
+
+            var s = 0;
+            var ci =0;
+            for(ci = 0; ci<c.length; ci++){
+              if (c.charAt(ci).toLowerCase()==='w'){
+                s+=3;
+              }else{
+                s+=1;
+              }
+            }
+            var p=w/s
+            for(ci=0; ci<c.length; ci++){
+              if (c.charAt(ci)==='W'){
+                context.fillRect(x,newY,p*3,h);
+                x+=p*3;
+              }else if (c.charAt(ci)==='N'){
+                context.fillRect(x,newY,p*1,h);
+                x+=p*1;
+              }else if (c.charAt(ci)==='w'){
+                //context.fillRect(x,newY,3,10);
+                x+=p*3;
+              }else if (c.charAt(ci)==='n'){
+                //context.fillRect(x,newY,1,10);
+                x+=p*1;
+              }
+            }
+            newY+=h;
+            oldY = newY;
+            //console.log('draw code 39',item.value,w,s,w/s);
+
           }
 
           if (tag==='box'){
@@ -329,7 +457,7 @@ ScrollView {
         return Number(v).toFixed(0) + " %"
       });
 
-
+      //console.log(template);
       var tpl = new Template.Template(template,tplCtx);
 
       canvas.height = 15000;
@@ -345,8 +473,10 @@ ScrollView {
       ctx.strokeStyle = "transparent"
       ctx.fillStyle = "black"
       ctx.font = "15px sans-serif";
+      if ((typeof data.referenz==='undefined')&&(typeof data.reference!=='undefined')){
 
-      data.referenz = data.reference; //backward compatibility
+        data.referenz = data.reference; //backward compatibility
+      }
       //      console.log(JSON.stringify(data,null,2));
       var metrics = draw(ctx,tpl.render(data),true);
       //console.log(JSON.stringify(metrics,null,2));

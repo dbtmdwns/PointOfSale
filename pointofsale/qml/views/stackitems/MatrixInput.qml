@@ -177,7 +177,7 @@ StackViewItem {
             template: "{name}"
             columns: 4
             Component.onCompleted: {
-              console.log('***',JSON.stringify(application.relationList,null,0))
+              console.log('relationMatrix onCompleted',JSON.stringify(application.relationList,null,0))
               relationMatrix.addList(application.relationList);
               application.reportStore.cmd("SET RELATION", application.relationList[0]);
             }

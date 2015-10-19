@@ -139,8 +139,8 @@ var Shunt;
 
     cs: function cs(name) {
       if (typeof this.cst[name] === 'undefined'){
-        throw new Error('runtime error: constant "' + name + '" is not defined');
-        //return name;
+        //throw new Error('runtime error: constant "' + name + '" is not defined');
+        return name;
       }else{
 
         return this.cst[name];

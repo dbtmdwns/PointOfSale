@@ -42,11 +42,12 @@ Rectangle {
 
 
             application.reportStore.refItem.referenzphp = '/cmp/cmp_gutscheine/plugins/gutschein/save.php';
-            application.reportStore.currentMode = 'amount';
+
             application.reportStore.refItem.referenz = application.reportStore.referenzString;
             application.reportStore.refItem.brutto_preis = res.data.value*-1;
             application.reportStore.add(application.reportStore.refItem, true);
             application.reportStore.calcPos();
+            application.reportStore.currentMode = 'amount';
 
 
           }else if (typeof res.message==='string') {

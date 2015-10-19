@@ -356,12 +356,18 @@ Item {
   }
 
   function login(cb) {
+    async=0;
     console.log('App.qml','login',async);
+
+
     var cbx = function(){
-      console.log('App.qml','login1',async);
+      console.log('App.qml','query config',async);
+
       config(function() {
-        console.log('App.qml','login2',async);
+
+        console.log('App.qml','login2',async,JSON.stringify(cb,null,3));
         relations(cb);
+
       }.bind(this));
     }.bind(this)
 
@@ -431,8 +437,11 @@ Item {
         cb();
       });
     }else{
+      console.log('app.qml', 'myRemote config');
       myRemote.config(function(res){
+        console.log('app.qml', 'myRemote config res',JSON.stringify(res,null,1));
         processConfig(res);
+        console.log('app.qml', 'myRemote calling cb ***********');
         cb();
         saveSettings();
       });

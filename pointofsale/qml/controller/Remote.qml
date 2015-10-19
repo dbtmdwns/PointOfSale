@@ -130,7 +130,9 @@ Item {
 
       if (err){
         // ToDo
+        console.log('err',err);
       }else if (res.success) {
+        console.log('sessionID',sessionID);
         sessionID = res.sid;
         cb(true);
         pingTimer.start();
@@ -144,6 +146,7 @@ Item {
   }
 
   function logout(cb) {
+    console.log('logout sessionID',sessionID);
     sessionID = '';
     pingTimer.stop();
     cb();
@@ -156,6 +159,7 @@ Item {
   }
 
   function ping(){
+    console.log(application.processConfig);
     config(application.processConfig)
     articles(function(){ });
   }
@@ -236,19 +240,23 @@ Item {
             var list = res.staffeln;
             for(var i =0;i< list.length;i++){
               var item = list[i];
-              var sql = ' insert into searchablearticles
-              (key,id,article,waregroup,articlenumber,staffeln,value)
-              values (
-                \''+client+'\',
-                '+i+',
-                \''+item.gruppe.replace(/'/gm,"#qoute;")+'\',
-                \''+res.artikel[item.gruppe].warengruppe.replace(/'/gm,"#qoute;")+'\',
-                \''+res.artikel[item.gruppe].artikelnummer.replace(/'/gm,"#qoute;")+'\',
-                \''+escapeResult(item)+'\',
-                \''+escapeResult(res.artikel[item.gruppe])+'\'
-              )
-              ';
-              tx.executeSql(sql);
+              try{
+                var sql = ' insert into searchablearticles
+                (key,id,article,waregroup,articlenumber,staffeln,value)
+                values (
+                  \''+client+'\',
+                  '+i+',
+                  \''+item.gruppe.replace(/'/gm,"#qoute;")+'\',
+                  \''+res.artikel[item.gruppe].warengruppe.replace(/'/gm,"#qoute;")+'\',
+                  \''+res.artikel[item.gruppe].artikelnummer.replace(/'/gm,"#qoute;")+'\',
+                  \''+escapeResult(item)+'\',
+                  \''+escapeResult(res.artikel[item.gruppe])+'\'
+                )
+                ';
+                tx.executeSql(sql);
+              }catch(e){
+
+              }
             }
 
           }
@@ -329,14 +337,14 @@ Item {
     }
     var http_result = "";
     __callback = callback;
-    //console.log('post',send_data.substring(0,200));
+    console.log('post',url,send_data.substring(0,200));
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         timeoutTimer.stop()
         if (xhr.status === 200) {
           http_result = xhr.responseText;
-          console.log('post',http_result.substring(0,200));
-          //console.log(xhr.responseText);
+          //console.log('post',http_result.substring(0,200));
+          console.log(xhr.responseText);
           if (typeof callback !== 'undefined') {
             try {
               if (parse === true) {
