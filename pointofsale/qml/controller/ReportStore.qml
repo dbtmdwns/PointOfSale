@@ -703,7 +703,7 @@ Item {
         var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
         var xitem = {
-          artikel: item.gruppe.replace(/'/gm,"#qoute;"),
+          artikel: item.gruppe,
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
           referenz: (typeof item.referenz === 'string') ? item.referenz : '',
           steuersatz: item.steuersatz,
@@ -714,7 +714,7 @@ Item {
           brutto: brutto,
           netto: netto
         }
-        var kombi_liste = _kombiartikel[xitem.artikel];
+        var kombi_liste = _kombiartikel[xitem.artikel.replace(/'/gm,"#qoute;")];
         positions.push(xitem);
         for(var ki=0;ki<kombi_liste.length;ki++){
           singleArticle(kombi_liste[ki].resultartikel.replace(/#qoute;/gm,"'"),function(nitem){
