@@ -24,7 +24,7 @@ Rectangle {
     Text {
         id: texticon
         color: mainStyle.colors.toolbarPrevIcon
-        font.pixelSize: mainStyle.font.size
+        font.pointSize: mainStyle.font.size
         text: modelData
         font.family: mainStyle.font.iconFont.name
         anchors.verticalCenter: parent.verticalCenter
@@ -35,7 +35,7 @@ Rectangle {
     Text {
         id: textitem
         color:mainStyle.colors.toolbarText
-        font.pixelSize: mainStyle.font.size
+        font.pointSize: mainStyle.font.size
         text: modelData
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left

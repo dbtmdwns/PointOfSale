@@ -103,7 +103,7 @@ Grid {
              Text {
 
                 font.family: mainStyle.font.iconFont.name
-                font.pixelSize: mainStyle.font.buttonFontSize
+                font.pointSize: mainStyle.font.buttonFontSize
 
                 width: grid.itemWidth - spacing
                 height: grid.itemHeight - spacing

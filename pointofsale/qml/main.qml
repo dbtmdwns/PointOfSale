@@ -82,7 +82,7 @@ ApplicationWindow {
             color: mainStyle.colors.toolbarPrevIcon
             width: backButton.width
             height: backButton.height
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             font.family: mainStyle.font.iconFont.name
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -101,7 +101,7 @@ ApplicationWindow {
     }
 
     Text {
-        font.pixelSize: mainStyle.font.size
+        font.pointSize: mainStyle.font.size
         //Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
         x: backButton.x + backButton.width + mainStyle.dimens.leftMargin
         anchors.verticalCenter: parent.verticalCenter
@@ -123,6 +123,7 @@ ApplicationWindow {
     Rectangle {
       id: syncButton
       //xxf021
+      visible: application.async=='0'?false:true
       color: "transparent"
       anchors.verticalCenter: parent.verticalCenter
       anchors.right: parent.right
@@ -132,10 +133,10 @@ ApplicationWindow {
 
       Text{
           text: "\uf021"
-          color: application.remote.syncing?"green":"lightgray"
+          color: application.remote.syncing?"green": ( application.async=='1'?'darkgray':'lightgray' )
           width: syncButton.width
           height: syncButton.height
-          font.pixelSize: mainStyle.font.size
+          font.pointSize: mainStyle.font.size
           font.family: mainStyle.font.iconFont.name
           horizontalAlignment: Text.AlignHCenter
           verticalAlignment: Text.AlignVCenter
@@ -147,7 +148,7 @@ ApplicationWindow {
           x: mainStyle.font.size
           width: syncButton.width  - mainStyle.font.size
           height: syncButton.height
-          font.pixelSize: mainStyle.font.size*0.8
+          font.pointSize: mainStyle.font.size*0.8
           horizontalAlignment: Text.AlignRight
           verticalAlignment: Text.AlignVCenter
       }
@@ -188,7 +189,7 @@ ApplicationWindow {
             color: mainStyle.colors.toolbarNextIcon
             width: doneButton.width  - mainStyle.font.size
             height: doneButton.height
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
         }
@@ -198,7 +199,7 @@ ApplicationWindow {
             color: mainStyle.colors.toolbarNextIcon
             width: doneButton.width
             height: doneButton.height
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             font.family: mainStyle.font.iconFont.name
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter

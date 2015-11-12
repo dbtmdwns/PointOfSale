@@ -57,7 +57,7 @@ Grid {
              opacity: mouse.pressed?pressedOpacity:backgroundOpacity
              Behavior on opacity { OpacityAnimator{  easing.type: Easing.InCubic; duration: 250 } }
              Text {
-                font.pixelSize: fontPixelSize
+                font.pointSize: fontPixelSize
                 width: grid.itemWidth-spacing
                 height: grid.itemHeight-spacing
                 color: isHidden?"transparent":mainStyle.colors.basicFontColor

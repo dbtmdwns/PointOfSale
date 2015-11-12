@@ -26,7 +26,7 @@ Rectangle {
         height: textFld.height
         verticalAlignment: Text.AlignVCenter
         color: labelColor
-        font.pixelSize: labelFontPixelSize
+        font.pointSize: labelFontPixelSize
     }
 
     TextField {

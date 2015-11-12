@@ -53,7 +53,6 @@ Rectangle {
           Text {
             id: reportText
             font.family: "Helvetica"
-            font.pixelSize: mainStyle.font.size
             width: numberDisplay.width - 10
             height: numberDisplay.height - 10
             anchors.centerIn: parent

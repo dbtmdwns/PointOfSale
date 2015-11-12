@@ -86,7 +86,7 @@ Rectangle {
         height: mainStyle.dimens.toolbarHeight
         width: parent.width
 
-        
+
 
         Rectangle {
             id: backButton
@@ -106,7 +106,7 @@ Rectangle {
                 color: mainStyle.colors.toolbarPrevIcon
                 width: backButton.width
                 height: backButton.height
-                font.pixelSize: mainStyle.font.size
+                font.pointSize: mainStyle.font.size
                 font.family: mainStyle.font.iconFont.name
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -125,7 +125,7 @@ Rectangle {
         }
 
         Text {
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
             x: backButton.x + backButton.width + mainStyle.dimens.leftMargin
             anchors.verticalCenter: parent.verticalCenter
@@ -164,7 +164,7 @@ Rectangle {
                 color: mainStyle.colors.toolbarNextIcon
                 width: doneButton.width  - mainStyle.font.size
                 height: doneButton.height
-                font.pixelSize: mainStyle.font.size
+                font.pointSize: mainStyle.font.size
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
             }
@@ -174,7 +174,7 @@ Rectangle {
                 color: mainStyle.colors.toolbarNextIcon
                 width: doneButton.width
                 height: doneButton.height
-                font.pixelSize: mainStyle.font.size
+                font.pointSize: mainStyle.font.size
                 font.family: mainStyle.font.iconFont.name
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter

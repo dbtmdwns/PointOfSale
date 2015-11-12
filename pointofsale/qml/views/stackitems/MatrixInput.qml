@@ -202,16 +202,13 @@ StackViewItem {
       Text {
         id: givenText
         font.family: "Helvetica"
-        font.pixelSize: mainStyle.font.size
         width: parent.width - 10
         height: parent.height - 10
         anchors.centerIn: parent
         clip: true
-
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-
-          font.pointSize: givenDisplay.height * 0.3
+        font.pointSize: givenDisplay.height * 0.3
         color: (application.reportStore.given < application.reportStore.total) ? "red" : "black"
         text: "Gegeben: " + (application.reportStore.given.toFixed(2))
       }
@@ -227,7 +224,6 @@ StackViewItem {
       Text {
         id: givebackText
         font.family: "Helvetica"
-        font.pixelSize: mainStyle.font.size
         width: parent.width - 10
         height: parent.height - 10
         anchors.centerIn: parent
@@ -495,7 +491,7 @@ StackViewItem {
           Text {
             id: givenText
             font.family: "Helvetica"
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             width: parent.width - 10
             height: parent.height - 10
             anchors.centerIn: parent
@@ -520,7 +516,7 @@ StackViewItem {
           Text {
             id: givebackText
             font.family: "Helvetica"
-            font.pixelSize: mainStyle.font.size
+            font.pointSize: mainStyle.font.size
             width: parent.width - 10
             height: parent.height - 10
             anchors.centerIn: parent

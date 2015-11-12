@@ -15,7 +15,7 @@ StackViewItem {
     Text{
         id: authText
         color: "white"
-        font.pixelSize: mainStyle.font.size
+        font.pointSize: mainStyle.font.size
 
         anchors.centerIn: parent
         text: qsTr("Please scan your Card")
