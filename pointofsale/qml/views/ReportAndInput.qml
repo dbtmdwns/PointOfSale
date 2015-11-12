@@ -36,7 +36,8 @@ Rectangle {
       id: reportDisplay
       color: "transparent"
       width: root.width
-      height: singleItemHeight * (maxRows - buttonPanelRows - application.totalDisplayRows)
+      height: parent.height/2
+      //height: singleItemHeight * (maxRows - buttonPanelRows - application.totalDisplayRows)
 
       Column {
         id: rep
@@ -90,7 +91,7 @@ Rectangle {
     Rectangle {
       color: "transparent"
       width: root.width
-      height: singleItemHeight * (buttonPanelRows)
+      height: parent.height/2
 
       ButtonPanel {
         id: reportInput

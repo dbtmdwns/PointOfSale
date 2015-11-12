@@ -96,7 +96,8 @@ Item {
       _warengruppen = res.warengruppen;
       _staffeln = res.staffeln;
       _artikel = res.artikel;
-      _kombiartikel = res.kombiartikel;
+      _kombiartikel = application.html_decode_entities_object(res.kombiartikel);
+
       cb();
     });
   }
@@ -290,6 +291,13 @@ Item {
       }
     }
 
+    if (cmdtype === 'ESC') {
+      findString = ""
+      if (currentMode === 'pay') {
+        currentMode = 'amount';
+      }
+    }
+
     if (cmdtype === 'PLUSMINUS') {
       if (number === -1) {
         if (currentMode === 'amount') {
@@ -298,7 +306,6 @@ Item {
         }
       }
     }
-
 
 
     if (cmdtype === 'SEP') {
@@ -688,14 +695,15 @@ Item {
   function add(item, noPlugin) {
     findString = "";
 
-    if (typeof  _kombiartikel[item.gruppe] !== 'undefined'){
+
+    if (typeof  _kombiartikel[item.gruppe.replace(/'/gm,"#qoute;")] !== 'undefined'){
       if (number === -1) {
         lastTotal = 0;
         var brutto_preis = item.brutto_preis;
         var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
         var xitem = {
-          artikel: item.gruppe,
+          artikel: item.gruppe.replace(/'/gm,"#qoute;"),
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
           referenz: (typeof item.referenz === 'string') ? item.referenz : '',
           steuersatz: item.steuersatz,
@@ -709,7 +717,8 @@ Item {
         var kombi_liste = _kombiartikel[xitem.artikel];
         positions.push(xitem);
         for(var ki=0;ki<kombi_liste.length;ki++){
-          singleArticle(kombi_liste[ki].resultartikel,function(nitem){
+          singleArticle(kombi_liste[ki].resultartikel.replace(/#qoute;/gm,"'"),function(nitem){
+            console.log(JSON.stringify(nitem,null,1));
             nitem.artikel = nitem.gruppe;
             nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
             nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;

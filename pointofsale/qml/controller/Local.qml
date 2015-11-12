@@ -94,6 +94,7 @@ Item {
         /*}else{
           cbMessage.msg="Der Nummernkreis ist erschöpft."
         }*/
+          application.remote.tmrUnSyncRPT();
 
         cb(null,cbMessage);
 

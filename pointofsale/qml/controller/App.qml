@@ -6,6 +6,7 @@ import com.tualo 1.0
 
 Item {
 
+  property string version: "1.0.0"
   property string message: ""
   property var configs: []
   property alias local: myLocal
@@ -50,9 +51,45 @@ Item {
     id: myRemote
   }
 
+  property alias matrix : layoutProperties
+  Item {
+    id: layoutProperties
+
+    property int raiX: 9
+    property int raiY: 0
+    property int raiWidth: 3
+    property int raiHeight: 12
+
+    property int waregroupX: 0
+    property int waregroupY: 0
+    property int waregroupWidth: 1
+    property int waregroupHeight: 11
+
+    property int articleX: 1
+    property int articleY: 0
+    property int articleWidth: 8
+    property int articleHeight: 11
+
+    property int relationX: 0
+    property int relationY: 11
+    property int relationWidth: 8
+    property int relationHeight: 1
+
+    property int payX: 0
+    property int payY: 0
+    property int payWidth: 8
+    property int payHeight: 11
+
+    property int pluginX: 0
+    property int pluginY: 0
+    property int pluginWidth: 8
+    property int pluginHeight: 11
+  }
+
+
   property double reportViewScale: 0.5
   property double reportPrintScale: 0.5
-  property string basicFontColor: "#ffffff"
+  property string basicFontColor: "#ccccff"
   property string basicStyleColor: "#212121"
   property int dpi: 72
   property double density: 1
@@ -86,12 +123,16 @@ Item {
 
   property int waregroupColumns: 1
   property int waregroupColCount: 1
+  property int waregroupRowCount: 8
   property int waregroupRows: 10
 
+  property int relationRowCount: 1
+  property int relationColCount: 6
   property int relationColumns: waregroupColumns + articleColumns
   property int relationRows: 1
 
   property int articleColCount: 2
+  property int articleRowCount: 8
   property int articleColumns: 8
   property int articleRows: 10
 
@@ -325,7 +366,7 @@ Item {
     json.zahlungsart = zahlart;
     json.kundennummer = kundennummer;
     json.kostenstelle = kostenstelle;
-    if (async=='1'){
+    if (async!='0'){
       myLocal.save(json,cb);
     }else{
       myRemote.save(json,cb);
@@ -339,7 +380,7 @@ Item {
         relations(cb);
       });
     };
-    if (async=='1'){
+    if (async!='0'){
       cbx();
     }else{
       myRemote.login(cbx);
@@ -351,7 +392,7 @@ Item {
   }
 
   function articles(cb) {
-    if (async=='1'){
+    if (async!='0'){
       myLocal.articles(cb);
     }else{
       myRemote.articles(cb);
@@ -361,16 +402,6 @@ Item {
   function relations(cb) {
     processRelations(relationList,cb);
 
-    /*
-    var cbx = function(res){
-      processRelations(res,cb);
-    }
-    if (async=='1'){
-      myLocal.relations(cbx);
-    }else{
-      myRemote.relations(cbx);
-    }
-    */
   }
 
   function processRelations(res,cb){
@@ -403,7 +434,7 @@ Item {
 
 
   function config(cb){
-    if (async=='1'){
+    if (async!='0'){
       myLocal.config(function(res){
         processConfig(res);
         cb();
@@ -593,13 +624,15 @@ Item {
 
     for (var _property in _object) {
       if (_object.hasOwnProperty(_property)) {
+
         if (typeof _object[_property] === 'string') {
-          _object[_property] = _object[_property].replace(/&#\d+;/gm, function(s) {
+          _object[_property] = _object[_property].replace(/&#quote;/gm,"'").replace(/&#\d+;/gm, function(s) {
             return String.fromCharCode(s.match(/\d+/gm)[0]);
           });
-        }
-        if (typeof _object[_property] === 'object') {
+        }else if (typeof _object[_property] === 'object') {
           _object[_property] = html_decode_entities_object(_object[_property]);
+        }else{
+          _object[_property] = _object[_property];
         }
       }
     }

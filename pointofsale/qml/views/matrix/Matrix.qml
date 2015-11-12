@@ -96,7 +96,7 @@ ScrollView {
         }
         Text {
           id: txt
-          font.pixelSize: mainStyle.font.size
+          font.pointSize: mainStyle.font.size
           width: scrollview.itemWidth - spacing
           //height: grid.itemHeight - spacing
           color: textColor

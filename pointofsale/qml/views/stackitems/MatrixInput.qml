@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
-import QtQuick.Layouts 1.1
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.1
 
 
@@ -20,13 +20,13 @@ StackViewItem {
   title: qsTr("Kasse")
 
   property int spacing: 8
-  property int buttonPanelColumns: 5
-  property int rows: 10
-  property int maxColumns: 8 + application.waregroupColumns + buttonPanelColumns + application.leftSideColumns + application.rightSideColumns
-  property int itemWidth: (framedView.width - spacing * maxColumns) / maxColumns
+  property int layoutWUnit: (parent.width)/12
+  property int layoutHUnit: (parent.height)/12
+
 
   function keyInput(event) {
-    //console.log(event.key,Qt.Key_Enter,Qt.Key_Return);
+
+    console.log(event.key,Qt.Key_Enter,Qt.Key_Return);
     if (16777250===event.key){
       return;
     }
@@ -34,6 +34,9 @@ StackViewItem {
 
       case Qt.Key_Backspace:
         application.reportStore.cmd('BACK', '');
+        break;
+      case Qt.Key_Escape:
+        application.reportStore.cmd('ESC', '');
         break;
       case Qt.Key_Enter:
       case Qt.Key_Return:
@@ -50,6 +53,7 @@ StackViewItem {
   }
 
   Component.onCompleted: {
+
     if ((typeof application.reportStore.modeReferences=='undefined') || (application.reportStore.modeReferences==null)){
       application.reportStore.modeReferences= {};
     }
@@ -61,20 +65,282 @@ StackViewItem {
 
   function update(){
     waregroupMatrix.addList(application.reportStore.getWarengrupen());
-    //relationMatrix.addList(application.relationList);
+  }
+
+
+
+  Rectangle {
+    id: waregroupChooser
+    visible: ( (application.reportStore.currentMode === 'amount') || (application.reportStore.currentMode === 'price') ) ? true : false
+
+    x: spacing+(layoutWUnit*application.matrix.waregroupX)
+    y: spacing+(layoutHUnit*application.matrix.waregroupY)
+    width: layoutWUnit * application.matrix.waregroupWidth -spacing
+    height: layoutHUnit * application.matrix.waregroupHeight -spacing
+
+    color: "transparent"
+    Matrix {
+      id: waregroupMatrix
+      anchors.fill: parent
+      template: "{warengruppe}"
+      rows: application.waregroupRowCount
+      columns: application.waregroupColCount
+      Component.onCompleted: {
+        waregroupMatrix.addList(application.reportStore.getWarengrupen());
+      }
+      onSelected: {
+        articleMatrix.defaultBackgroundColor = item.displayBackgroundColor;
+        application.reportStore.getArtikel(item.warengruppe,function(res){
+          articleMatrix.addList(res);
+        })
+      }
+    }
+
+  }
+
+
+  Rectangle {
+    id: itemChooser
+    color: "transparent"
+    visible: ( (application.reportStore.currentMode === 'amount') || (application.reportStore.currentMode === 'price') ) ? true : false
+
+    x: spacing+(layoutWUnit*application.matrix.articleX)
+    y: spacing+(layoutHUnit*application.matrix.articleY)
+    width: layoutWUnit * application.matrix.articleWidth -spacing
+    height: layoutHUnit * application.matrix.articleHeight -spacing
+
+
+    Matrix {
+      id: articleMatrix
+      anchors.fill: parent
+      template: "{gruppe}<br/>{euro(brutto)}"
+      rows: application.articleRowCount
+      columns: application.articleColCount
+      Component.onCompleted: {
+        application.reportStore.onFind = function(str){
+          application.reportStore.currentMode = 'find';
+          (application.reportStore.findArticle(str,function(l){
+            articleMatrix.addList(l);
+            application.reportStore.currentMode = 'amount';
+          }));
+
+        }
+      }
+      onSelected: {
+        application.reportStore.add(item);
+      }
+    }
+
+  }
+
+
+
+
+  Rectangle {
+    id: relationChooser
+
+    visible: ( (application.reportStore.currentMode === 'amount') || (application.reportStore.currentMode === 'price') ) ? true : false
+
+    x: spacing+(layoutWUnit*application.matrix.relationX)
+    y: spacing+(layoutHUnit*application.matrix.relationY)
+    width: layoutWUnit * application.matrix.relationWidth -spacing
+    height: layoutHUnit * application.matrix.relationHeight -spacing
+
+    color: "transparent"
+    Matrix {
+      id: relationMatrix
+      anchors.fill: parent
+      template: "{name}"
+
+      rows: application.relationRowCount
+      columns: application.relationColCount
+
+      Component.onCompleted: {
+
+        relationMatrix.addList(application.relationList);
+        application.reportStore.cmd("SET RELATION", application.relationList[0]);
+      }
+      onSelected: {
+        application.reportStore.cmd("SET RELATION", item);
+        application.reportStore.getArtikel(application.reportStore._warengruppe,function(res){
+          articleMatrix.addList(res);
+        })
+
+      }
+    }
+  }
+
+
+
+  ReportAndInput {
+    id: rai
+    x: spacing+(layoutWUnit*application.matrix.raiX)
+    y: spacing+(layoutHUnit*application.matrix.raiY)
+    width: layoutWUnit * application.matrix.raiWidth -spacing
+    height: layoutHUnit * application.matrix.raiHeight -spacing
+  }
+
+
+
+  // +++ pay rect
+  Rectangle {
+    id: mFrame2
+    visible: ((application.reportStore.currentMode === 'pay')) ? true : false
+    color: "transparent"
+    x: spacing+(layoutWUnit*application.matrix.payX)
+    y: spacing+(layoutHUnit*application.matrix.payY)
+    width: layoutWUnit * application.matrix.payWidth - spacing
+    height: layoutHUnit * application.matrix.payHeight - spacing
+
+    Rectangle {
+      id: givenDisplay
+      width: parent.width
+      y: 10
+      height: mFrame2.height/9
+      color: "white"
+      radius: 5
+      Text {
+        id: givenText
+        font.family: "Helvetica"
+        font.pixelSize: mainStyle.font.size
+        width: parent.width - 10
+        height: parent.height - 10
+        anchors.centerIn: parent
+        clip: true
+
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+
+          font.pointSize: givenDisplay.height * 0.3
+        color: (application.reportStore.given < application.reportStore.total) ? "red" : "black"
+        text: "Gegeben: " + (application.reportStore.given.toFixed(2))
+      }
+    }
+
+    Rectangle {
+      id: givebackDisplay
+      y: givenDisplay.y + givenDisplay.height + 10
+      width: parent.width
+      height: mFrame2.height/9
+      color: "white"
+      radius: 5
+      Text {
+        id: givebackText
+        font.family: "Helvetica"
+        font.pixelSize: mainStyle.font.size
+        width: parent.width - 10
+        height: parent.height - 10
+        anchors.centerIn: parent
+        clip: true
+
+          verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+
+          font.pointSize: givebackDisplay.height * 0.3
+        color: ((application.reportStore.given - application.reportStore.total) < 0) ? "red" : "black"
+        text: "Rückgeld: " + ((application.reportStore.given - application.reportStore.total).toFixed(2))
+      }
+    }
+
+    BezahlenMatrix {
+      y: givebackDisplay.y + givebackDisplay.height + 10
+      width: parent.width
+      height: mFrame2.height/9 * 5
+      onFieldSelected: {
+        application.reportStore.cmd(item.cmd, item.val);
+      }
+    }
+  } // --- pay rect
+
+
+
+
+  //******************************************
+
+  Rectangle {
+    id: simpleReferenz
+    property alias plugin: plugIn
+    visible: ((application.reportStore.currentMode === 'Referenz')) ? true : false
+    color: "transparent"
+
+    x: spacing+(layoutWUnit*application.matrix.pluginX)
+    y: spacing+(layoutHUnit*application.matrix.pluginY)
+    width: layoutWUnit * application.matrix.pluginWidth - spacing
+    height: layoutHUnit * application.matrix.pluginHeight - spacing
+
+    ReferenzPlugin {
+      id: plugIn
+      y: 0
+      x: 0
+      width: parent.width
+      height: parent.height
+      color: "transparent"
+    }
+  }
+
+
+  Rectangle {
+    id: gutscheinEinloesen
+    property alias plugin: gplugIn
+    visible: ((application.reportStore.currentMode === "GutscheinEinloesen")) ? true : false
+    color: "transparent"
+    x: spacing+(layoutWUnit*application.matrix.pluginX)
+    y: spacing+(layoutHUnit*application.matrix.pluginY)
+    width: layoutWUnit * application.matrix.pluginWidth - spacing
+    height: layoutHUnit * application.matrix.pluginHeight - spacing
+    GutscheinEinloesenPlugin {
+      id: gplugIn
+      y: 0
+      x: 0
+      width: parent.width
+      height: parent.height
+      color: "transparent"
+    }
   }
 
   Rectangle {
-    id: view
-    clip: true
+    id: gutscheinAusgabe
+    property alias plugin: gaplugIn
+    visible: ((application.reportStore.currentMode === "GutscheinAusgeben")) ? true : false
     color: "transparent"
-    width: framedView.width
-    height: framedView.height
-    x: 0
-    y: 0
+
+    x: spacing+(layoutWUnit*application.matrix.pluginX)
+    y: spacing+(layoutHUnit*application.matrix.pluginY)
+    width: layoutWUnit * application.matrix.pluginWidth - spacing
+    height: layoutHUnit * application.matrix.pluginHeight - spacing
+
+    GutscheinAusgebenPlugin {
+      id: gaplugIn
+      y: 0
+      x: 0
+      width: parent.width
+      height: parent.height
+      color: "transparent"
+    }
+  }
 
 
 
+
+
+  Rectangle {
+    anchors.centerIn: parent
+    visible: (application.reportStore.findString === "") ? false : true
+    color: "white"
+    radius: 5
+    width: parent.width * 0.30
+    height: parent.height * 0.10
+
+    Text {
+      anchors.centerIn: parent
+      text: "Suche: "+application.reportStore.findString
+    }
+  }
+
+}
+
+//}
+/*
     Rectangle {
       id: mmFrame
       x: spacing
@@ -420,29 +686,7 @@ StackViewItem {
       }
     }
   }
-/*
 
-  BelegeMatrix {
-    id: leftFrame
-    x: view.width + rightFrame.width
-    width: itemWidth * application.rightSideColumns
-    height: framedView.height
-    //color: "transparent"
-    anchors.margins: spacing
-    Behavior on opacity {
-      OpacityAnimator {
-        easing.type: Easing.InCubic;
-        duration: 500
-      }
-    }
-    opacity: ReportStore.reportMode ? 1 : 0
-      //anchors.fill: parent
-      //anchors.margins: spacing
-    onFieldSelected: {
-      ReportStore.cmd("OPENREPORT", item);
-    }
-  }
-  */
   Rectangle {
     id: leftFrame
     x: application.reportStore.reportMode ? 0: -1*view.width
@@ -484,5 +728,4 @@ StackViewItem {
       }
     }
   }
-
-}
+*/

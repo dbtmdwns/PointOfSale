@@ -21,7 +21,7 @@ ApplicationWindow {
     id: application
   }
 
-  title: application.posTitle
+  title: application.posTitle + " (" +application.version+")"
   /*
 
   ReportStore {
@@ -44,6 +44,7 @@ ApplicationWindow {
 
   Component.onCompleted: {
     appWindow.showMaximized();
+    application.remote.tmrUnSyncRPT();
 
     if (application.fullscreen === "1") {
       appWindow.showFullScreen();
@@ -117,6 +118,54 @@ ApplicationWindow {
 
         ) : title )
     }
+
+
+    Rectangle {
+      id: syncButton
+      //xxf021
+      color: "transparent"
+      anchors.verticalCenter: parent.verticalCenter
+      anchors.right: parent.right
+      anchors.rightMargin: mainStyle.dimens.rightMargin*2+mainStyle.dimens.nextButtonWidth
+      height: mainStyle.dimens.nextButtonHeight
+      width: mainStyle.dimens.nextButtonWidth
+
+      Text{
+          text: "\uf021"
+          color: application.remote.syncing?"green":"lightgray"
+          width: syncButton.width
+          height: syncButton.height
+          font.pixelSize: mainStyle.font.size
+          font.family: mainStyle.font.iconFont.name
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+      }
+
+      Text{
+          text: application.remote.reports_not_in_sync
+          color: "darkgray"
+          x: mainStyle.font.size
+          width: syncButton.width  - mainStyle.font.size
+          height: syncButton.height
+          font.pixelSize: mainStyle.font.size*0.8
+          horizontalAlignment: Text.AlignRight
+          verticalAlignment: Text.AlignVCenter
+      }
+
+      MouseArea {
+        id: syncmouse
+        anchors.fill: parent
+        onClicked: {
+          if (application.async=='2'){
+            if (application.remote.syncing===false){
+              application.remote.doSync();
+            }
+          }
+        }
+      }
+
+    }
+
 
 
     Rectangle {
@@ -201,7 +250,7 @@ ApplicationWindow {
      if (typeof stack.currentItem.keyInput==='function'){
        stack.currentItem.keyInput(event);
      }
-     
+
      /*
      console.log(event.key);
      switch (event.key) {

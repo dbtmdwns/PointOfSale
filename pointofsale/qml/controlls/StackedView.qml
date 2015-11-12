@@ -86,7 +86,7 @@ Rectangle {
         height: mainStyle.dimens.toolbarHeight
         width: parent.width
 
-
+        
 
         Rectangle {
             id: backButton

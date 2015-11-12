@@ -9,7 +9,9 @@ Item {
   property string password: "admin"
   property string client: ""
   property string sessionID: ""
+  property int reports_not_in_sync: 0
   property bool logged_in: false
+  property bool syncing: false
   property var __callback;
 
   Timer {
@@ -37,62 +39,105 @@ Item {
 
   Timer {
     id: asyncTimer
-    interval: 10000
+    interval: 60000
     running: true
     repeat: true
     onTriggered: {
 
       if (application.async=='1'){
-
-
-        var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
-        db.transaction(
-          function(tx) {
-            var sql = 'select * from reports where key = \''+client+'\' ';
-            var rs = tx.executeSql(sql);
-
-            post(url, {
-              username: username,
-              mandant: client,
-              password: password,
-              "return": "json"
-            }, function(err, res) {
-
-              if (err){
-                // ToDo
-              }else if (res.success) {
-                var csession = res.sid;
-                sessionID = csession;
-                ping();
-                asyncList(csession,rs.rows,0,function(){
-                  post(url, {
-                    TEMPLATE: 'NO',
-                    cmp: 'cmp_logout',
-                    sid: csession
-                  }, function(err, res) {
-                    sessionID="";
-                  }, false);
-
-                });
-
-              }else if (res.success == false) {
-                // ToDo
-              }
-            });
-
-          }
-        );
+        console.log('autosync');
+        doSync();
       }
 
     }
   }
 
+  Timer {
+    id: unSyncTimer
+    interval: 30000
+    running: true
+    repeat: true
+    onTriggered: {
+
+      if (application.async!='0'){
+        tmrUnSyncRPT();
+      }
+
+    }
+  }
+
+  function tmrUnSyncRPT(){
+    unsyncReports(function(num){
+      reports_not_in_sync=num;
+    })
+  }
+
+  function unsyncReports(cb){
+    var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+    db.transaction(
+      function(tx) {
+        var sql = 'select id from reports where key = \''+client+'\' ';
+        var rs = tx.executeSql(sql);
+        console.log('counts '+rs.rows.length);
+        cb(rs.rows.length);
+      }
+    );
+  }
+  function doSync(){
+    var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+    db.transaction(
+      function(tx) {
+        var sql = 'select * from reports where key = \''+client+'\' ';
+        var rs = tx.executeSql(sql);
+
+        syncing = true;
+        post(url, {
+          username: username,
+          mandant: client,
+          password: password,
+          "return": "json"
+        }, function(err, res) {
+
+          if (err){
+            // ToDo
+          }else if (res.success) {
+            var csession = res.sid;
+            sessionID = csession;
+            ping();
+            asyncList(csession,rs.rows,0,function(){
+              post(url, {
+                TEMPLATE: 'NO',
+                cmp: 'cmp_logout',
+                sid: csession
+              }, function(err, res) {
+
+                tmrUnSyncRPT();
+
+                sessionID="";
+                syncing = false;
+              }, false);
+
+            });
+
+          }else if (res.success == false) {
+            // ToDo
+          }
+        });
+
+      }
+    );
+  }
+
+
   function asyncList(csession,list,index,cb){
     if (index<list.length){
-      var json = application.remote.unEscapeResult(list[0].value);
-      var xid = list[0].id
-      json.id = list[0].id+' '+json.id;
+      var json = application.remote.unEscapeResult(list[index].value);
+      var xid = list[index].id
+      json.id = list[index].id+' '+json.id;
       save(json,function(err,res){
+
+        console.log('asyncList',JSON.stringify(res,null,1));
+
         if (res.success==true){
         }else{
         }
@@ -102,10 +147,12 @@ Item {
             function(tx) {
               var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
               tx.executeSql(sql);
+              console.log('asyncList',list.length,index+1);
+              asyncList(csession,list,index+1,cb);
             }
           );
         }
-        asyncList(csession,list,index+1,cb);
+
       },csession);
 
     }else{
@@ -160,7 +207,7 @@ Item {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
       sid: sessionID,
-      page: "pos_get_config_v1.0.0",
+      page: "pos_get_config_v"+application.version,
       "return": "json"
     }, function(err, res) {
       if (err) {
@@ -194,7 +241,7 @@ Item {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
       sid: sessionID,
-      page: "pos_articles",
+      page: "pos_articles_v"+application.version,
       "return": "json"
     }, function(err, res) {
 
@@ -224,8 +271,6 @@ Item {
             tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_article on searchablearticles(article)');
             tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_waregroup on searchablearticles(waregroup)');
             tx.executeSql('CREATE INDEX IF NOT EXISTS idx_sa_articlenumber on searchablearticles(articlenumber)');
-
-            //console.log(JSON.stringify(res,null,2));
             var sql = 'delete from searchablearticles where key=\''+client+'\'';
             tx.executeSql(sql);
 
@@ -295,7 +340,7 @@ Item {
     post(url, {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
-      page: 'single_report_v1.0.0',
+      page: "single_report_v"+application.version,
       sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
