@@ -27,6 +27,7 @@ StackViewItem {
               console.log(JSON.stringify(res,null,4));
               application.processConfig(res);
               stack.pop();
+              application.remote.doSync();
             });
           }else{
             application.displayMessage("Das Login war fehlerhaft");
