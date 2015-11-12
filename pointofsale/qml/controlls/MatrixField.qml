@@ -60,9 +60,9 @@ Grid {
                 font.pixelSize: fontPixelSize
                 width: grid.itemWidth-spacing
                 height: grid.itemHeight-spacing
-                color: isHidden?"transparent":"white"
+                color: isHidden?"transparent":mainStyle.colors.basicFontColor
                 style: Text.Outline
-                styleColor: isHidden?"transparent":"black"
+                styleColor: isHidden?"transparent": mainStyle.colors.basicStyleColor
                 anchors.centerIn: parent
                 wrapMode: Text.WordWrap
                 text: isHidden ? "" :  ((typeof fields[index].displayText==='undefined')?"":fields[index].displayText)

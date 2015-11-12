@@ -118,7 +118,7 @@ StackViewItem {
             anchors.fill: parent
             template: "{warengruppe}"
             rows: framedView.rows
-            columns: 1
+            columns: application.waregroupColCount
             Component.onCompleted: {
               waregroupMatrix.addList(application.reportStore.getWarengrupen());
             }
@@ -148,7 +148,7 @@ StackViewItem {
             anchors.fill: parent
             template: "{gruppe}<br/>{euro(brutto)}"
             rows: framedView.rows
-            columns: 2
+            columns: application.articleColCount
             Component.onCompleted: {
               application.reportStore.onFind = function(str){
                 application.reportStore.currentMode = 'find';

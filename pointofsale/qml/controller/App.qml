@@ -50,6 +50,10 @@ Item {
     id: myRemote
   }
 
+  property double reportViewScale: 0.5
+  property double reportPrintScale: 0.5
+  property string basicFontColor: "#ffffff"
+  property string basicStyleColor: "#212121"
   property int dpi: 72
   property double density: 1
   property int dbsize: 1024*1024* 50 // 50MB
@@ -68,8 +72,8 @@ Item {
   property int leftMatrixWidth: 100
   property int rightMatrixWidth: 100
   property int scale: 2
-  property int fontSize: (dpi/109) * configFontSize
-  property int buttonFontSize: (dpi/109) * configButtonFontSize
+  property int fontSize: configFontSize //(dpi/109) * configFontSize
+  property int buttonFontSize: configButtonFontSize //(dpi/109) * configButtonFontSize
   property int configFontSize: 14
   property int configButtonFontSize: 14
 
@@ -81,11 +85,13 @@ Item {
   property int rightSideColumns: 3
 
   property int waregroupColumns: 1
+  property int waregroupColCount: 1
   property int waregroupRows: 10
 
   property int relationColumns: waregroupColumns + articleColumns
   property int relationRows: 1
 
+  property int articleColCount: 2
   property int articleColumns: 8
   property int articleRows: 10
 
@@ -233,7 +239,7 @@ Item {
           tx.executeSql('CREATE TABLE IF NOT EXISTS reports ( key varchar(255), id integer, value TEXT, primary key (key,id) )');
           tx.executeSql('CREATE TABLE IF NOT EXISTS articles (key varchar(255) primary key, value TEXT)');
           tx.executeSql('CREATE TABLE IF NOT EXISTS relations (key varchar(255) primary key, value TEXT)');
-        tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
+          tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
         var rs = tx.executeSql('SELECT key,value FROM settings');
         for (var i = 0; i < rs.rows.length; i++) {
           switch (rs.rows.item(i).key) {
@@ -452,6 +458,38 @@ Item {
     model.clear();
     configs=[];
     if (result && result.cnf){
+      if (result.fontsize){
+        configFontSize = result.fontsize*1;
+        configButtonFontSize = result.fontsize*1;
+      }
+      if (result.waregroupColCount){
+        waregroupColCount = result.waregroupColCount*1;
+      }
+      if (result.articleColCount){
+        articleColCount = result.articleColCount*1;
+      }
+      if (result.waregroupColumns){
+        waregroupColumns = result.waregroupColumns*1;
+      }
+      if (result.articleColumns){
+        articleColumns = result.articleColumns*1;
+      }
+
+
+      if (result.reportViewScale){
+        reportViewScale = result.reportViewScale*1;
+      }
+
+      if (result.basicFontColor){
+        basicFontColor = result.basicFontColor;
+      }
+      if (result.basicStyleColor){
+        basicStyleColor = result.basicStyleColor;
+      }
+
+      basicFontColor
+
+
       for(var i=0;i<result.cnf.length;i++){
         var item = {};
         var res = result.cnf[i];

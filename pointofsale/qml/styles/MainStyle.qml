@@ -22,7 +22,10 @@ Item {
     id: colors
     property string btnBackground: "#41414f"
     property string background: "#54545f"
-    property string basicFontColor: "white"
+
+    property string basicFontColor: application.basicFontColor
+    property string basicStyleColor: application.basicStyleColor
+
     property string buttonPressed: "#212121"
     property string toolbarPrevIcon: "#eeffffff"
     property string toolbarNextIcon: "green"

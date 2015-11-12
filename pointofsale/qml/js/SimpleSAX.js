@@ -207,7 +207,7 @@ SimpleSAX.prototype.parse = function(data) {
               // self closed tag with attributes
 
             } else {
-              throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1] + ' ');
+              //throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1] + ' ');
             }
             temp = [];
           }
@@ -237,7 +237,7 @@ SimpleSAX.prototype.parse = function(data) {
             //me.emit('etag', stack, stag);
             stack.pop();
           } else {
-            throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1].tag + ' ');
+            //throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1].tag + ' ');
           }
 
           //console.log('close tag found: ',stag);
@@ -254,4 +254,4 @@ SimpleSAX.prototype.parse = function(data) {
 
   me.emit('end');
 
-}
+};

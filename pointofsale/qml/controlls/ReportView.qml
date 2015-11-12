@@ -19,6 +19,9 @@ ScrollView {
 
   }
   id: scrollView
+  property double reportViewScale: application.reportViewScale
+  property double reportPrintScale: application.reportPrintScale
+
   Image{
 
     opacity: 0
@@ -40,8 +43,8 @@ ScrollView {
     antialiasing: true
     property bool isConverting: false
     transform: Scale {
-       xScale: 0.5
-       yScale: 0.5
+       xScale: reportViewScale
+       yScale: reportViewScale
    }
 
    Timer {
@@ -382,7 +385,7 @@ ScrollView {
       sax.parse(data)
       try{
         //console.log(newY,scrollView.height)
-        scrollView.flickableItem.contentY = newY - scrollView.height *0.95
+        scrollView.flickableItem.contentY = (newY*(reportViewScale/0.5)) - scrollView.height *0.95
         //scrollView.__verticalScrollBar.value = newY //- scrollView.height *0.95
       }catch(e){
         console.log(e);
@@ -465,7 +468,7 @@ ScrollView {
       ctx.fillStyle = "white";
       ctx.fillRect(0,0,5000,5000);
 
-      ctx.scale(2,2);
+      ctx.scale(1/reportPrintScale,1/reportPrintScale);
       //ctx.beginPath();
       ctx.fillStyle = "black"
       ctx.strokeStyle = "transparent"
@@ -476,7 +479,7 @@ ScrollView {
         data.referenz = data.reference; //backward compatibility
       }
       var metrics = draw(ctx,tpl.render(data),true);
-      ctx.scale(0.5,0.5);
+      ctx.scale(reportPrintScale,reportPrintScale);
       ctx.save();
 
 
