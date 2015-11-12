@@ -518,9 +518,142 @@ Item {
         basicStyleColor = result.basicStyleColor;
       }
 
-      basicFontColor
+      if (result.layout){
+
+        if (result.layout.raiX){
+          layoutProperties.raiX = result.layout.raiX*1;
+        }else{
+          layoutProperties.raiX = 9;
+        }
+        if (result.layout.raiY){
+          layoutProperties.raiY = result.layout.raiY*1;
+        }else{
+          layoutProperties.raiY = 0;
+        }
+        if (result.layout.raiWidth){
+          layoutProperties.raiWidth = result.layout.raiWidth*1;
+        }else{
+          layoutProperties.raiWidth = 3;
+        }
+        if (result.layout.raiHeight){
+          layoutProperties.raiHeight = result.layout.raiHeight*1;
+        }else{
+          layoutProperties.raiHeight = 12;
+        }
 
 
+        if (result.layout.waregroupX){
+          layoutProperties.waregroupX = result.layout.waregroupX*1;
+        }else{
+          layoutProperties.waregroupX = 0;
+        }
+        if (result.layout.waregroupY){
+          layoutProperties.waregroupY = result.layout.waregroupY*1;
+        }else{
+          layoutProperties.waregroupY = 0;
+        }
+        if (result.layout.waregroupWidth){
+          layoutProperties.waregroupWidth = result.layout.waregroupWidth*1;
+        }else{
+          layoutProperties.waregroupWidth = 2;
+        }
+        if (result.layout.waregroupHeight){
+          layoutProperties.waregroupHeight = result.layout.waregroupHeight*1;
+        }else{
+          layoutProperties.waregroupHeight = 11;
+        }
+
+
+        if (result.layout.articleX){
+          layoutProperties.articleX = result.layout.articleX*1;
+        }else{
+          layoutProperties.articleX = 2;
+        }
+        if (result.layout.articleY){
+          layoutProperties.articleY = result.layout.articleY*1;
+        }else{
+          layoutProperties.articleY = 0;
+        }
+        if (result.layout.articleWidth){
+          layoutProperties.articleWidth = result.layout.articleWidth*1;
+        }else{
+          layoutProperties.articleWidth = 2;
+        }
+        if (result.layout.articleHeight){
+          layoutProperties.articleHeight = result.layout.articleHeight*1;
+        }else{
+          layoutProperties.articleHeight = 11;
+        }
+
+
+        if (result.layout.relationX){
+          layoutProperties.relationX = result.layout.relationX*1;
+        }else{
+          layoutProperties.relationX = 0;
+        }
+        if (result.layout.relationY){
+          layoutProperties.relationY = result.layout.relationY*1;
+        }else{
+          layoutProperties.relationY = 11;
+        }
+        if (result.layout.relationWidth){
+          layoutProperties.relationWidth = result.layout.relationWidth*1;
+        }else{
+          layoutProperties.relationWidth = 8;
+        }
+        if (result.layout.relationHeight){
+          layoutProperties.relationHeight = result.layout.relationHeight*1;
+        }else{
+          layoutProperties.relationHeight = 1;
+        }
+
+
+        if (result.layout.payX){
+          layoutProperties.payX = result.layout.payX*1;
+        }else{
+          layoutProperties.payX = 0;
+        }
+        if (result.layout.payY){
+          layoutProperties.payY = result.layout.payY*1;
+        }else{
+          layoutProperties.payY = 0;
+        }
+        if (result.layout.payWidth){
+          layoutProperties.payWidth = result.layout.payWidth*1;
+        }else{
+          layoutProperties.payWidth = 8;
+        }
+        if (result.layout.payHeight){
+          layoutProperties.payHeight = result.layout.payHeight*1;
+        }else{
+          layoutProperties.payHeight = 11;
+        }
+
+
+        if (result.layout.pluginX){
+          layoutProperties.pluginX = result.layout.pluginX*1;
+        }else{
+          layoutProperties.pluginX = 0;
+        }
+        if (result.layout.pluginY){
+          layoutProperties.pluginY = result.layout.pluginY*1;
+        }else{
+          layoutProperties.pluginY = 0;
+        }
+        if (result.layout.pluginWidth){
+          layoutProperties.pluginWidth = result.layout.pluginWidth*1;
+        }else{
+          layoutProperties.pluginWidth = 8;
+        }
+        if (result.layout.pluginHeight){
+          layoutProperties.pluginHeight = result.layout.pluginHeight*1;
+        }else{
+          layoutProperties.pluginHeight = 11;
+        }
+
+
+      }
+console.log(JSON.stringify(result.cnf,null,4));
       for(var i=0;i<result.cnf.length;i++){
         var item = {};
         var res = result.cnf[i];
