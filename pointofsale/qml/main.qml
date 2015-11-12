@@ -76,7 +76,7 @@ ApplicationWindow {
         height: mainStyle.dimens.backButtonHeight
         radius: 4
         color: backmouse.pressed ? "#222" : "transparent"
-        Behavior on opacity { NumberAnimation{  easing.type: Easing.InCubic; duration: 50 } }
+        //Behavior on opacity { NumberAnimation{  easing.type: Easing.InCubic; duration: 50 } }
         Text{
             text: "\uf053"
             color: mainStyle.colors.toolbarPrevIcon
@@ -102,7 +102,7 @@ ApplicationWindow {
 
     Text {
         font.pixelSize: mainStyle.font.size
-        Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
+        //Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
         x: backButton.x + backButton.width + mainStyle.dimens.leftMargin
         anchors.verticalCenter: parent.verticalCenter
         color: mainStyle.colors.toolbarText
@@ -181,7 +181,7 @@ ApplicationWindow {
         radius: 4
         color: backmouse.pressed ? mainStyle.colors.buttonPressed : "transparent"
 
-        Behavior on opacity { NumberAnimation{  easing.type: Easing.InCubic; duration: 50 } }
+        //Behavior on opacity { NumberAnimation{  easing.type: Easing.InCubic; duration: 50 } }
 
         Text{
             text: ( (stack.currentItem!==null)  && (typeof stack.currentItem.doneText==="string"))?stack.currentItem.doneText.substring(0,stack.currentItem.doneText.length-1):""
@@ -296,12 +296,14 @@ ApplicationWindow {
     radius: 5
     width: parent.width * 0.30
     height: parent.height * 0.30
+    /*
     Behavior on opacity {
       OpacityAnimator {
         easing.type: Easing.InCubic;
         duration: 150
       }
     }
+    */
     Text {
       anchors.centerIn: parent
       clip: true
