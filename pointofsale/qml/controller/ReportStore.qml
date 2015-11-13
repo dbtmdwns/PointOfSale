@@ -79,7 +79,8 @@ Item {
       currentMode = 'amount';
       clearFindString.stop();
       findArticle(findString,function(l){
-        if (l.length==1){
+        console.log('xxx');
+        if (l.length===1){
           add(l[0]);
         }
         findString = "";
@@ -144,9 +145,11 @@ Item {
   function findArticle(find,cb){
     var res = [];
 
+    if (find.length>3){
     var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
     db.transaction(
       function(tx) {
+
         var sql = 'SELECT * FROM searchablearticles
         where key=\''+application.remote.client+'\'
         and (
@@ -173,13 +176,17 @@ Item {
             item.zusatztext = artikel.zusatztext;
             res.push(item);
 
+            if (find='4000607432101')
+             console.log(JSON.stringify(item,null,2));
+
           }
 
         }
+        console.log('find res',res.length,typeof cb)
         cb(res);
       }
     );
-
+    }
   }
 
 
@@ -607,14 +614,19 @@ Item {
 
 
     if (cmdtype === 'ENTER') {
+      console.log(currentMode,findString);
+        if ( (currentMode === 'amount') && (findString.length>5) ){
+           currentMode ='find';
+        }
 
       if (currentMode === 'find') {
         currentMode = 'amount';
         clearFindString.stop();
-        var l = findArticle(findString);
-        if (l.length==1){
-          add(l[0]);
-        }
+        var r = findArticle(findString,function(res){
+            if (res.length===1){
+              add(res[0]);
+            }
+        });
         findString = "";
         return;
       }

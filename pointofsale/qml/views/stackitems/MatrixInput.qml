@@ -39,8 +39,13 @@ StackViewItem {
       case Qt.Key_Escape:
         application.reportStore.cmd('ESC', '');
         break;
+
+      case 10:
+      case 13:
+      case 16777249:
       case Qt.Key_Enter:
       case Qt.Key_Return:
+        application.reportStore.findString=application.reportStore.findString.replace(/[^0-9a-z]/gi,'')
         application.reportStore.cmd('ENTER', '');
         break;
       default:

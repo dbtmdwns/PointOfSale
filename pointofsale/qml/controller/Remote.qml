@@ -293,6 +293,7 @@ Item {
                   \''+escapeResult(res.artikel[item.gruppe])+'\'
                 )
                 ';
+
                 tx.executeSql(sql);
               }catch(e){
 
