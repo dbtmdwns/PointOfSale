@@ -1,6 +1,9 @@
-import QtQuick 2.3
-import QtQuick.Window 2.1
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 
 import "./controlls"
 import "./styles"
@@ -21,7 +24,7 @@ ApplicationWindow {
     id: application
   }
 
-  title: application.posTitle + " (" +application.version+")"
+  title: application.posTitle + " (" +application.version+" / "+application.versionBuild+")"
   /*
 
   ReportStore {

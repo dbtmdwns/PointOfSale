@@ -1,5 +1,9 @@
-import QtQuick 2.3
-import QtQuick.Window 2.1
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 import QtQuick.LocalStorage 2.0
 import com.tualo 1.0
 
@@ -78,7 +82,6 @@ Item {
       function(tx) {
         var sql = 'select id from reports where key = \''+client+'\' ';
         var rs = tx.executeSql(sql);
-        console.log('counts '+rs.rows.length);
         cb(rs.rows.length);
       }
     );
@@ -337,6 +340,7 @@ Item {
     if (typeof csession==='undefined'){
       csession = sessionID;
     }
+
     post(url, {
       TEMPLATE: 'NO',
       cmp: 'cmp_mde_sync',
@@ -344,9 +348,121 @@ Item {
       sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
-
+      //console.log(JSON.stringify(err,null,1));
+      //console.log(JSON.stringify(res,null,1));
       cb(err, res);
     }, true);
+  }
+
+  function getCashBox(cb){
+
+    syncing = true;
+    post(url, {
+      username: username,
+      mandant: client,
+      password: password,
+      "return": "json"
+    }, function(err, res) {
+
+      if (err){
+        // ToDo
+      }else if (res.success) {
+        var csession = res.sid;
+        post(url, {
+          TEMPLATE: 'NO',
+          cmp: 'cmp_kassenbuch',
+          page: "ajax/grid/kassenbuch",
+          sid: csession,
+          start: 0,
+          limit: 1000000,
+          kasse: application.kasse,
+          abschluss: ""
+        }, function(err, res) {
+          if (err){
+            // ToDo
+          }else{
+            var list = res.data;
+            var saldo = 0;
+            var start = 0;
+            var liste = [];
+
+            for(var i=0;i<list.length;i++){
+              if (i===0){
+                start = list[i].einnahme*1-list[i].ausgabe*1;
+              }
+              saldo+=list[i].einnahme*1-list[i].ausgabe*1
+              if (i>0){
+                liste.push({
+                  reportnumber: list[i].referenz,
+                  total: list[i].einnahme*1-list[i].ausgabe*1,
+                  date: (list[i].belegdatum=='')?'____-__-__':list[i].belegdatum,
+                  time: (list[i].zeit)?list[i].zeit:'__:__:__'
+                });
+              }
+            }
+            //console.log('saldo',saldo);
+            //console.log('start',start);
+            cb(liste,start,saldo,application.kasse);
+
+            post(url, {
+              TEMPLATE: 'NO',
+              cmp: 'cmp_logout',
+              sid: csession
+            }, function(err, res) {
+              syncing = false;
+            });
+          }
+        })
+
+      }
+    })
+  }
+
+
+  function closeCashBox(cb){
+
+    syncing = true;
+    post(url, {
+      username: username,
+      mandant: client,
+      password: password,
+      "return": "json"
+    }, function(err, res) {
+
+      if (err){
+        // ToDo
+      }else if (res.success) {
+        var csession = res.sid;
+        post(url, {
+          TEMPLATE: 'NO',
+          cmp: 'cmp_kassenbuch',
+          page: "ajax/grid/abschluss",
+          sid: csession,
+          start: 0,
+          limit: 1000000,
+          kasse: application.kasse,
+          abschluss: ""
+        }, function(err, res) {
+          if (err){
+            // ToDo
+          }else{
+
+            //console.log('saldo',saldo);
+            //console.log('start',start);
+            cb();
+
+            post(url, {
+              TEMPLATE: 'NO',
+              cmp: 'cmp_logout',
+              sid: csession
+            }, function(err, res) {
+              syncing = false;
+            });
+          }
+        })
+
+      }
+    })
   }
 
   function shortPost(data, callback) {

@@ -1,7 +1,9 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
-import QtQuick.Layouts 1.1
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 
 import "../../js/Template.js" as Template
 import "../../js/Shunt.js" as Shunt
@@ -103,6 +105,7 @@ ScrollView {
           anchors.centerIn: parent
           wrapMode: Text.Wrap
           elide: Text.ElideMiddle
+          textFormat: Text.RichText
           text: displayText
           antialiasing: true
           style: Text.Outline

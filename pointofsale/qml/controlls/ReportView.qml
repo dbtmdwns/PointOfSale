@@ -1,7 +1,7 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
-import QtQuick.Layouts 1.1
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 
 
@@ -122,8 +122,7 @@ ScrollView {
       var item,width,padding,paddingRight,paddingLeft,paddingTop,paddingBottom,align;
 
       var fontStyle = "black";
-      var fontSize = 0.22;
-
+      var fontSize = 1;
       var fontName = "sans-serif";
 
       var getCode39=function(data){
@@ -342,7 +341,6 @@ ScrollView {
             if (fontPixelSize <1){
               fontPixelSize = 1
             }
-
             context.font = fontPixelSize+"px "+fontName;
             lineHeight = Math.max(lineHeight,fontPixelSize * 1.5);
             newY =  wrapText(

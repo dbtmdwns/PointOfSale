@@ -1,7 +1,9 @@
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
-import QtQuick.Layouts 1.1
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 import "../controlls"
 import "../views"
 import "../styles"
@@ -12,13 +14,18 @@ Rectangle {
 
   property int buttonPanelRows: 6
   property int maxRows: 10
+  property bool main: true
   property double singleItemHeight: (root.height - 10) / maxRows
 
+  property alias view: reportView
+  
   Component.onCompleted: {
 
-    application.reportStore.styles = mainStyle;
-    application.reportStore.reportView = reportView;
-    application.reportStore.sum();
+    if (main===true){
+      application.reportStore.styles = mainStyle;
+      application.reportStore.reportView = reportView;
+      application.reportStore.sum();
+    }
   }
 
 

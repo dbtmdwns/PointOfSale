@@ -1,4 +1,9 @@
-import QtQuick 2.0
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 import QtQuick.LocalStorage 2.0
 import "../styles"
 import "../controlls"
@@ -421,29 +426,43 @@ Item {
           }
         } else if (currentMode === 'price') {
 
-          if (positions[positions.length - 1].kombiartikel===true){
+          var chPos = positions.length - 1;
+          console.log(JSON.stringify(positions,null,1));
+          while((positions[chPos].kombiartikel===true)){
+            chPos--;
+            if (chPos==-1){
+              return;
+            }
+          }
+          console.log(chPos);
+          /*
+          if (positions[chPos].kombiartikel===true){
             application.displayMessage("Preisänderung ist bei Kombiartikeln nicht erlaubt");
             return;
+
           }
+          */
+
+
           val *=1;
           if (priceModeInit) {
-            positions[positions.length - 1].brutto_preis = val;
+            positions[chPos].brutto_preis = val;
             priceModeInit = false;
           } else {
-            if (typeof positions[positions.length - 1]._fraction === 'undefined') {
-              positions[positions.length - 1]._fraction = "";
+            if (typeof positions[chPos]._fraction === 'undefined') {
+              positions[chPos]._fraction = "";
             }
 
             if (fractionMode) {
-              positions[positions.length - 1]._fraction += val + "";
-              var f = Math.floor(positions[positions.length - 1].brutto_preis);
-              positions[positions.length - 1].brutto_preis = (f + "." + positions[positions.length - 1]._fraction) * 1;
+              positions[chPos]._fraction += val + "";
+              var f = Math.floor(positions[chPos].brutto_preis);
+              positions[chPos].brutto_preis = (f + "." + positions[chPos]._fraction) * 1;
             } else {
-              positions[positions.length - 1].brutto_preis *= 10;
-              positions[positions.length - 1].brutto_preis += val;
+              positions[chPos].brutto_preis *= 10;
+              positions[chPos].brutto_preis += val;
             }
           }
-          calcPos(positions.length - 1);
+          calcPos(chPos);
         } else if (currentMode === 'pay') {
 
           givenPModeInit = true;
@@ -810,8 +829,8 @@ Item {
       var brutto_preis = positions[index].brutto_preis; // Math.round( positions[index].epreis*(1+positions[index].steuersatz/100) * 100) /100;
 
       var brutto = Math.round((positions[index].anzahl * brutto_preis) * 100) / 100;
-
-      positions[index].steuersatz = _artikel[positions[index].artikel]['steuer' + feld] * 1;
+      console.log(positions[index].artikel);
+      positions[index].steuersatz = _artikel[positions[index].artikel.replace(/'/gm,"#qoute;")]['steuer' + feld] * 1;
       var netto = brutto / (1 + positions[index].steuersatz / 100);
 
       positions[index].brutto_preis = brutto_preis;

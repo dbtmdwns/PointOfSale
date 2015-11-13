@@ -1,12 +1,17 @@
 
-import QtQuick 2.3
-import QtQuick.Window 2.1
+import QtQuick 2.5
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 import QtQuick.LocalStorage 2.0
 import com.tualo 1.0
 
 Item {
 
   property string version: "1.0.0"
+  property string versionBuild: "003"
   property string message: ""
   property var configs: []
   property alias local: myLocal
@@ -277,10 +282,10 @@ Item {
       function(tx) {
         // Create the database if it doesn't already exist
       tx.executeSql('CREATE TABLE IF NOT EXISTS config (key varchar(255) primary key, value TEXT)');
-          tx.executeSql('CREATE TABLE IF NOT EXISTS reports ( key varchar(255), id integer, value TEXT, primary key (key,id) )');
-          tx.executeSql('CREATE TABLE IF NOT EXISTS articles (key varchar(255) primary key, value TEXT)');
-          tx.executeSql('CREATE TABLE IF NOT EXISTS relations (key varchar(255) primary key, value TEXT)');
-          tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS reports ( key varchar(255), id integer, value TEXT, primary key (key,id) )');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS articles (key varchar(255) primary key, value TEXT)');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS relations (key varchar(255) primary key, value TEXT)');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS settings(key varchar(255) primary key, value TEXT)');
         var rs = tx.executeSql('SELECT key,value FROM settings');
         for (var i = 0; i < rs.rows.length; i++) {
           switch (rs.rows.item(i).key) {
@@ -653,7 +658,6 @@ Item {
 
 
       }
-console.log(JSON.stringify(result.cnf,null,4));
       for(var i=0;i<result.cnf.length;i++){
         var item = {};
         var res = result.cnf[i];
@@ -688,6 +692,15 @@ console.log(JSON.stringify(result.cnf,null,4));
         configs.push(item);
       }
     }
+
+
+    model.append({
+      iconText: "\uf00c",
+      title:  "Abschluss",
+      doneText: "",
+      page: "CloseCashBox.qml"
+    })
+
     model.append({
       iconText: "\uf0f6",
       title: "About",
