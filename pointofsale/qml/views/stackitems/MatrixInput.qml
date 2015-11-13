@@ -36,8 +36,10 @@ StackViewItem {
       case Qt.Key_Backspace:
         application.reportStore.cmd('BACK', '');
         break;
-      case Qt.Key_Escape:
-        application.reportStore.cmd('ESC', '');
+        
+      case 44:
+      case 46:
+        application.reportStore.cmd('NUM', '');
         break;
 
       case 10:
