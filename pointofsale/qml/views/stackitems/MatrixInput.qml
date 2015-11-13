@@ -36,10 +36,10 @@ StackViewItem {
       case Qt.Key_Backspace:
         application.reportStore.cmd('BACK', '');
         break;
-        
+
       case 44:
       case 46:
-        application.reportStore.cmd('NUM', '');
+        application.reportStore.cmd('SEP', '');
         break;
 
       case 10:
