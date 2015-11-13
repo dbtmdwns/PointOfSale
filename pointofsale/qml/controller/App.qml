@@ -11,7 +11,7 @@ import com.tualo 1.0
 Item {
 
   property string version: "1.0.0"
-  property string versionBuild: "003"
+  property string versionBuild: "004"
   property string message: ""
   property var configs: []
   property alias local: myLocal
