@@ -341,6 +341,47 @@ StackViewItem {
     }
   }
 
+
+
+  Rectangle {
+    id: leftFrame
+
+    visible: application.reportStore.reportMode ? true : false
+    x: spacing+(layoutWUnit*application.matrix.payX)
+    y: spacing+(layoutHUnit*application.matrix.payY)
+    width: layoutWUnit * application.matrix.payWidth - spacing
+    height: layoutHUnit * application.matrix.payHeight - spacing
+
+    color: "black"
+    Matrix {
+      id: leftFrameMatrix
+      anchors.fill: parent
+
+      columns: 1
+      rows: 12
+      template: "{reportnumber} {euro(total)}"
+
+      Component.onCompleted: {
+        application.reportStore.onAddedReport = function(item){
+          function compare(a,b) {
+            if (a.reportnumber < b.reportnumber)
+               return 1;
+            if (a.reportnumber > b.reportnumber)
+              return -1;
+            return 0;
+          }
+          var list = application.reportStore.oldReports.slice(0);
+          leftFrameMatrix.addList(list.sort(compare).slice(0,30));
+        };
+      }
+
+      onSelected: {
+        application.reportStore.reportMode = false
+        application.reportStore.cmd("OPENREPORT", item.reportnumber);
+      }
+    }
+  }
+
 }
 
 //}
