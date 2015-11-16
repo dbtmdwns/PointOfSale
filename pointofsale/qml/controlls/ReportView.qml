@@ -98,6 +98,8 @@ ScrollView {
       data = dt
       data.print = '0'
 
+      console.log(JSON.stringify(data,null,1));
+
       if (print===true){
         data.print='1'
         doPrint = true
@@ -385,6 +387,7 @@ ScrollView {
         scrollView.flickableItem.contentY = (newY*(reportViewScale/0.5)) - scrollView.height *0.95
         //scrollView.__verticalScrollBar.value = newY //- scrollView.height *0.95
       }catch(e){
+          console.log(e);
         application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(e,null,1));
       }
       return {
