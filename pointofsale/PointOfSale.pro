@@ -4,6 +4,7 @@ QT += qml quick widgets printsupport
 
 SOURCES += main.cpp \
     posprinter.cpp \
+    logger.cpp \
     escimage.cpp
 
 RESOURCES += qml.qrc
@@ -29,6 +30,7 @@ RC_FILE = app.rc
 HEADERS += \
     posprinter.h \
     escimage.h \
+    logger.h \
     version.h
 
 DISTFILES += \

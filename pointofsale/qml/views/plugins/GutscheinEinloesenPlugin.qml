@@ -13,7 +13,6 @@ Rectangle {
   width: parent.width
   height: parent.height
   function cmd(cmdtype, val, input) {
-    console.log(cmdtype, val, input);
     if (cmdtype === 'BACK') {
       if (application.reportStore.referenzString.length > 0) {
         application.reportStore.referenzString = application.reportStore.referenzString.substring(0, application.reportStore.referenzString.length - 1);
@@ -59,8 +58,11 @@ Rectangle {
           }
 
         }
-        console.log(JSON.stringify(err,null,2));
-        console.log(JSON.stringify(res,null,2));
+        if (err){
+          application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
+        }else{
+          application.logger.debug((new Date()).toISOString()+" - "+JSON.stringify(res,null,1));
+        }
       });
     }
 

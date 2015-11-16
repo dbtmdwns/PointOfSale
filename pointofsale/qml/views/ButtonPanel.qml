@@ -141,7 +141,6 @@ Grid {
                      if (typeof buttons[index]==='object'){
                          if (btn.enabled){
                              btn.enabled = false;
-                             console.log(buttons[index].cmd);
                              application.reportStore.cmd(buttons[index].cmd,buttons[index].val);
                              tmr.start();
                          }

@@ -26,7 +26,6 @@ StackViewItem {
         application.remote.login(function(state){
           if (state===true){
             application.remote.config(function(res){
-              console.log(JSON.stringify(res,null,4));
               application.processConfig(res);
               stack.pop();
               application.remote.doSync();

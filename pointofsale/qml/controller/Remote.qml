@@ -49,7 +49,7 @@ Item {
     onTriggered: {
 
       if (application.async=='1'){
-        console.log('autosync');
+        application.logger.debug((new Date()).toISOString()+" - "+'autosync');
         doSync();
       }
 
@@ -138,24 +138,21 @@ Item {
       var xid = list[index].id
       json.id = list[index].id+' '+json.id;
       save(json,function(err,res){
-
-        console.log('asyncList',JSON.stringify(res,null,1));
-
-        if (res.success==true){
+        if (err){
+          application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
         }else{
+          if ((res.success==true) || ((res.success==false) && (res.code===1))){
+            var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
+            db.transaction(
+              function(tx) {
+                var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
+                tx.executeSql(sql);
+                application.logger.debug((new Date()).toISOString()+" - "+'asyncList '+list.length+' '+index+1);
+                asyncList(csession,list,index+1,cb);
+              }
+            );
+          }
         }
-        if ((res.success==true) || ((res.success==false) && (res.code===1))){
-          var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
-          db.transaction(
-            function(tx) {
-              var sql = 'delete from reports where key = \''+client+'\' and  id = \''+xid+'\' ';
-              tx.executeSql(sql);
-              console.log('asyncList',list.length,index+1);
-              asyncList(csession,list,index+1,cb);
-            }
-          );
-        }
-
       },csession);
 
     }else{
@@ -174,7 +171,7 @@ Item {
 
       if (err){
         // ToDo
-        console.log('err',err);
+        application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
       }else if (res.success) {
         sessionID = res.sid;
         cb(true);
@@ -215,7 +212,7 @@ Item {
     }, function(err, res) {
       if (err) {
         // todo
-        console.log('error',err.toString());
+        application.logger.error((new Date()).toISOString()+" - "+err.toString());
       } else if (res.success) {
         try{
           var db = LocalStorage.openDatabaseSync("PointOfSale", "1.0", "", application.dbsize);
@@ -228,13 +225,13 @@ Item {
             }
           );
         }catch(e){
-          console.log( e)
+          application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(e,null,1));
         }
         cb(res);
         //cb(res);
       } else if (res.success==false) {
         //todo
-        console.log('error false',err);
+        application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
       }
     });
   }
@@ -349,8 +346,6 @@ Item {
       sid: csession,
       json: JSON.stringify(html_encode_entities_object(json))
     }, function(err, res) {
-      //console.log(JSON.stringify(err,null,1));
-      //console.log(JSON.stringify(res,null,1));
       cb(err, res);
     }, true);
   }
@@ -401,8 +396,6 @@ Item {
                 });
               }
             }
-            //console.log('saldo',saldo);
-            //console.log('start',start);
             cb(liste,start,saldo,application.kasse);
 
             post(url, {
@@ -446,10 +439,9 @@ Item {
         }, function(err, res) {
           if (err){
             // ToDo
+            application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
           }else{
 
-            //console.log('saldo',saldo);
-            //console.log('start',start);
             cb();
 
             post(url, {

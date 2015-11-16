@@ -79,7 +79,6 @@ Item {
       currentMode = 'amount';
       clearFindString.stop();
       findArticle(findString,function(l){
-        console.log('xxx');
         if (l.length===1){
           add(l[0]);
         }
@@ -176,13 +175,10 @@ Item {
             item.zusatztext = artikel.zusatztext;
             res.push(item);
 
-            if (find='4000607432101')
-             console.log(JSON.stringify(item,null,2));
 
           }
 
         }
-        console.log('find res',res.length,typeof cb)
         cb(res);
       }
     );
@@ -262,7 +258,6 @@ Item {
       function(tx) {
         var sql = 'SELECT * FROM searchablearticles where key=\''+application.remote.client+'\' and waregroup=\''+_warengruppe.replace(/'/gm,"#qoute;")+'\'';
         var rs = tx.executeSql(sql);
-        //console.log(sql,JSON.stringify(rs,null,2),rs.rows.length);
         for (var i = 0; i < rs.rows.length; i++) {
           var item = {};
           var staffeln = application.remote.unEscapeResult(rs.rows.item(i).staffeln);
@@ -434,14 +429,12 @@ Item {
         } else if (currentMode === 'price') {
 
           var chPos = positions.length - 1;
-          console.log(JSON.stringify(positions,null,1));
           while((positions[chPos].kombiartikel===true)){
             chPos--;
             if (chPos==-1){
               return;
             }
           }
-          console.log(chPos);
           /*
           if (positions[chPos].kombiartikel===true){
             application.displayMessage("Preisänderung ist bei Kombiartikeln nicht erlaubt");
@@ -539,7 +532,6 @@ Item {
 
     if (cmdtype === 'SET RELATION') {
       if (typeof val==='object'){
-        console.log('val.steuerschluessel',val.steuerschluessel,JSON.stringify(_steuergruppen,null,2));
         if (_steuergruppen[val.steuerschluessel]){
           feld = _steuergruppen[val.steuerschluessel].feld;
         }else{
@@ -614,7 +606,6 @@ Item {
 
 
     if (cmdtype === 'ENTER') {
-      console.log(currentMode,findString);
         if ( (currentMode === 'amount') && (findString.length>5) ){
            currentMode ='find';
         }
@@ -645,12 +636,13 @@ Item {
               }
 
               application.saveReport(kundennummer, kostenstelle, positions, given, function(err, res) {
-
-                console.log('saveReport',JSON.stringify(err,null,1));
-                console.log('saveReport',JSON.stringify(res,null,1));
+                if (err){
+                  application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
+                }else{
+                  application.logger.debug((new Date()).toISOString()+" - "+JSON.stringify(res,null,1));
+                }
                 if (err) {
                   application.displayMessage(err.response);
-                  console.log('saveReport error',err.response);
 
                 } else {
 
@@ -682,7 +674,7 @@ Item {
                     try {
                       pushOldReport(application.html_decode_entities_object(item));
                     } catch (e) {
-                      console.log(e);
+                      application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(e,null,1));
                     }
                     positions = [];
                     application.displayMessage(number + " gespeichert.");
@@ -749,7 +741,6 @@ Item {
         positions.push(xitem);
         for(var ki=0;ki<kombi_liste.length;ki++){
           singleArticle(kombi_liste[ki].resultartikel.replace(/#qoute;/gm,"'"),function(nitem){
-            console.log(JSON.stringify(nitem,null,1));
             nitem.artikel = nitem.gruppe;
             nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
             nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
@@ -841,7 +832,6 @@ Item {
       var brutto_preis = positions[index].brutto_preis; // Math.round( positions[index].epreis*(1+positions[index].steuersatz/100) * 100) /100;
 
       var brutto = Math.round((positions[index].anzahl * brutto_preis) * 100) / 100;
-      console.log(positions[index].artikel);
       positions[index].steuersatz = _artikel[positions[index].artikel.replace(/'/gm,"#qoute;")]['steuer' + feld] * 1;
       var netto = brutto / (1 + positions[index].steuersatz / 100);
 

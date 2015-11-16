@@ -41,7 +41,6 @@ Rectangle {
 
         }
         onAccepted:{
-            console.log(textFld.text);
             done();
         }
 

@@ -18,7 +18,7 @@ Rectangle {
   property double singleItemHeight: (root.height - 10) / maxRows
 
   property alias view: reportView
-  
+
   Component.onCompleted: {
 
     if (main===true){
@@ -30,7 +30,6 @@ Rectangle {
 
 
   function getReportHTML() {
-    console.log('ReportAndInput','line', 36,'fix me');
   }
 
 

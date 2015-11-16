@@ -70,7 +70,6 @@ SimpleSAX.prototype.parse = function(data) {
               item.value = me.arrayToString(temp).substring( 1, temp.length - 1);
               stack.push(item);
             } else {
-              console.log("error", temp);
             }
           }
           state = STATES.OPENENDTAG;
@@ -108,7 +107,6 @@ SimpleSAX.prototype.parse = function(data) {
           comment = me.arrayToString(temp).substring( 1, temp.length - 1);
           item.comment = (item.comment) ? item.comment + ' ' + comment : comment;
           stack.push(item);
-          //console.log(item);
           temp = [];
           lastChars = shiftChars(lastChars, char);
           current += 1;
@@ -222,7 +220,6 @@ SimpleSAX.prototype.parse = function(data) {
           }
           item.attr[attributeName] = me.arrayToString(temp);
           stack.push(item);
-          //console.log('attribute', attributeName, );
           temp = [];
         }
         break;
@@ -240,14 +237,12 @@ SimpleSAX.prototype.parse = function(data) {
             //throw Error('invalid tag or syntax at postition ' + current + ' ' + stag + ' !== ' + stack[stack.length - 1].tag + ' ');
           }
 
-          //console.log('close tag found: ',stag);
           temp = [];
           tag = [];
         }
         break;
     }
     lastChars = shiftChars(lastChars, char);
-    //console.log(lastChars[8]);
     temp.push(char);
     current += 1;
   }

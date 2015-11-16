@@ -255,39 +255,6 @@ ApplicationWindow {
        stack.currentItem.keyInput(event);
      }
 
-     /*
-     console.log(event.key);
-     switch (event.key) {
-       case Qt.Key_Escape:
-         if (stack.depth > 1) {
-           stack.pop();
-           event.accepted = true;
-         }
-         break;
-       case Qt.Key_Backspace:
-         if (inputText.length > 0)
-           inputText = inputText.substring(0, inputText.length - 1);
-         event.accepted = true;
-         break;
-       case Qt.Key_Enter:
-       case Qt.Key_Return:
-         stack.currentItem.textInput(inputText,true);
-         inputText = "";
-         event.accepted = true;
-         break;
-       default:
-         for (var i in Qt) {
-           if (i.indexOf('Key') === 0) {
-             if (Qt[i] === event.key) {
-               console.log("main","QT KEY",i);
-             }
-           }
-         }
-         inputText += event.text;
-         stack.currentItem.textInput(inputText,false);
-         event.accepted = true;
-     }
-     */
    }
    initialItem: overview
   }
@@ -314,54 +281,6 @@ ApplicationWindow {
       text: application.message
     }
   }
-
-  /*
-  StackedView {
-    id: stack
-    anchors.fill: parent
-    initialItem: overview
-    focus: true
-    property string inputText: ""
-    Keys.onReleased: {
-      if (typeof stack.currentItem.keyInput === 'function') {
-        stack.currentItem.keyInput(event);
-      }
-      switch (event.key) {
-        case Qt.Key_Escape:
-          if (stackView.depth > 1) {
-            stackView.pop();
-            event.accepted = true;
-          }
-          break;
-        case Qt.Key_Backspace:
-          if (inputText.length > 0)
-            inputText = inputText.substring(0, inputText.length - 1);
-          event.accepted = true;
-          break;
-        case Qt.Key_Enter:
-        case Qt.Key_Return:
-          stack.currentItem.textInput(inputText);
-          inputText = "";
-          event.accepted = true;
-          break;
-        default:
-          for (var i in Qt) {
-            if (i.indexOf('Key') === 0) {
-              if (Qt[i] === event.key) {
-                //console.log("main","QT KEY",i);
-              }
-            }
-          }
-          inputText += event.text;
-          event.accepted = true;
-
-      }
-      //console.log("main","input",inputText)
-    }
-
-
-  }
-  */
 
   OverView {
     id: overview

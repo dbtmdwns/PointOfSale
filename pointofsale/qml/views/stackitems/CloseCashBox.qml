@@ -34,7 +34,6 @@ StackViewItem {
     property int viewY: 0
 
     Component.onCompleted: {
-      console.log('layoutWUnit',layoutWUnit);
     }
     Rectangle {
       id: rssaldo

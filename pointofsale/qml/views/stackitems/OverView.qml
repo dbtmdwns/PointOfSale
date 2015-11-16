@@ -83,7 +83,6 @@ StackViewItem {
           icon: iconText
 
           onClicked: {
-            // console.log('ok');
             if (
               (page==='MatrixInput.qml')
             ){

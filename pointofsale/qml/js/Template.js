@@ -77,11 +77,11 @@ Template.prototype.render = function(obj){
   this.if();
   this.pureValues();
   return this.result;
-}
+};
 
 Template.prototype.escapeRegExp = function(string) {
     return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
+};
 
 Template.prototype.pureValues = function(){
   var matches = (this.result.match(this.values));
@@ -98,15 +98,14 @@ Template.prototype.pureValues = function(){
         //try{
           this.result = this.result.replace(new RegExp("{"+this.escapeRegExp(key)+"}","gm"), Shunt.parse(key, this.ctx) );
         //}catch(e){
-        //  console.log(e);
         //}
       }
     }
   }
-}
+};
 
 Template.prototype.if = function(){
-  var start = true
+  var start = true;
   while (start){
     start = this.findStartTag('if',this.result);
     if (start){
@@ -239,7 +238,6 @@ Template.prototype.findCloseTag = function(tag,str){
     close = this.findCloseTag(tag,str.substring(start.offset));
 
     end = str.substring(start.offset+close.offset).indexOf('</'+tag+'>');
-    //console.log(close,start.offset+close.offset,str.substring(start.offset+close.offset),sp.indexOf('</'+tag+'>'));
     return {
       index: start.offset + close.offset + end ,
       length: tag.length+3,

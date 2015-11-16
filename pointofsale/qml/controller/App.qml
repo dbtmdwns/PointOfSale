@@ -11,11 +11,17 @@ import com.tualo 1.0
 Item {
 
   property string version: "1.0.0"
-  property string versionBuild: "005"
+  property string versionBuild: "006"
   property string message: ""
   property var configs: []
   property alias local: myLocal
   property alias remote: myRemote
+  property alias logger: myLogger
+
+  Logger{
+    id: myLogger
+
+  }
 
   Timer {
     id: messageHideTimer
@@ -217,6 +223,7 @@ Item {
 
 
   Component.onCompleted: {
+    application.logger.debug("started "+(new Date()).toISOString());
 
     template = '
     <line>
@@ -425,7 +432,7 @@ Item {
         }
       }
     }catch(e){
-      console.log(e.toString(),JSON.stringify(res.data,null,0))
+      application.logger.error((new Date()).toISOString()+" - "+e.toString()+"\n"+JSON.stringify(res.data,null,0));
     }
     var wgs = []
     for (var w in _hash) {
@@ -463,7 +470,7 @@ Item {
       kasse = res.kasse;
       relationList = res.relations;
 
-      console.log('app','res.relations',JSON.stringify(res.relations,null,2));
+      application.logger.debug((new Date()).toISOString()+" - "+'res.relations '+JSON.stringify(res.relations,null,2));
       lager = res.lager;
       zahlart = res.zahlart;
       tabellenzusatz = res.tabellenzusatz;
@@ -706,6 +713,13 @@ Item {
       title: "About",
       doneText: "",
       page: "About.qml"
+    })
+
+    model.append({
+      iconText: "\uf0f6",
+      title: "Logging",
+      doneText: "",
+      page: "Logging.qml"
     })
 
     model.append({

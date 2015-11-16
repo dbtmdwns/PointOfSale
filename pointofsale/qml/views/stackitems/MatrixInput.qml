@@ -27,7 +27,6 @@ StackViewItem {
 
   function keyInput(event) {
 
-    console.log(event.key,Qt.Key_Enter,Qt.Key_Return);
     if (16777250===event.key){
       return;
     }

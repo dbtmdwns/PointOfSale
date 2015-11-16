@@ -51,7 +51,6 @@ StackViewItem {
            var imageData = ctx.getImageData(0, 0, 255, 255);
            var data = imageData.data;
 
-           console.log(canvas.getImage());
            canvas.isConverting=false;
          }
        }
@@ -287,7 +286,6 @@ StackViewItem {
 
               context.fillStyle = fontStyle;
               context.font = (pixelScale*fontSize)+"px "+fontName;
-              console.log((pixelScale*fontSize)+"px "+fontName);
 
               newY =  wrapText(context,item.value,x + paddingLeft,contextOffset + paddingTop,width - paddingLeft -paddingRight , (pixelScale*fontSize)*1.5 ,align) + paddingTop + paddingBottom ;
               oldY = Math.max(newY,oldY);
@@ -392,7 +390,6 @@ StackViewItem {
         ctx.font = "15px sans-serif";
         draw(ctx,tpl.render(data));
 
-        //console.log(canvas.getImageData());
 
       }
     }

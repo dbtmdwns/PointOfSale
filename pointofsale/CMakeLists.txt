@@ -31,6 +31,7 @@ set(pointofsale_srcs
   main.cpp
   posprinter.cpp
   escimage.cpp
+  logger.cpp
 )
 
 qt5_wrap_ui(ui_srcs

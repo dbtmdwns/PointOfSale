@@ -57,8 +57,11 @@ Rectangle {
           }
 
         }
-        //console.log(JSON.stringify(err,null,2));
-        console.log(JSON.stringify(res,null,2));
+        if (err){
+          application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(err,null,1));
+        }else{
+          application.logger.debug((new Date()).toISOString()+" - "+JSON.stringify(res,null,1));
+        }
       });
     }
 

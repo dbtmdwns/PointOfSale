@@ -9,6 +9,7 @@
         <file>qml/views/stackitems/MatrixInput.qml</file>
         <file>qml/views/stackitems/Main.qml</file>
         <file>qml/views/stackitems/CloseCashBox.qml</file>
+        <file>qml/views/stackitems/Logging.qml</file>
         <file>qml/views/stackitems/Screen.qml</file>
         <file>qml/views/stackitems/Testing.qml</file>
 

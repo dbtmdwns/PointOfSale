@@ -145,6 +145,7 @@ int printer_fd = open("/dev/lp0", O_WRONLY);
 ssize_t bytes_written = write(printer_fd, escp_seq, sizeof(escp_seq));
 close(printer_fd);
   */
+  return false;
 }
 
 bool PosPrinter::sendToPrinter(QString printerName, QString filename){

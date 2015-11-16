@@ -382,11 +382,10 @@ ScrollView {
 
       sax.parse(data)
       try{
-        //console.log(newY,scrollView.height)
         scrollView.flickableItem.contentY = (newY*(reportViewScale/0.5)) - scrollView.height *0.95
         //scrollView.__verticalScrollBar.value = newY //- scrollView.height *0.95
       }catch(e){
-        console.log(e);
+        application.logger.error((new Date()).toISOString()+" - "+JSON.stringify(e,null,1));
       }
       return {
         h: newY + lineHeight * 5,

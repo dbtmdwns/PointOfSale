@@ -17,7 +17,6 @@ Rectangle {
     signal clicked
 
     Component.onCompleted: {
-      //console.log("ok");
     }
 
     Rectangle {

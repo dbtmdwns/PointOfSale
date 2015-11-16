@@ -12,7 +12,6 @@ Rectangle {
   width: parent.width
   height: parent.height
   function cmd(cmdtype, val, input) {
-    console.log(cmdtype, val, input);
     if (cmdtype === 'BACK') {
       if (application.reportStore.referenzString.length > 0) {
         application.reportStore.referenzString = application.reportStore.referenzString.substring(0, application.reportStore.referenzString.length - 1);
