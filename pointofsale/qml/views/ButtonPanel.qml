@@ -21,6 +21,19 @@ Grid {
      columns: 5
      rows: 6
 
+
+     function addItem(item) {
+       gridModel.append(item);
+     }
+
+     function addList(list) {
+       gridModel.clear();
+       for (var i = 0, m = list.length; i < m; i++) {
+         addItem(list[i]);
+       }
+       //cRows = Math.ceil(list.length/columns)
+     }
+
      property var buttons: [
 
          {
@@ -41,30 +54,30 @@ Grid {
              hidden: (application.reportStore.number===-1)?false:true ,
              color: (application.reportStore.currentMode!=='pay')?"#f33":"3f9"
          },
-         { text: "7", cmd: "NUM", val: 7 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "8", cmd: "NUM", val: 8 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "9", cmd: "NUM", val: 9 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "7", cmd: "NUM", val: '7' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "8", cmd: "NUM", val: '8' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "9", cmd: "NUM", val: '9' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf115", cmd: "CUT",val:"", hidden: true , color: "#ff8"},
 
 
 
          { text: "PR", cmd: "AMOUNTPRICESWITCH", val:"", hidden: (application.reportStore.number===-1&&application.reportStore.currentMode!=='pay')?false:true , color: ((application.reportStore.currentMode==='amount')? "#9aa": "#955") },
-         { text: "4", cmd: "NUM", val: 4 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "5", cmd: "NUM", val: 5 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "6", cmd: "NUM", val: 6 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "4", cmd: "NUM", val: '4' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "5", cmd: "NUM", val: '5' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "6", cmd: "NUM", val: '6' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf02f", cmd: "PRINT", val:"", hidden: false , color: "#88f"},
 
 
          { text: ".", cmd: ".", val:"", hidden: true , color: "#faa"},
-         { text: "1", cmd: "NUM", val: 1 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "2", cmd: "NUM", val: 2 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
-         { text: "3", cmd: "NUM", val: 3 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "1", cmd: "NUM", val: '1' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "2", cmd: "NUM", val: '2' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "3", cmd: "NUM", val: '3' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: ".", cmd: ".", val:"", hidden: true , color: "#afa"},
 
 
          { text: "B", cmd: "REPORTMODE", val:"", hidden: (application.reportStore.currentMode!=='pay')?false:true , color: "#133"},
          { text: "+/-", cmd: "PLUSMINUS", val: "" , hidden: (application.reportStore.number===-1)?false:true , color: "#aad"},
-         { text: "0", cmd: "NUM", val: 0 , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
+         { text: "0", cmd: "NUM", val: '0' , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: ",", cmd: "SEP", val: "" , hidden: (application.reportStore.number===-1)?false:true , color: mainStyle.colors.btnBackground},
          { text: "\uf00c", cmd: "ENTER", val:"", hidden: false , color: "#3f3"},
 
@@ -78,18 +91,63 @@ Grid {
 
      ]
 
+     Component.onCompleted: {
+       refresh();
+     }
+
+     function refresh(){
+       /*
+       buttons[15].text = 'Pfand.R.';
+       buttons[15].cmd = 'CUSTOM';
+       buttons[15].val = 'Pfandrueckgabe';
+       buttons[15].hidden = false;
+       var b=false;
+       try{
+         eval('b='+'application.reportStore.addAmount<0');
+       }catch(e){
+
+       }
+       buttons[15].color = b?'#3cc':'#3ff';
+       */
+       for(var i=0; i < application.customCMDList.length;i++){
+         var itm = application.customCMDList[i];
+         if (typeof buttons[itm.index*1]==='object'){
+           buttons[itm.index*1].text = itm.text;
+           buttons[itm.index*1].cmd = itm.cmd;
+           buttons[itm.index*1].val = itm.val;
+           buttons[itm.index*1].hidden = false;
+           var b=false;
+           try{
+             eval('b='+itm.condition);
+           }catch(e){
+
+           }
+           if (b){
+             buttons[itm.index*1].color = itm.color;
+           }else{
+             buttons[itm.index*1].color = itm.altColor;
+           }
+           application.reportStore.customFunctions[itm.val] = itm.list;
+         }
+       }
+       addList(buttons);
+     }
+     /*
      move: Transition {
          NumberAnimation { properties: "x,y"; easing.type: Easing.OutBounce; duration: 100 }
      }
      add: Transition {
          NumberAnimation { properties: "x,y"; easing.type: Easing.OutBounce; duration: 100 }
      }
+     */
+     ListModel {
+       id: gridModel
+     }
 
      Repeater {
+       model: gridModel
 
-         model: 25
-
-         Rectangle {
+       Rectangle {
 
              property bool isHidden: ( (typeof buttons[index]==='undefined') || (buttons[index].hidden) )
              property bool enabled: true
@@ -143,8 +201,10 @@ Grid {
                              btn.enabled = false;
                              application.reportStore.cmd(buttons[index].cmd,buttons[index].val);
                              tmr.start();
+                             refresh();
                          }
                      }
+
 
 
 

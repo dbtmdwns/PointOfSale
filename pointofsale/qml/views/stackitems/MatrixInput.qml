@@ -68,6 +68,7 @@ StackViewItem {
     application.reportStore.modeReferences[gutscheinEinloesen.plugin.modeText] = gutscheinEinloesen.plugin.cmd;
     application.reportStore.modeReferences[gutscheinAusgabe.plugin.modeText] = gutscheinAusgabe.plugin.cmd;
 
+    application.reportStore.articleMatrix = articleMatrix;
   }
 
   function update(){
@@ -99,7 +100,7 @@ StackViewItem {
         articleMatrix.defaultBackgroundColor = item.displayBackgroundColor;
         application.reportStore.getArtikel(item.warengruppe,function(res){
           articleMatrix.addList(res);
-        })
+        });
       }
     }
 

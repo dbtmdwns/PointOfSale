@@ -67,8 +67,10 @@ Item {
 
   property var modeReferences: null
 
+  property var customFunctions: null
 
-
+  property int addAmount: 1
+  property var articleMatrix: null
 
   Timer {
     id: clearFindString
@@ -149,13 +151,7 @@ Item {
     db.transaction(
       function(tx) {
 
-        var sql = 'SELECT * FROM searchablearticles
-        where key=\''+application.remote.client+'\'
-        and (
-          lower(article) like \'%'+find.toLowerCase()+'%\' or
-          lower(articlenumber) like \'%'+find.toLowerCase()+'%\'
-        )
-        ';
+        var sql = 'SELECT * FROM searchablearticles where key=\''+application.remote.client+'\' and (          lower(article) like \'%'+find.toLowerCase()+'%\' or          lower(articlenumber) like \'%'+find.toLowerCase()+'%\'        )        ';
         var rs = tx.executeSql(sql);
         for (var i = 0; i < rs.rows.length; i++) {
           var item = {};
@@ -212,7 +208,6 @@ Item {
             item.brutto_preis = staffeln.brutto * 1;
             item.brutto = staffeln.brutto * 1;
             item.zusatztext = artikel.zusatztext;
-            //res.push(item);
             cb(item);
           }
 
@@ -220,33 +215,7 @@ Item {
 
       }
     );
-    /*
-    for (var i in _artikel) {
-      if (
-        (_artikel[i].gruppe.toLowerCase().indexOf(name.toLowerCase())>=0)
-      ){
-        for (var s in _staffeln) {
-          if (_staffeln[s].gruppe === _artikel[i].gruppe) {
-            if (preiskategorie * 1 === _staffeln[s].preiskategorie * 1) {
-              var item = {};
-              item.gruppe = _staffeln[s].gruppe;
-              item.plugin = _artikel[i].plugin;
-              item.anzahl = 1;
-              item.steuersatz = 1 * _artikel[i]["steuer" + feld];
-              item.bpreis = _staffeln[s].brutto;
-              item.preis = _staffeln[s].brutto / (1 + item.steuersatz / 100);
-              item.netto = item.preis;
-              item.brutto_preis = _staffeln[s].brutto * 1;
-              item.brutto = _staffeln[s].brutto * 1;
-              item.zusatztext = _artikel[i].zusatztext;
-              return item;
-            }
-          }
-        }
-      }
-    }
-    return res;
-    */
+
   }
 
   function getArtikel(warengruppe,cb) {
@@ -396,12 +365,17 @@ Item {
           val *=1;
           var ix_init = false;
           if (amountModeInit) {
+            positions[positions.length - 1].anzahl *= addAmount;
             positions[positions.length - 1].anzahl = val;
+            positions[positions.length - 1].anzahl *= addAmount;
             ix_init = true;
             amountModeInit = false;
           } else {
+            positions[positions.length - 1].anzahl *= addAmount;
             positions[positions.length - 1].anzahl *= 10;
             positions[positions.length - 1].anzahl += val;
+
+            positions[positions.length - 1].anzahl *= addAmount;
           }
           calcPos(positions.length - 1);
           if (positions[positions.length - 1].kombiartikel===true){
@@ -587,6 +561,30 @@ Item {
       }
     }
 
+    if (cmdtype === 'FILTERWG'){
+      articleMatrix.defaultBackgroundColor = '#010101';
+      application.reportStore.getArtikel( val ,function(res){
+        articleMatrix.addList(res);
+      });
+
+    }
+    if (cmdtype === 'NEGAMOUNT'){
+      if (addAmount===1){
+        addAmount=-1;
+      }else{
+        addAmount=1;
+      }
+    }
+
+    if (cmdtype === 'CUSTOM'){
+      if (typeof customFunctions[val]==='object'){
+        var cf_list = customFunctions[val];
+        for(var i=0;i<cf_list.length;i++){
+          cmd.apply(this,cf_list[i]);
+        }
+      }
+    }
+
     if (cmdtype === 'OPENREPORT') {
 
       for (var i = 0; i < oldReports.length; i++) {
@@ -724,14 +722,14 @@ Item {
       if (number === -1) {
         lastTotal = 0;
         var brutto_preis = item.brutto_preis;
-        var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
+        var brutto = Math.round((item.anzahl * addAmount * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
         var xitem = {
           artikel: item.gruppe,
           zusatztext: (typeof item.zusatztext === 'string') ? item.zusatztext : '',
           referenz: (typeof item.referenz === 'string') ? item.referenz : '',
           steuersatz: item.steuersatz,
-          anzahl: item.anzahl,
+          anzahl: item.anzahl*addAmount,
           xref: item.xref,
           epreis: item.preis,
           brutto_preis: brutto_preis,
@@ -744,7 +742,7 @@ Item {
           singleArticle(kombi_liste[ki].resultartikel.replace(/#qoute;/gm,"'"),function(nitem){
             nitem.artikel = nitem.gruppe;
             nitem.referenz = (typeof nitem.referenz === 'string') ? nitem.referenz : '';
-            nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor;
+            nitem.anzahl =  nitem.anzahl * kombi_liste[ki].resultfaktor*addAmount;
             nitem.epreis =  nitem.preis * kombi_liste[ki].resultpfaktor;
             nitem.brutto_preis =  nitem.brutto_preis * kombi_liste[ki].resultpfaktor;
             nitem.brutto =  nitem.brutto * kombi_liste[ki].resultpfaktor;
@@ -782,7 +780,7 @@ Item {
       referenzString = '';
       refItem = item;
       refItem.referenz = '';
-      refItem.anzahl = 1;
+      refItem.anzahl = 1*addAmount;
 
     }else if (
       (
@@ -795,13 +793,13 @@ Item {
       referenzString = '';
       refItem = item;
       refItem.referenz = '';
-      refItem.anzahl = 1;
+      refItem.anzahl = 1*addAmount;
 
     } else {
       if (number === -1) {
         lastTotal = 0;
         var brutto_preis = item.brutto_preis;
-        var brutto = Math.round((item.anzahl * brutto_preis) * 100) / 100;
+        var brutto = Math.round((item.anzahl * addAmount * brutto_preis) * 100) / 100;
         var netto = brutto / (1 + item.steuersatz / 100);
         var yitem = {
           artikel: item.gruppe,
@@ -809,7 +807,7 @@ Item {
           referenz: (typeof item.referenz !== 'undefined') ? item.referenz : '',
           referenzphp: (typeof item.referenzphp !== 'undefined') ? item.referenzphp : '',
           steuersatz: item.steuersatz,
-          anzahl: item.anzahl,
+          anzahl: item.anzahl*addAmount,
           xref: item.xref,
           epreis: item.preis,
           brutto_preis: brutto_preis,

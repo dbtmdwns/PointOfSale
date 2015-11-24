@@ -11,7 +11,7 @@ import com.tualo 1.0
 Item {
 
   property string version: "1.0.0"
-  property string versionBuild: "006"
+  property string versionBuild: "007"
   property string message: ""
   property var configs: []
   property alias local: myLocal
@@ -168,6 +168,7 @@ Item {
   property var use_date
   property var relationList;
   property var db;
+  property var customCMDList: [];
 
   property alias posPrinter: posPrinter
 
@@ -287,6 +288,15 @@ Item {
     myRemote.username = "admin"
     myRemote.password = "admin"
 
+
+    myReportStore.customFunctions={};
+
+/*
+    myReportStore.customFunctions['Pfandrueckgabe'] = [
+      ['FILTERWG','Pfand'],
+      ['NEGAMOUNT','-']
+    ];
+*/
     db.transaction(
       function(tx) {
         // Create the database if it doesn't already exist
@@ -540,6 +550,14 @@ Item {
       }
       if (result.showLastTotal){
         showLastTotal = result.showLastTotal==='1';
+      }
+
+      if (result.customCMDList){
+        try{
+          customCMDList = JSON.parse(result.customCMDList);
+        }catch(e){
+          console.log(e);
+        }
       }
 
       if (result.layout){

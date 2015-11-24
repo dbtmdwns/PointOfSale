@@ -98,7 +98,6 @@ ScrollView {
       data = dt
       data.print = '0'
 
-      console.log(JSON.stringify(data,null,1));
 
       if (print===true){
         data.print='1'
