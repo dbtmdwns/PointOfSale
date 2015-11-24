@@ -105,8 +105,15 @@ StackViewItem {
               }
 
 
+            }else if ( (page==='CloseCashBox.qml') ){
+              var me = application;
+              var stk = stack;
+              var p = page;
+              if (me.setConfigs(configIndex)){
+                stack.push(Qt.resolvedUrl(page));
+              }
             }else{
-              stack.push(Qt.resolvedUrl(page))
+              stack.push(Qt.resolvedUrl(page));
             }
           }
       }

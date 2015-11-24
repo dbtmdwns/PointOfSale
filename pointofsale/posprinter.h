@@ -23,6 +23,7 @@ public:
     bool sendToPrinter(QString printerName,QString data);
 
 
+    Q_INVOKABLE void systemPrintFile(QString printer, QString filename, QString height, double ws, double hs,int x, int y);
     Q_INVOKABLE void printFile(QString printer, QString filename, QString height);
     Q_INVOKABLE void cut(QString printer);
     Q_INVOKABLE void open(QString printer);

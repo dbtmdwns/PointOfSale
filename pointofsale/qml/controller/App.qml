@@ -99,7 +99,7 @@ Item {
 
 
   property double reportViewScale: 0.5
-  property double reportPrintScale: 0.5
+  property double reportPrintScale: 0.2
   property string basicFontColor: "#ccccff"
   property string basicStyleColor: "#212121"
   property int dpi: 72
@@ -109,6 +109,8 @@ Item {
   property string async: "0"
 
   property bool usePOSPrinter: true
+  property bool autoAddArticles: true
+  property bool showLastTotal: true
 
   property string receipt: ""
   property string department: ""
@@ -530,6 +532,16 @@ Item {
         basicStyleColor = result.basicStyleColor;
       }
 
+      if (result.usePOSPrinter){
+        usePOSPrinter = result.usePOSPrinter==='1';
+      }
+      if (result.autoAddArticles){
+        autoAddArticles = result.autoAddArticles==='1';
+      }
+      if (result.showLastTotal){
+        showLastTotal = result.showLastTotal==='1';
+      }
+
       if (result.layout){
 
         if (result.layout.raiX){
@@ -665,6 +677,7 @@ Item {
 
 
       }
+      var kassenHash = {};
       for(var i=0;i<result.cnf.length;i++){
         var item = {};
         var res = result.cnf[i];
@@ -673,6 +686,7 @@ Item {
         item.maxReportNumber = res.maxReportNumber;
         item.minReportNumber = res.minReportNumber;
         item.kasse = res.kasse;
+        kassenHash[item.kasse] = i;
         item.lager = res.lager;
         item.zahlart = res.zahlart;
         item.relations = res.relations;
@@ -701,12 +715,21 @@ Item {
     }
 
 
-    model.append({
-      iconText: "\uf00c",
-      title:  "Abschluss",
-      doneText: "",
-      page: "CloseCashBox.qml"
-    })
+    for(i in kassenHash){
+      if (kassenHash.hasOwnProperty(i)){
+        if (i!=""){
+          model.append({
+            iconText: "\uf00c",
+            title:  "Abschluss "+i,
+            doneText: "",
+            page: "CloseCashBox.qml",
+            configIndex: kassenHash[i]
+          });
+        }
+      }
+    }
+
+
 
     model.append({
       iconText: "\uf0f6",

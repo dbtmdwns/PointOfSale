@@ -293,6 +293,25 @@ void PosPrinter::allPrinters(){
 }
 
 
+void PosPrinter::systemPrintFile(QString printer, QString filename, QString height, double ws, double hs,int x, int y){
+  int iHeight = atoi(height.toLocal8Bit());
+  QPrinter qprinter(QPrinter::HighResolution);
+  qprinter.setPrinterName(printer);
+  int iResolution = qprinter.resolution();
+  qprinter.setPaperSize(QSizeF(80, ((iHeight/203)*25.4) ),QPrinter::Millimeter);
+  qprinter.setPageSize(QPrinter::Custom);
+  QImage image;
+  image.load(filename);
+  QPainter painter(&qprinter);
+  QRect rect = painter.viewport();
+  QSize size = image.size();
+  double f = iResolution/25.4;
+  painter.setWindow(0,0,size.width()+f*2,iHeight+f*2);
+  painter.drawImage(0*f,2*f,image);
+  QFile::remove(filename);
+}
+
+
 
 void PosPrinter::printFile(QString printer, QString filename, QString height){
   QImage *img = new QImage(filename);

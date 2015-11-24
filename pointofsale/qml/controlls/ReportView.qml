@@ -36,7 +36,7 @@ ScrollView {
 
     id:canvas
 
-    width: (Screen.pixelDensity * 80 * 2)
+    width: (Screen.pixelDensity * 80 * (1/reportPrintScale))
     height: 15000
 
     property bool doPrint: false
@@ -114,7 +114,7 @@ ScrollView {
       var sax = new SimpleSAX.SimpleSAX();
       var contextOffset = 0;
 
-      var pixelPerMM = (512/80)/2; //Screen.pixelDensity;
+      var pixelPerMM = (512/80)/(1/reportPrintScale); //Screen.pixelDensity;
       var pixelScale = pixelPerMM*10;
 
       var oldY = 0;
@@ -384,7 +384,7 @@ ScrollView {
 
       sax.parse(data)
       try{
-        scrollView.flickableItem.contentY = (newY*(reportViewScale/0.5)) - scrollView.height *0.95
+        scrollView.flickableItem.contentY = (newY*(reportViewScale/reportPrintScale)) - scrollView.height *0.95
         //scrollView.__verticalScrollBar.value = newY //- scrollView.height *0.95
       }catch(e){
           console.log(e);
@@ -488,11 +488,16 @@ ScrollView {
       if (doPrint===true){
 
         canvas.save(data.reportnumber+'.png');
-        application.posPrinter.printFile(application.printerName,data.reportnumber+'.png',metrics.h*2);
-        application.posPrinter.cut(application.printerName);
-        application.posPrinter.open(application.printerName);
-        application.reportStore.cmd('SUM','');
 
+
+        if (application.usePOSPrinter===true){
+        application.posPrinter.printFile(application.printerName,data.reportnumber+'.png',metrics.h*(1/reportPrintScale));
+          application.posPrinter.cut(application.printerName);
+          application.posPrinter.open(application.printerName);
+        }else{
+          application.posPrinter.systemPrintFile(application.printerName,data.reportnumber+'.png',metrics.h*(1/reportPrintScale),2.2,2.2,50,80);
+        }
+        application.reportStore.cmd('SUM','');
       }
       doPrint=false
     }

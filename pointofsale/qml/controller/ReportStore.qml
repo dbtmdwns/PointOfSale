@@ -79,7 +79,7 @@ Item {
       currentMode = 'amount';
       clearFindString.stop();
       findArticle(findString,function(l){
-        if (l.length===1){
+        if (((l.length===1)||(appliation.autoAddArticles===true))&&((/[a-z]/).test(findString)===false)){
           add(l[0]);
         }
         findString = "";
@@ -613,8 +613,9 @@ Item {
       if (currentMode === 'find') {
         currentMode = 'amount';
         clearFindString.stop();
+        var lastFS = findString;
         var r = findArticle(findString,function(res){
-            if (res.length===1){
+            if (((res.length===1)||(appliation.autoAddArticles===true))&&((/[a-z]/).test(lastFS)===false)){
               add(res[0]);
             }
         });

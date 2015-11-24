@@ -69,7 +69,7 @@ Rectangle {
 
             font.pointSize: numberDisplay.height * 0.4
             color: (application.reportStore.lastTotal === 0) ? "black" : "black"
-            text: (application.reportStore.lastTotal === 0) ? (application.reportStore.total.toFixed(2) + " €") : ("" + application.reportStore.lastTotal.toFixed(2) + " €")
+            text: ((application.reportStore.lastTotal === 0)) ? (application.reportStore.total.toFixed(2) + " €") : ("" + ((application.showLastTotal === true)?application.reportStore.lastTotal.toFixed(2):application.reportStore.total.toFixed(2)) + " €")
           }
         }
 

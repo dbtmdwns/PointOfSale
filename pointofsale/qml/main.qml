@@ -57,6 +57,8 @@ ApplicationWindow {
     application.dpi = Screen.pixelDensity * 25.4
     application.density = Screen.pixelDensity
     */
+    //application.posPrinter.systemPrintFile("EPSON_TM_T88V","20000270.png","679",1,1,0,0);
+    Qt.quit();
   }
 
 
