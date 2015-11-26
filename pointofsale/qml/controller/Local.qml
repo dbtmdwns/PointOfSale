@@ -56,7 +56,11 @@ Item {
     db.transaction(
       function(tx) {
         var rs = tx.executeSql('SELECT key,value FROM config');
+        if (rs.rows.length===0){
+          cb([]);
+        }
         for (var i = 0; i < rs.rows.length; i++) {
+
           switch (rs.rows.item(i).key) {
             case application.remote.client:
               cb(JSON.parse(rs.rows.item(i).value));
