@@ -102,7 +102,7 @@ Item {
 
 
   property double reportViewScale: 0.5
-  property double reportPrintScale: 0.2
+  property double reportPrintScale: 2
   property string basicFontColor: "#ccccff"
   property string basicStyleColor: "#212121"
   property int dpi: 72
@@ -536,6 +536,11 @@ Item {
 
       if (result.reportViewScale){
         reportViewScale = result.reportViewScale*1;
+      }
+      if (result.reportPrintScale){
+        reportPrintScale = result.reportPrintScale*1;
+      }else{
+        reportPrintScale = 1/result.reportViewScale*1;
       }
 
       if (result.basicFontColor){

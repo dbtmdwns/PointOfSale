@@ -28,7 +28,7 @@ ScrollView {
     id: logo
     fillMode: Image.PreserveAspectFit
     source: ""
-    width: 512
+    width: 1024
 
   }
 
@@ -461,7 +461,7 @@ ScrollView {
       var tpl = new Template.Template(template,tplCtx);
 
       canvas.height = 15000;
-      canvas.width =512;
+      canvas.width = 512;
 
       var ctx = canvas.getContext('2d');
       ctx.fillStyle = "white";
