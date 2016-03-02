@@ -14,9 +14,12 @@ Item {
   property string versionBuild: "007"
   property string message: ""
   property var configs: []
+  property var plugins: null
   property alias local: myLocal
   property alias remote: myRemote
   property alias logger: myLogger
+
+
 
   Logger{
     id: myLogger
@@ -139,7 +142,7 @@ Item {
   property int waregroupRowCount: 8
   property int waregroupRows: 10
 
-  property int relationRowCount: 1
+  property int relationRowCount: 2
   property int relationColCount: 6
   property int relationColumns: waregroupColumns + articleColumns
   property int relationRows: 1
@@ -769,6 +772,14 @@ Item {
       doneText: "\uf00c Fertig",
       page: "Settings.qml"
     })
+
+    /*
+    model.append({
+      iconText: "\uf085",
+      title:  "Cal",
+      doneText: "\uf00c Fertig",
+      page: "ReportList.qml"
+    })*/
 
     model.append({
       iconText: "\uf08b",

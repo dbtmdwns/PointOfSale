@@ -164,7 +164,6 @@ StackViewItem {
       columns: application.relationColCount
 
       Component.onCompleted: {
-
         relationMatrix.addList(application.relationList);
         application.reportStore.cmd("SET RELATION", application.relationList[0]);
       }
@@ -324,7 +323,25 @@ StackViewItem {
   }
 
 
+  Rectangle {
+    id: rabattPlugin
+    property alias plugin: plugIn
+    visible: ((application.reportStore.currentMode === 'Rabatt')) ? true : false
+    color: "transparent"
 
+    x: spacing+(layoutWUnit*application.matrix.pluginX)
+    y: spacing+(layoutHUnit*application.matrix.pluginY)
+    width: layoutWUnit * application.matrix.pluginWidth - spacing
+    height: layoutHUnit * application.matrix.pluginHeight - spacing
+
+    RabattPlugin {
+      y: 0
+      x: 0
+      width: parent.width
+      height: parent.height
+      color: "transparent"
+    }
+  }
 
 
   Rectangle {
@@ -354,6 +371,36 @@ StackViewItem {
 
     color: "black"
     Matrix {
+      anchors.fill: parent
+
+      columns: 1
+      rows: 12
+      template: "{reportnumber} {euro(total)}"
+
+      Component.onCompleted: {
+
+        application.reportStore.onAddedReport = function(item){
+          function compare(a,b) {
+            if (a.reportnumber < b.reportnumber)
+               return 1;
+            if (a.reportnumber > b.reportnumber)
+              return -1;
+            return 0;
+          }
+          var list = application.reportStore.oldReports.slice(0);
+          leftFrameMatrix.addList(list.sort(compare).slice(0,30));
+        };
+
+
+      }
+
+      onSelected: {
+        application.reportStore.reportMode = false
+        application.reportStore.cmd("OPENREPORT", item.reportnumber);
+      }
+    }
+    /*
+    Matrix {
       id: leftFrameMatrix
       anchors.fill: parent
 
@@ -380,6 +427,7 @@ StackViewItem {
         application.reportStore.cmd("OPENREPORT", item.reportnumber);
       }
     }
+    */
   }
 
 }

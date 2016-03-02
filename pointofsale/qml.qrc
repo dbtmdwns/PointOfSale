@@ -12,6 +12,7 @@
         <file>qml/views/stackitems/Logging.qml</file>
         <file>qml/views/stackitems/Screen.qml</file>
         <file>qml/views/stackitems/Testing.qml</file>
+        <file>qml/views/stackitems/ReportList.qml</file>
 
         <file>qml/views/Authenticate.qml</file>
         <file>qml/views/ReportAndInput.qml</file>
@@ -44,6 +45,7 @@
         <file>qml/views/matrix/Matrix.qml</file>
 
         <file>qml/views/plugins/ReferenzPlugin.qml</file>
+        <file>qml/views/plugins/RabattPlugin.qml</file>
         <file>qml/views/plugins/GutscheinEinloesenPlugin.qml</file>
         <file>qml/views/plugins/GutscheinAusgebenPlugin.qml</file>
 

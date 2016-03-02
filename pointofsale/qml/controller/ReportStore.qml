@@ -734,7 +734,8 @@ Item {
           epreis: item.preis,
           brutto_preis: brutto_preis,
           brutto: brutto,
-          netto: netto
+          netto: netto,
+          warengruppe: item.warengruppe
         }
         var kombi_liste = _kombiartikel[xitem.artikel.replace(/'/gm,"#qoute;")];
         positions.push(xitem);
@@ -748,6 +749,7 @@ Item {
             nitem.brutto =  nitem.brutto * kombi_liste[ki].resultpfaktor;
             nitem.netto =  nitem.netto * kombi_liste[ki].resultpfaktor;
             nitem.kombiartikel = true;
+            nitem.warengruppe = nitem.warengruppe;
             positions.push(nitem);
             sum();
           });
@@ -795,7 +797,25 @@ Item {
       refItem.referenz = '';
       refItem.anzahl = 1*addAmount;
 
+    } else if (
+      (
+        (item.plugin === 'reportplugin.rabatt')
+      ) && (noPlugin !== true)
+    ) {
+
+      currentMode = 'Rabatt';
+      referenzString = '';
+      refItem = item;
+      refItem.referenz = '';
+      refItem.anzahl = 1*addAmount;
+      try{
+        application.plugins['reportplugin.rabatt'].refresh();
+      }catch(e){
+
+      }
+
     } else {
+
       if (number === -1) {
         lastTotal = 0;
         var brutto_preis = item.brutto_preis;
@@ -812,7 +832,8 @@ Item {
           epreis: item.preis,
           brutto_preis: brutto_preis,
           brutto: brutto,
-          netto: netto
+          netto: netto,
+          warengruppe: item.warengruppe
         }
         positions.push(yitem);
         currentMode = 'amount';

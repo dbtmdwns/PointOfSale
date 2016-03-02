@@ -32,7 +32,15 @@ ScrollView {
       displayText: rendered(entry),
       entry: entry,
     }
-    item.backgroundColor = item.isVisible ? ((typeof entry.displayBackgroundColor !== 'undefined') ? entry.displayBackgroundColor : defaultBackgroundColor) : "transparent";
+    if (
+      (typeof entry.hexcolor !== 'undefined')&&
+      (typeof entry.displayBackgroundColor === 'undefined')
+    ){
+      entry.displayBackgroundColor = entry.hexcolor;
+    }
+    var bc = (typeof entry.displayBackgroundColor !== 'undefined') ? entry.displayBackgroundColor : defaultBackgroundColor;
+
+    item.backgroundColor = item.isVisible ? (bc) : "transparent";
     item.textColor = item.isVisible ? mainStyle.colors.basicFontColor : "transparent";
     item.outlineColor = item.isVisible ? mainStyle.colors.basicStyleColor : "transparent";
 
