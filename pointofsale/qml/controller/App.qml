@@ -516,6 +516,13 @@ Item {
     model.clear();
     configs=[];
     if (result && result.cnf){
+      if (result.version){
+        if (result.version!=version){
+          if (result.update_url){
+            
+          }
+        }
+      }
       if (result.fontsize){
         configFontSize = result.fontsize*1;
         configButtonFontSize = result.fontsize*1;
