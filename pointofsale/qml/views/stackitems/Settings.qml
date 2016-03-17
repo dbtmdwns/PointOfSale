@@ -12,7 +12,7 @@ StackViewItem {
     title: "Einstellungen"
 
     property int _labelWidth: 300
-    doneText: qsTr("Fertig") + "\uf00c"
+    doneText: qsTr("") + "\uf00c"
 
     function onDoneClicked(){
 
@@ -80,7 +80,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("URL")
                     text: ""
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -98,7 +98,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("Client")
                     text: ""
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -117,7 +117,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("Login")
                     text: ""
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -139,7 +139,7 @@ StackViewItem {
                     label: qsTr("Password")
                     text: ""
                     echoMode: TextInput.Password
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -158,7 +158,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("Drucker-Name")
                     text: ""
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -178,7 +178,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("Drucker-Auflösung")
                     text: "180"
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -196,7 +196,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("Bon-Breite")
                     text: "80"
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }
@@ -214,7 +214,7 @@ StackViewItem {
                     width: parent.width
                     label: qsTr("max. Bon-Länge")
                     text: "500"
-                    style: touchStyle
+                    //style: touchStyle
                     labelWidth: _labelWidth
                     labelLeftSpace: 40
                 }

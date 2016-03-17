@@ -10,7 +10,7 @@ Rectangle {
     property alias text: textFld.text
     property alias inputFLD: textFld
     property alias echoMode: textFld.echoMode
-    property alias style: textFld.style
+    /*property alias style: textFld.style*/
     property alias labelLeftSpace: label.x
     property color labelColor: "white"
     property int labelFontPixelSize: mainStyle.font.size
@@ -31,11 +31,13 @@ Rectangle {
         font.pointSize: labelFontPixelSize
     }
 
-    TextField {
+    
+    TextInput {
         x: labelWidth + label.x
         id: textFld
         width: parent.width - labelWidth - 2*label.x
         text: "Text input"
+
         onTextChanged: {
            //changed(text);
 
