@@ -332,7 +332,7 @@ StackViewItem {
         }
 
     }
-
+/*
     Component {
         id: touchStyle
 
@@ -364,5 +364,7 @@ StackViewItem {
                 }
             }
         }
+
     }
+    */
 }
